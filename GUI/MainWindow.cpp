@@ -31,27 +31,27 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     _scroll_area->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
     _gl_widget = new GLWidget(this);
-    QWidget *window;
-    window = new QWidget(this);
-    _section_x = new GLWidget(window);
-    _section_x->set_angle_x(0);
-    _section_x->set_angle_y(0);
-    _section_x->set_angle_z(0);
-    _section_y = new GLWidget(window);
-    _section_y->set_angle_x(0);
-    _section_y->set_angle_y(90);
-    _section_y->set_angle_z(0);
-    _section_z = new GLWidget(window);
-    _section_z->set_angle_x(0);
-    _section_z->set_angle_y(90);
-    _section_z->set_angle_z(90);
-    window->setLayout(new QVBoxLayout());
-    window->layout()->addWidget(_section_x);
-    window->layout()->addWidget(_section_y);
-    window->layout()->addWidget(_section_z);
+//    QWidget *window;
+//    window = new QWidget(this);
+//    _section_x = new GLWidget(window);
+//    _section_x->set_angle_x(0);
+//    _section_x->set_angle_y(0);
+//    _section_x->set_angle_z(0);
+//    _section_y = new GLWidget(window);
+//    _section_y->set_angle_x(0);
+//    _section_y->set_angle_y(90);
+//    _section_y->set_angle_z(0);
+//    _section_z = new GLWidget(window);
+//    _section_z->set_angle_x(0);
+//    _section_z->set_angle_y(90);
+//    _section_z->set_angle_z(90);
+//    window->setLayout(new QVBoxLayout());
+//    window->layout()->addWidget(_section_x);
+//    window->layout()->addWidget(_section_y);
+//    window->layout()->addWidget(_section_z);
 
     centralWidget()->setLayout(new QHBoxLayout());
-    centralWidget()->layout()->addWidget(window);
+//    centralWidget()->layout()->addWidget(window);
     centralWidget()->layout()->addWidget(_gl_widget);
     centralWidget()->layout()->addWidget(_scroll_area);
 
@@ -65,20 +65,21 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     connect(_side_widget->trans_x_spin_box, SIGNAL(valueChanged(double)), _gl_widget, SLOT(set_trans_x(double)));
     connect(_side_widget->trans_y_spin_box, SIGNAL(valueChanged(double)), _gl_widget, SLOT(set_trans_y(double)));
     connect(_side_widget->trans_z_spin_box, SIGNAL(valueChanged(double)), _gl_widget, SLOT(set_trans_z(double)));
+    connect(_gl_widget, SIGNAL(zoomChanged(double)), _side_widget, SLOT(set_zoom_factor(double)));
 
-    connect(_side_widget->zoom_factor_spin_box, SIGNAL(valueChanged(double)), _section_x, SLOT(set_zoom_factor(double)));
-    connect(_side_widget->zoom_factor_spin_box, SIGNAL(valueChanged(double)), _section_y, SLOT(set_zoom_factor(double)));
-    connect(_side_widget->zoom_factor_spin_box, SIGNAL(valueChanged(double)), _section_z, SLOT(set_zoom_factor(double)));
+//    connect(_side_widget->zoom_factor_spin_box, SIGNAL(valueChanged(double)), _section_x, SLOT(set_zoom_factor(double)));
+//    connect(_side_widget->zoom_factor_spin_box, SIGNAL(valueChanged(double)), _section_y, SLOT(set_zoom_factor(double)));
+//    connect(_side_widget->zoom_factor_spin_box, SIGNAL(valueChanged(double)), _section_z, SLOT(set_zoom_factor(double)));
 
-    connect(_side_widget->trans_x_spin_box, SIGNAL(valueChanged(double)), _section_x, SLOT(set_trans_x(double)));
-    connect(_side_widget->trans_y_spin_box, SIGNAL(valueChanged(double)), _section_x, SLOT(set_trans_y(double)));
-    connect(_side_widget->trans_z_spin_box, SIGNAL(valueChanged(double)), _section_x, SLOT(set_trans_z(double)));
-    connect(_side_widget->trans_x_spin_box, SIGNAL(valueChanged(double)), _section_y, SLOT(set_trans_x(double)));
-    connect(_side_widget->trans_y_spin_box, SIGNAL(valueChanged(double)), _section_y, SLOT(set_trans_y(double)));
-    connect(_side_widget->trans_z_spin_box, SIGNAL(valueChanged(double)), _section_y, SLOT(set_trans_z(double)));
-    connect(_side_widget->trans_x_spin_box, SIGNAL(valueChanged(double)), _section_z, SLOT(set_trans_x(double)));
-    connect(_side_widget->trans_y_spin_box, SIGNAL(valueChanged(double)), _section_z, SLOT(set_trans_y(double)));
-    connect(_side_widget->trans_z_spin_box, SIGNAL(valueChanged(double)), _section_z, SLOT(set_trans_z(double)));
+//    connect(_side_widget->trans_x_spin_box, SIGNAL(valueChanged(double)), _section_x, SLOT(set_trans_x(double)));
+//    connect(_side_widget->trans_y_spin_box, SIGNAL(valueChanged(double)), _section_x, SLOT(set_trans_y(double)));
+//    connect(_side_widget->trans_z_spin_box, SIGNAL(valueChanged(double)), _section_x, SLOT(set_trans_z(double)));
+//    connect(_side_widget->trans_x_spin_box, SIGNAL(valueChanged(double)), _section_y, SLOT(set_trans_x(double)));
+//    connect(_side_widget->trans_y_spin_box, SIGNAL(valueChanged(double)), _section_y, SLOT(set_trans_y(double)));
+//    connect(_side_widget->trans_z_spin_box, SIGNAL(valueChanged(double)), _section_y, SLOT(set_trans_z(double)));
+//    connect(_side_widget->trans_x_spin_box, SIGNAL(valueChanged(double)), _section_z, SLOT(set_trans_x(double)));
+//    connect(_side_widget->trans_y_spin_box, SIGNAL(valueChanged(double)), _section_z, SLOT(set_trans_y(double)));
+//    connect(_side_widget->trans_z_spin_box, SIGNAL(valueChanged(double)), _section_z, SLOT(set_trans_z(double)));
 
 }
 

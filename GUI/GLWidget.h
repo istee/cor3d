@@ -8,7 +8,11 @@
 #include  <vector>
 #include <QTimer>
 
+#include <QMouseEvent>
+#include <QPoint>
+
 #include "../Model/Skeleton.h"
+#include "../Core/Lights.h"
 
 class GLWidget: public QGLWidget
 {
@@ -34,10 +38,12 @@ private:
 
     unsigned int        _dl;
 
-    QTimer              *_timer;
-    int                 _angle;
-
     cagd::Skeleton      *_skeleton;
+    cagd::DirectionalLight  *_dir_light;
+    cagd::TriangulatedMesh3 mouse;
+
+    int                 mouse_pressed_x, mouse_pressed_y;
+    int                 mouse_pressed_trans_x, mouse_pressed_trans_y, mouse_pressed_trans_z;
 
 public:
     // special and default constructor
@@ -48,6 +54,15 @@ public:
     void initializeGL();
     void paintGL();
     void resizeGL(int w, int h);
+
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void wheelEvent(QWheelEvent *event);
+
+    // protected:
+    // paintGL, _select_mode = true | false
+    // process hits, unsigned int * _select_buffer
+    //
 
     ~GLWidget();
 
@@ -63,6 +78,6 @@ public slots:
     void set_trans_y(double value);
     void set_trans_z(double value);
 
-protected slots:
-    void _animate();
+signals:
+    void zoomChanged(double newValue);
 };

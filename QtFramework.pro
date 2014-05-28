@@ -8,7 +8,8 @@ SOURCES += \
     Core/Lights.cpp \
     Core/Materials.cpp \
     Core/TriangulatedMeshes3.cpp \
-    Core/LinearCombination3.cpp
+    Core/LinearCombination3.cpp \
+    Model/Skeleton.cpp
 
 HEADERS += \
     GUI/MainWindow.h \
@@ -27,7 +28,6 @@ HEADERS += \
     Core/TriangulatedMeshes3.h \
     Core/TCoordinates4.h \
     Core/LinearCombination3.h \
-    Model/Joints.h \
     Model/Skeleton.h
 
 FORMS += \

@@ -51,53 +51,53 @@ namespace cagd
     }
 
     // get components by value
-    GLfloat TCoordinate4::operator[](GLuint rhs) const
+    inline GLfloat TCoordinate4::operator[](GLuint rhs) const
     {
         return _data[rhs];
     }
 
-    GLfloat TCoordinate4::s() const
+    inline GLfloat TCoordinate4::s() const
     {
         return _data[0];
     }
 
-    GLfloat TCoordinate4::t() const
+    inline GLfloat TCoordinate4::t() const
     {
         return _data[1];
     }
 
-    GLfloat TCoordinate4::r() const
+    inline GLfloat TCoordinate4::r() const
     {
         return _data[2];
     }
 
-    GLfloat TCoordinate4::q() const
+    inline GLfloat TCoordinate4::q() const
     {
         return _data[3];
     }
 
     // get components by reference
-    GLfloat& TCoordinate4::operator[](GLuint rhs)
+    inline GLfloat& TCoordinate4::operator[](GLuint rhs)
     {
         return _data[rhs];
     }
 
-    GLfloat& TCoordinate4::s()
+    inline GLfloat& TCoordinate4::s()
     {
         return _data[0];
     }
 
-    GLfloat& TCoordinate4::t()
+    inline GLfloat& TCoordinate4::t()
     {
         return _data[1];
     }
 
-    GLfloat& TCoordinate4::r()
+    inline GLfloat& TCoordinate4::r()
     {
         return _data[2];
     }
 
-    GLfloat& TCoordinate4::q()
+    inline GLfloat& TCoordinate4::q()
     {
         return _data[3];
     }

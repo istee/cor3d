@@ -1,48 +1,19 @@
 #include "GLWidget.h"
+#include <math.h>
 
+#include "../Core/Colors4.h"
+#include "../Core/Materials.h"
+#include "../Core/HCoordinates3.h"
+
+using namespace cagd;
+
+#define PI 3.14159265
 
 //--------------------------------
 // special and default constructor
 //--------------------------------
 GLWidget::GLWidget(QWidget *parent, const QGLFormat &format): QGLWidget(format, parent)
 {
-    _timer = new QTimer(this);
-    _timer->setInterval(0);
-
-    connect(_timer, SIGNAL(timeout()), this, SLOT(_animate()));
-
-    //std::cout << "Test cout";
-    _skeleton = 0;
-    _skeleton = new cagd::Skeleton(new cagd::DCoordinate3( 0.0,  0.0, 0.0), new cagd::DCoordinate3( 0.0,  4.0, 0.0));
-
-    if (_skeleton)
-    {
-            _skeleton->AddLink(2, new cagd::DCoordinate3(0.0, 5.0, 0.0));
-            _skeleton->AddLink(2, new cagd::DCoordinate3(3.0, 3.8, 0.5));
-            _skeleton->AddLink(2, new cagd::DCoordinate3(-3.0, 3.7, 0.4));
-            _skeleton->AddLink(4, new cagd::DCoordinate3(4.0, 4.8, 0.4));
-            _skeleton->AddLink(5, new cagd::DCoordinate3(-4.0, 4.7, 0.4));
-            _skeleton->AddLink(1, new cagd::DCoordinate3(2.0, -4.0, 0.0));
-            _skeleton->AddLink(1, new cagd::DCoordinate3(-2.0, -4.0, 0.0));
-            _skeleton->AddLink(8, new cagd::DCoordinate3(1.5, -7.0, 0.0));
-            _skeleton->AddLink(9, new cagd::DCoordinate3(-1.5, -7.0, 0.0));
-            /*
-            (*_skeleton)[0] = cagd::DCoordinate3( 0.0,  0.0, 0.0);
-            (*_skeleton)[1] = cagd::DCoordinate3( 0.0,  1.0, 0.0);
-            (*_skeleton)[2] = cagd::DCoordinate3( 1.0, -1.0, 0.0);
-            (*_skeleton)[3] = cagd::DCoordinate3( 0.0,  2.0, 0.0);
-            (*_skeleton)[4] = cagd::DCoordinate3( 2.0, -1.0, 0.0);
-            (*_skeleton)[5] = cagd::DCoordinate3( 1.0,  2.0, 0.0);
-            (*_skeleton)[6] = cagd::DCoordinate3( 2.0, -2.0, 0.0);
-            (*_skeleton)[7] = cagd::DCoordinate3( 1.0,  1.0, 0.0);
-            (*_skeleton)[8] = cagd::DCoordinate3( 1.0, -2.0, 0.0);
-            (*_skeleton)[9] = cagd::DCoordinate3( 3.0, -2.0, 0.0);
-
-            _skeleton->AddLink(0, 0, 1);
-            _skeleton->AddLink(0, 0, 2);
-            // ...
-            */
-    }
 
 }
 
@@ -59,6 +30,8 @@ GLWidget::~GLWidget()
 //--------------------------------------------------------------------------------------
 void GLWidget::initializeGL()
 {
+    glewInit();
+
     // creating a perspective projection matrix
     glMatrixMode(GL_PROJECTION);
 
@@ -117,9 +90,56 @@ void GLWidget::initializeGL()
         glEndList();
     }
 
-    _angle = 0;
+    _skeleton = 0;
+    _skeleton = new cagd::Skeleton(new cagd::DCoordinate3( 0.0,  0.0, 0.0), new cagd::DCoordinate3( 0.0,  3.0, 0.0));
 
-    _timer->start();
+    if (_skeleton)
+    {
+            _skeleton->AddLink(2, new cagd::DCoordinate3(0.0, 3.5, 0.0));
+            _skeleton->AddLink(2, new cagd::DCoordinate3(3.0, 1.8, 0.5));
+            _skeleton->AddLink(2, new cagd::DCoordinate3(-3.0, 3.7, 0.4));
+            _skeleton->AddLink(4, new cagd::DCoordinate3(4.0, 4.8, 0.4));
+
+            _skeleton->AddLink(5, new cagd::DCoordinate3(-4.0, 4.7, 0.4));
+            _skeleton->AddLink(1, new cagd::DCoordinate3(2.0, -4.0, 0.0));
+            _skeleton->AddLink(1, new cagd::DCoordinate3(-2.0, -4.0, 0.0));
+            _skeleton->AddLink(8, new cagd::DCoordinate3(1.5, -7.0, 0.0));
+            _skeleton->AddLink(9, new cagd::DCoordinate3(-1.5, -7.0, 0.0));
+
+            /*
+            (*_skeleton)[0] = cagd::DCoordinate3( 0.0,  0.0, 0.0);
+            (*_skeleton)[1] = cagd::DCoordinate3( 0.0,  1.0, 0.0);
+            (*_skeleton)[2] = cagd::DCoordinate3( 1.0, -1.0, 0.0);
+            (*_skeleton)[3] = cagd::DCoordinate3( 0.0,  2.0, 0.0);
+            (*_skeleton)[4] = cagd::DCoordinate3( 2.0, -1.0, 0.0);
+            (*_skeleton)[5] = cagd::DCoordinate3( 1.0,  2.0, 0.0);
+            (*_skeleton)[6] = cagd::DCoordinate3( 2.0, -2.0, 0.0);
+            (*_skeleton)[7] = cagd::DCoordinate3( 1.0,  1.0, 0.0);
+            (*_skeleton)[8] = cagd::DCoordinate3( 1.0, -2.0, 0.0);
+            (*_skeleton)[9] = cagd::DCoordinate3( 3.0, -2.0, 0.0);
+
+            _skeleton->AddLink(0, 0, 1);
+            _skeleton->AddLink(0, 0, 2);
+            // ...
+            */
+    }
+
+    glEnable(GL_LIGHTING);
+    glEnable(GL_NORMALIZE);
+
+    _dir_light = 0;
+    _dir_light = new DirectionalLight(
+            GL_LIGHT0,
+            HCoordinate3(0.0, 0.0, 1.0, 0.0),
+            Color4(0.4, 0.4, 0.4, 1.0),
+            Color4(0.8, 0.8, 0.8, 1.0),
+            Color4(1.0, 1.0, 1.0, 1.0));
+
+    _dir_light->Enable();
+
+
+    mouse.LoadFromOFF("Models/mouse.off");
+    mouse.UpdateVertexBufferObjects();
 }
 
 //-----------------------
@@ -173,8 +193,14 @@ void GLWidget::paintGL()
         if (_skeleton)
         {
             glColor3f(1.0, 0.0, 0.0);
+            MatFBBrass.Apply();
+            _skeleton->RenderJoints();
+            MatFBPearl.Apply();
             _skeleton->RenderLinks();
         }
+
+        MatFBTurquoise.Apply();
+        mouse.Render();
 
     // pops the current matrix stack, replacing the current matrix with the one below it on the stack,
     // i.e., the original model view matrix is restored
@@ -271,12 +297,60 @@ void GLWidget::set_trans_z(double value)
     }
 }
 
-void GLWidget::_animate()
+void GLWidget::mousePressEvent(QMouseEvent *event)
 {
-    _angle += 1;
+    event->accept();
+    mouse_pressed_x = event->x();
+    mouse_pressed_y = event->y();
+    mouse_pressed_trans_x = _trans_x;
+    mouse_pressed_trans_y = _trans_y;
+    mouse_pressed_trans_z = _trans_z;
+    std::cout<<"press";
+}
 
-    if (_angle >= 360)
-        _angle -= 360;
+void GLWidget::mouseMoveEvent(QMouseEvent *event)
+{
+    event->accept();
+    int disp_x = event->x() - mouse_pressed_x;
+    int disp_y = mouse_pressed_y - event->y();
 
-    updateGL();
+    double rad_x = _angle_x * PI / 180;
+    double rad_y = _angle_y * PI / 180;
+    double rad_z = _angle_z * PI / 180;
+
+    double sin_x = cos(rad_x);
+    double sin_y = cos(rad_y);
+    double sin_z = cos(rad_z);
+    double cos_x = cos(rad_x);
+    double cos_y = cos(rad_y);
+    double cos_z = cos(rad_z);
+
+    double new_trans_x, new_trans_y, new_trans_z;
+    new_trans_x = disp_x * (cos_y * cos_z + sin_x * sin_y * cos_z + cos_x * cos_z + cos_x * sin_y * cos_z + sin_x * sin_z) / 100.0;
+    new_trans_y = disp_y * (- cos_y * sin_z - sin_x * sin_y * sin_z + cos_x * cos_z - cos_x * sin_y * sin_z + sin_x * cos_z) / 100.0;
+    new_trans_z = (sin_y - sin_x * cos_y + cos_x * cos_y) / 100.0;
+
+
+    std::cout << "x: " << disp_x << ", y: " << disp_y << std::endl;
+    set_trans_x(mouse_pressed_trans_x + new_trans_x);
+    set_trans_y(mouse_pressed_trans_y + new_trans_y);
+    set_trans_z(mouse_pressed_trans_z + new_trans_z);
+    //if (event->button() == Qt::LeftButton)
+    //{
+       // if (event->modifiers() & Qt::ShiftModifier)
+      //  {
+//            Qt::AltModifier, Qt::ControlModifier
+        //}
+    //}
+}
+
+
+void GLWidget::wheelEvent(QWheelEvent *event)
+{
+    event->accept();
+    double new_zoom = _zoom + event->delta() / 1200.0;
+    if (new_zoom < 0.01)
+        new_zoom = 0.01;
+    std::cout << "zoom:" << new_zoom << std::endl;
+    emit zoomChanged(new_zoom);
 }

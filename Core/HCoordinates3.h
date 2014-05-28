@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef __HCoordinates_H_INCLUDED__
-#define __HCoordinates_H_INCLUDED__
-
 #include <cmath>
 #include <GL/glew.h>
 #include <iostream>
@@ -123,59 +120,59 @@ namespace cagd
     }
 
     // get components by value
-    GLfloat HCoordinate3::operator[](GLuint rhs) const
+    inline GLfloat HCoordinate3::operator[](GLuint rhs) const
     {
         return _data[rhs];
     }
 
-    GLfloat HCoordinate3::x() const
+    inline GLfloat HCoordinate3::x() const
     {
         return _data[0];
     }
 
-    GLfloat HCoordinate3::y() const
+    inline GLfloat HCoordinate3::y() const
     {
         return _data[1];
     }
 
-    GLfloat HCoordinate3::z() const
+    inline GLfloat HCoordinate3::z() const
     {
         return _data[2];
     }
 
-    GLfloat HCoordinate3::w() const
+    inline GLfloat HCoordinate3::w() const
     {
         return _data[3];
     }
 
     // get components by reference
-    GLfloat& HCoordinate3::operator[](GLuint rhs)
+    inline  GLfloat& HCoordinate3::operator[](GLuint rhs)
     {
         return _data[rhs];
     }
 
-    GLfloat& HCoordinate3::x()
+    inline GLfloat& HCoordinate3::x()
     {
         return _data[0];
     }
 
-    GLfloat& HCoordinate3::y()
+    inline GLfloat& HCoordinate3::y()
     {
         return _data[1];
     }
 
-    GLfloat& HCoordinate3::z()
+    inline GLfloat& HCoordinate3::z()
     {
         return _data[2];
     }
 
-    GLfloat& HCoordinate3::w()
+    inline GLfloat& HCoordinate3::w()
     {
         return _data[3];
     }
 
     // add to this
-    HCoordinate3& HCoordinate3::operator +=(const HCoordinate3& rhs)
+    inline HCoordinate3& HCoordinate3::operator +=(const HCoordinate3& rhs)
     {
         x() += rhs.w() * x() + w() * rhs.x();
         y() += rhs.w() * y() + w() * rhs.y();
@@ -186,7 +183,7 @@ namespace cagd
     }
 
     // subtract
-    const HCoordinate3 HCoordinate3::operator -(const HCoordinate3& rhs) const
+    inline const HCoordinate3 HCoordinate3::operator -(const HCoordinate3& rhs) const
     {
         return HCoordinate3(rhs.w() * x() - w() * rhs.x(),
                     rhs.w() * y() - w() * rhs.y(),
@@ -195,7 +192,7 @@ namespace cagd
     }
 
     // subtract from this
-    HCoordinate3& HCoordinate3::operator -=(const HCoordinate3& rhs)
+    inline HCoordinate3& HCoordinate3::operator -=(const HCoordinate3& rhs)
     {
         x() -= rhs.w() * x() + w() * rhs.x();
         y() -= rhs.w() * y() + w() * rhs.y();
@@ -206,7 +203,7 @@ namespace cagd
     }
 
     // dot product
-    GLfloat HCoordinate3::operator *(const HCoordinate3& rhs) const
+    inline GLfloat HCoordinate3::operator *(const HCoordinate3& rhs) const
     {
         return rhs.w() * x() * w() * rhs.x() +
                 rhs.w() * y() * w() * rhs.y() +
@@ -214,7 +211,7 @@ namespace cagd
     }
 
     // cross product
-    const HCoordinate3 HCoordinate3::operator ^(const HCoordinate3& rhs) const
+    inline const HCoordinate3 HCoordinate3::operator ^(const HCoordinate3& rhs) const
     {
         return HCoordinate3(y() * rhs.w() * rhs.z() * w() - z() * rhs.w() * rhs.y() * w(),
                             z() * rhs.w() * rhs.x() * w() - x() * rhs.w() * rhs.z() * w(),
@@ -223,7 +220,7 @@ namespace cagd
     }
 
     // cross product with this
-    HCoordinate3& HCoordinate3::operator ^=(const HCoordinate3& rhs)
+    inline HCoordinate3& HCoordinate3::operator ^=(const HCoordinate3& rhs)
     {
         HCoordinate3 temp = HCoordinate3();
         temp.x() = y() * rhs.w() * rhs.z() * w() - z() * rhs.w() * rhs.y() * w();
@@ -240,13 +237,13 @@ namespace cagd
     }
 
     // multiplicate with scalar from right
-    const HCoordinate3 HCoordinate3::operator *(GLfloat rhs) const
+    inline const HCoordinate3 HCoordinate3::operator *(GLfloat rhs) const
     {
         return HCoordinate3(x() * rhs, y() * rhs, z() * rhs, w());
     }
 
     // multiplicate this with a scalar
-    HCoordinate3& HCoordinate3::operator *=(GLfloat rhs)
+    inline HCoordinate3& HCoordinate3::operator *=(GLfloat rhs)
     {
         x() *= rhs;
         y() *= rhs;
@@ -256,13 +253,13 @@ namespace cagd
     }
 
     // divide with scalar
-    const HCoordinate3 HCoordinate3::operator /(GLfloat rhs) const
+    inline const HCoordinate3 HCoordinate3::operator /(GLfloat rhs) const
     {
         return HCoordinate3(x() / rhs, y() / rhs, z() / rhs, w());
     }
 
     // divide this with a scalar
-    HCoordinate3& HCoordinate3::operator /=(GLfloat rhs)
+    inline HCoordinate3& HCoordinate3::operator /=(GLfloat rhs)
     {
         x() /= rhs;
         y() /= rhs;
@@ -272,18 +269,16 @@ namespace cagd
     }
 
     // length of vector represented by this homogeneous coordinate
-    GLfloat HCoordinate3::length() const
+    inline GLfloat HCoordinate3::length() const
     {
         return sqrt(x()*x() + y()*y() + z()*z());
     }
 
     // normalize
-    HCoordinate3& HCoordinate3::normalize()
+    inline HCoordinate3& HCoordinate3::normalize()
     {
         GLfloat len = length();
         this->operator /=(len);
         return *this;
     }
 }
-
-#endif // __HCoordinates_H_INCLUDED__
