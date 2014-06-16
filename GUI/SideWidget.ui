@@ -266,7 +266,7 @@
       <string>Model</string>
      </property>
     </widget>
-    <widget class="QCheckBox" name="checkBox">
+    <widget class="QCheckBox" name="checkBox_render">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -279,7 +279,7 @@
       <string>Render</string>
      </property>
     </widget>
-    <widget class="QCheckBox" name="checkBox_2">
+    <widget class="QCheckBox" name="checkBox_render_joints">
      <property name="geometry">
       <rect>
        <x>30</x>
@@ -291,8 +291,11 @@
      <property name="text">
       <string>Render joints</string>
      </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
     </widget>
-    <widget class="QCheckBox" name="checkBox_3">
+    <widget class="QCheckBox" name="checkBox_render_links">
      <property name="geometry">
       <rect>
        <x>30</x>
@@ -304,8 +307,11 @@
      <property name="text">
       <string>Render links</string>
      </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
     </widget>
-    <widget class="QCheckBox" name="checkBox_4">
+    <widget class="QCheckBox" name="checkBox_render_mesh">
      <property name="geometry">
       <rect>
        <x>30</x>
@@ -316,6 +322,9 @@
      </property>
      <property name="text">
       <string>Render mesh</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
      </property>
     </widget>
    </widget>

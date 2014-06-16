@@ -31,9 +31,6 @@ namespace cagd
 
             Joint(DCoordinate3 *position, TriangulatedMesh3 *mesh, int prev_link = -1): _position(position), _mesh(mesh), _prev_link(prev_link)
             {
-                _position = position;
-                std::cout << "constr pos addr: "<< position << " " << position->x() << " " << position->y() << " " << position->z() <<std::endl;
-                std::cout << "constr pos addr: "<< _position << " " << _position->x() << " " << _position->y() << " " << _position->z() <<std::endl;
                 _scale = DCoordinate3(0.1, 0.1, 0.1);
             }
 
@@ -156,43 +153,16 @@ namespace cagd
 ////            }
         };
 
-        /*
-        class Chain
-        {
-        public:
-            std::vector<Link>   _links;
-            std::vector<Joint>  _joints;
-
-            bool AddLink(unsigned int start_index, unsigned int end_index)
-            {
-                std::cout << "added: " << start_index << " - " << end_index << "\n";
-                return false;
-            }
-        };
-        */
-
     protected:
-        unsigned int                _id;
-        unsigned int                _link_count;
-        unsigned int                _joint_count;
-        unsigned int                _index_count;
-
-        //Joint                       *_root;
-
         TriangulatedMesh3           *_link_mesh, *_joint_mesh;
         TriangulatedMesh3           _mesh;
 
-        //std::vector<DCoordinate3>   _vertices;
         std::vector<Link>           _links;
         std::vector<Joint>          _joints;
 
-        Joint                       *_selected;
+        int                         _selected;
 
         bool                        _render_mesh, _render_links, _render_joints;
-
-//        void RenderLinks_(Link *link, unsigned int parent_id) const;
-//        void RenderJoints_(Joint *joint, unsigned int parent_link_id, bool glLoad) const;
-        bool AddLink_(Joint *joint, unsigned int start_index, DCoordinate3 end_coordinate);
 
     public:
 
@@ -200,15 +170,22 @@ namespace cagd
 //        Joint* GetJoint_(Joint *joint, unsigned int parent_link_id, unsigned int joint_id) const;
 
 
-        Skeleton(unsigned int id, double x, double y, double z, TriangulatedMesh3 *joint_mesh, TriangulatedMesh3 *link_mesh);
+        Skeleton(double x, double y, double z, TriangulatedMesh3 mesh, TriangulatedMesh3 *joint_mesh, TriangulatedMesh3 *link_mesh, bool render_mesh = true, bool render_links = true, bool render_joints = true);
+
+        bool GetRenderMesh();
+        void SetRenderMesh(bool value);
+        bool GetRenderLinks();
+        void SetRenderLinks(bool value);
+        bool GetRenderJoints();
+        void SetRenderJoints(bool value);
+
+        void SetSelected(unsigned int selected_id);
 
         void Render(bool glLoad) const;
         void RenderLinks() const;
         void RenderJoints(bool glLoad) const;
 
         bool AddLink(unsigned int _start_index, double x, double y, double z);
-//        bool EraseLink(unsigned int chain_index, unsigned int link_index);
-//        void SetSelected(unsigned int selected_id);
 
 //        DCoordinate3* GetSelectedPosition() const;
 
@@ -219,10 +196,10 @@ namespace cagd
 
 //        void RenderSelected() const;
 
-//        unsigned int JointCount() const;
+        unsigned int JointCount() const;
         friend std::ostream& operator <<(std::ostream& lhs, const Skeleton& rhs)
         {
-            return lhs << rhs._id;
+            return lhs;// << rhs._id;
         }
     };
 }

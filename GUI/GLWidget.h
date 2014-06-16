@@ -81,6 +81,9 @@ public slots:
     void set_trans_x(double value);
     void set_trans_y(double value);
     void set_trans_z(double value);
+    void set_render_mesh(int skeleton_id, bool value);
+    void set_render_links(int skeleton_id, bool value);
+    void set_render_joints(int skeleton_id, bool value);
 
 signals:
     void zoomChanged(double newValue);

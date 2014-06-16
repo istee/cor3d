@@ -101,39 +101,11 @@ void GLWidget::initializeGL()
     sphere.LoadFromOFF("Models/sphere.off");
     sphere.UpdateVertexBufferObjects();
 
-    cagd::Skeleton sk = cagd::Skeleton(1, 0.0, 0.0, 0.0, &cone, &sphere);
-    sk.AddLink(0, 0.0, 3.5, 0.0);
+    cagd::Skeleton sk = cagd::Skeleton(0.1, -1.7, -1.5, mesh, &cone, &sphere);
+    sk.AddLink(0, 0.1, 0.5, -0.7);
+    sk.AddLink(1, 0.8, 0.4, -0.7);
+    sk.AddLink(2, 1.7, 0.3, -0.7);
     _skeletons.push_back(sk);
-    cout << "sk created" << endl;
-    //_skeleton = new Skeleton(new cagd::DCoordinate3( 0.0,  0.0, 0.0), new cagd::DCoordinate3( 0.0,  3.0, 0.0));
-//    if (_skeleton)
-//    {
-//            _skeleton->AddLink(2, new cagd::DCoordinate3(0.0, 3.5, 0.0));
-//            _skeleton->AddLink(2, new cagd::DCoordinate3(3.0, 1.8, 0.5));
-//            _skeleton->AddLink(2, new cagd::DCoordinate3(-3.0, 3.7, 0.4));
-//            _skeleton->AddLink(4, new cagd::DCoordinate3(4.0, 4.8, 0.4));
-
-//            _skeleton->AddLink(5, new cagd::DCoordinate3(-4.0, 4.7, 0.4));
-//            _skeleton->AddLink(1, new cagd::DCoordinate3(2.0, -4.0, 0.0));
-//            _skeleton->AddLink(1, new cagd::DCoordinate3(-2.0, -4.0, 0.0));
-//            _skeleton->AddLink(8, new cagd::DCoordinate3(1.5, -7.0, 0.0));
-//            _skeleton->AddLink(9, new cagd::DCoordinate3(-1.5, -7.0, 0.0));
-
-
-//            (*_skeleton)[0] = cagd::DCoordinate3( 0.0,  0.0, 0.0);
-//            (*_skeleton)[1] = cagd::DCoordinate3( 0.0,  1.0, 0.0);
-//            (*_skeleton)[2] = cagd::DCoordinate3( 1.0, -1.0, 0.0);
-//            (*_skeleton)[3] = cagd::DCoordinate3( 0.0,  2.0, 0.0);
-//            (*_skeleton)[4] = cagd::DCoordinate3( 2.0, -1.0, 0.0);
-//            (*_skeleton)[5] = cagd::DCoordinate3( 1.0,  2.0, 0.0);
-//            (*_skeleton)[6] = cagd::DCoordinate3( 2.0, -2.0, 0.0);
-//            (*_skeleton)[7] = cagd::DCoordinate3( 1.0,  1.0, 0.0);
-//            (*_skeleton)[8] = cagd::DCoordinate3( 1.0, -2.0, 0.0);
-//            (*_skeleton)[9] = cagd::DCoordinate3( 3.0, -2.0, 0.0);
-
-//            _skeleton->AddLink(0, 0, 1);
-//            _skeleton->AddLink(0, 0, 2);
-//    }
 
     glEnable(GL_LIGHTING);
     glEnable(GL_NORMALIZE);
@@ -173,9 +145,20 @@ void GLWidget::paintGL()
 
         glScaled(_zoom, _zoom, _zoom);
 
+        glEnable(GL_LIGHTING);
         for(std::vector<cagd::Skeleton>::iterator it = _skeletons.begin(); it != _skeletons.end(); ++it) {
             it->Render(false);
         }
+        glDisable(GL_LIGHTING);
+
+        glBegin(GL_TRIANGLES);
+        glColor3f(1.0, 0.0, 0.0);
+        glVertex3f(1.0, 0.0, 0.0);
+        glColor3f(0.0, 1.0, 0.0);
+        glVertex3f(0.0, 1.0, 0.0);
+        glColor3f(0.0, 0.0, 1.0);
+        glVertex3f(0.0, 0.0, 1.0);
+        glEnd();
 //        double line_offset = 1 / _zoom;
 //        DCoordinate3 *selected_position = _skeleton->GetSelectedPosition();
 
@@ -363,105 +346,103 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
     mouse_pressed_trans_x = _trans_x;
     mouse_pressed_trans_y = _trans_y;
     mouse_pressed_trans_z = _trans_z;
-//    if (event->button() == Qt::LeftButton)
-//    {
-//        GLint viewport[4];
+    if (event->button() == Qt::LeftButton)
+    {
+        GLint viewport[4];
 
-//        glGetIntegerv(GL_VIEWPORT, viewport);
+        glGetIntegerv(GL_VIEWPORT, viewport);
 
-//        GLuint size = 4 * _skeleton->JointCount();
-//        GLuint *pick_buffer = new GLuint[size];
+        GLuint size = 4 * _skeletons[0].JointCount();
+        GLuint *pick_buffer = new GLuint[size];
 
-//        if (pick_buffer)
-//        {
-//            glSelectBuffer(size, pick_buffer);
+        if (pick_buffer)
+        {
+            glSelectBuffer(size, pick_buffer);
 
-//            glRenderMode(GL_SELECT);
-
-
-//            glInitNames();
-//            glPushName(0);
-
-//            GLfloat projection_matrix[16];
-//            glGetFloatv(GL_PROJECTION_MATRIX, projection_matrix);
-
-//            glMatrixMode(GL_PROJECTION);
-
-//            glPushMatrix();
+            glRenderMode(GL_SELECT);
 
 
-//                glLoadIdentity();
-//                gluPickMatrix((GLdouble)event->x(), (GLdouble)(viewport[3] - event->y()), 5.0, 5.0, viewport);
+            glInitNames();
+            glPushName(0);
 
-//                glMultMatrixf(projection_matrix);
+            GLfloat projection_matrix[16];
+            glGetFloatv(GL_PROJECTION_MATRIX, projection_matrix);
 
-//                glMatrixMode(GL_MODELVIEW);
+            glMatrixMode(GL_PROJECTION);
 
-
-//                glPushMatrix();
-
-//                // rotating around the coordinate axes
-//                glRotatef(_angle_x, 1.0, 0.0, 0.0);
-//                glRotatef(_angle_y, 0.0, 1.0, 0.0);
-//                glRotatef(_angle_z, 0.0, 0.0, 1.0);
+            glPushMatrix();
 
 
-//                // translate
-//                glTranslated(_trans_x, _trans_y, _trans_z);
+                glLoadIdentity();
+                gluPickMatrix((GLdouble)event->x(), (GLdouble)(viewport[3] - event->y()), 5.0, 5.0, viewport);
 
-//                // scaling
-//                glScalef(_zoom, _zoom, _zoom);
+                glMultMatrixf(projection_matrix);
 
-//                // a kiválasztáshoz elégséges csak a joint-okat kirajzolni
-
-//                if (_skeleton)
-//                {
-//                    _skeleton->RenderJoints(true); // ahol true a glLoadName() függvény alkalmazását aktíválja
-//                    // ahogy bejárod a skeleton joint-jait a glLoadName függvénynek az egyes joint-ok id-ját kell átadnod
-//                }
+                glMatrixMode(GL_MODELVIEW);
 
 
-//            glPopMatrix();
+                glPushMatrix();
 
-//            glMatrixMode(GL_PROJECTION);
-//            glPopMatrix();
-
-//            glMatrixMode(GL_MODELVIEW);
-
-//            int nhits = glRenderMode(GL_RENDER);
+                // rotating around the coordinate axes
+                glRotatef(_angle_x, 1.0, 0.0, 0.0);
+                glRotatef(_angle_y, 0.0, 1.0, 0.0);
+                glRotatef(_angle_z, 0.0, 0.0, 1.0);
 
 
-//            if (nhits)
-//            {
-//                GLuint closest_selected = pick_buffer[3];
-//                GLuint closest_depth    = pick_buffer[1];
+                // translate
+                glTranslated(_trans_x, _trans_y, _trans_z);
+
+                // scaling
+                glScalef(_zoom, _zoom, _zoom);
+
+                // a kiválasztáshoz elégséges csak a joint-okat kirajzolni
+
+                _skeletons[0].RenderJoints(true); // ahol true a glLoadName() függvény alkalmazását aktíválja
+                    // ahogy bejárod a skeleton joint-jait a glLoadName függvénynek az egyes joint-ok id-ját kell átadnod
+                }
 
 
-//                for (GLuint i = 1; i < nhits; ++i)
-//                {
-//                    GLuint offset = i * 4;
-//                    if (pick_buffer[offset + 1] < closest_depth)
+            glPopMatrix();
 
-//                    {
-//                        closest_selected = pick_buffer[offset + 3];
-//                        closest_depth    = pick_buffer[offset + 1];
-//                    }
-//                }
+            glMatrixMode(GL_PROJECTION);
+            glPopMatrix();
 
-//                unsigned int _joint_id = closest_selected;
-//                _skeleton->SetSelected(_joint_id);
+            glMatrixMode(GL_MODELVIEW);
 
-//                _joint_position = _skeleton->GetJoint(_joint_id)->_position;
+            int nhits = glRenderMode(GL_RENDER);
 
 
-//                std::cout << "selected: " << _joint_id <<std::endl;
-//                // ...
-//            }
+            if (nhits)
+            {
+                cout<<"nhits: " << nhits << endl;
+                GLuint closest_selected = pick_buffer[3];
+                GLuint closest_depth    = pick_buffer[1];
 
-//            delete pick_buffer, pick_buffer = 0;
-//            updateGL();
-//        }
-//    }
+
+                for (GLuint i = 1; i < nhits; ++i)
+                {
+                    GLuint offset = i * 4;
+                    if (pick_buffer[offset + 1] < closest_depth)
+
+                    {
+                        closest_selected = pick_buffer[offset + 3];
+                        closest_depth    = pick_buffer[offset + 1];
+                    }
+                }
+
+                unsigned int _joint_id = closest_selected;
+                _skeletons[0].SetSelected(_joint_id);
+
+                //_joint_position = _skeleton->GetJoint(_joint_id)->_position;
+
+
+                std::cout << "selected: " << _joint_id <<std::endl;
+                // ...
+            }
+
+            delete pick_buffer, pick_buffer = 0;
+            updateGL();
+        }
 }
 
 void GLWidget::mouseMoveEvent(QMouseEvent *event)
@@ -531,5 +512,38 @@ void GLWidget::wheelEvent(QWheelEvent *event)
         emit zoomChanged(new_zoom);
     }
 
+    updateGL();
+}
+
+void GLWidget::set_render_mesh(int skeleton_id, bool value)
+{
+    if (skeleton_id == -1)
+    {
+        for(std::vector<cagd::Skeleton>::iterator it = _skeletons.begin(); it != _skeletons.end(); ++it) {
+            it->SetRenderMesh(value);
+        }
+    }
+    updateGL();
+}
+
+void GLWidget::set_render_links(int skeleton_id, bool value)
+{
+    if (skeleton_id == -1)
+    {
+        for(std::vector<cagd::Skeleton>::iterator it = _skeletons.begin(); it != _skeletons.end(); ++it) {
+            it->SetRenderLinks(value);
+        }
+    }
+    updateGL();
+}
+
+void GLWidget::set_render_joints(int skeleton_id, bool value)
+{
+    if (skeleton_id == -1)
+    {
+        for(std::vector<cagd::Skeleton>::iterator it = _skeletons.begin(); it != _skeletons.end(); ++it) {
+            it->SetRenderJoints(value);
+        }
+    }
     updateGL();
 }

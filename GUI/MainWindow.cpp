@@ -85,6 +85,9 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
 //    connect(_side_widget->trans_y_spin_box, SIGNAL(valueChanged(double)), _section_z, SLOT(set_trans_y(double)));
 //    connect(_side_widget->trans_z_spin_box, SIGNAL(valueChanged(double)), _section_z, SLOT(set_trans_z(double)));
 
+    connect(_side_widget, SIGNAL(checkBox_render_mesh_toggled(int, bool)), _gl_widget, SLOT(set_render_mesh(int, bool)));
+    connect(_side_widget, SIGNAL(checkBox_render_links_toggled(int, bool)), _gl_widget, SLOT(set_render_links(int, bool)));
+    connect(_side_widget, SIGNAL(checkBox_render_joints_toggled(int, bool)), _gl_widget, SLOT(set_render_joints(int, bool)));
 }
 
 //--------------------------------

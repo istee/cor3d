@@ -28,3 +28,18 @@ void SideWidget::set_trans_z(double value)
 {
     trans_z_spin_box->setValue(value);
 }
+
+void SideWidget::on_checkBox_render_mesh_toggled(bool checked)
+{
+    emit checkBox_render_mesh_toggled(-1, checked);
+}
+
+void SideWidget::on_checkBox_render_links_toggled(bool checked)
+{
+    emit checkBox_render_links_toggled(-1, checked);
+}
+
+void SideWidget::on_checkBox_render_joints_toggled(bool checked)
+{
+    emit checkBox_render_joints_toggled(-1, checked);
+}
