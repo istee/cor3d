@@ -28,7 +28,8 @@ HEADERS += \
     Core/TriangulatedMeshes3.h \
     Core/TCoordinates4.h \
     Core/LinearCombination3.h \
-    Model/Skeleton.h
+    Model/Skeleton.h \
+    Core/Constants.h
 
 FORMS += \
     GUI/MainWindow.ui \

@@ -65,7 +65,11 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     connect(_side_widget->trans_x_spin_box, SIGNAL(valueChanged(double)), _gl_widget, SLOT(set_trans_x(double)));
     connect(_side_widget->trans_y_spin_box, SIGNAL(valueChanged(double)), _gl_widget, SLOT(set_trans_y(double)));
     connect(_side_widget->trans_z_spin_box, SIGNAL(valueChanged(double)), _gl_widget, SLOT(set_trans_z(double)));
+
     connect(_gl_widget, SIGNAL(zoomChanged(double)), _side_widget, SLOT(set_zoom_factor(double)));
+    connect(_gl_widget, SIGNAL(trans_xChanged(double)), _side_widget, SLOT(set_trans_x(double)));
+    connect(_gl_widget, SIGNAL(trans_yChanged(double)), _side_widget, SLOT(set_trans_y(double)));
+    connect(_gl_widget, SIGNAL(trans_zChanged(double)), _side_widget, SLOT(set_trans_z(double)));
 
 //    connect(_side_widget->zoom_factor_spin_box, SIGNAL(valueChanged(double)), _section_x, SLOT(set_zoom_factor(double)));
 //    connect(_side_widget->zoom_factor_spin_box, SIGNAL(valueChanged(double)), _section_y, SLOT(set_zoom_factor(double)));

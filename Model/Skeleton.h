@@ -22,89 +22,138 @@ namespace cagd
         class Joint
         {
         public:
-            int                 _id;
+            //unsigned int        _id;
             DCoordinate3        *_position;
             DCoordinate3        _scale;
-            //Link                *_prev_link;
-            std::vector<Link *> _links; // eredetileg (hibásan) pointer volt
-            const TriangulatedMesh3 *_ptr_sphere;
+            TriangulatedMesh3   *_mesh;
+            int                 _prev_link;
+            std::vector<int>    _next_links;
 
-
-            Joint(unsigned int id = 0, DCoordinate3 *position = 0, const TriangulatedMesh3 *sphere = 0): _id(id), _position(position), _ptr_sphere(sphere)
+            Joint(DCoordinate3 *position, TriangulatedMesh3 *mesh, int prev_link = -1): _position(position), _mesh(mesh), _prev_link(prev_link)
             {
-                _scale = DCoordinate3(0.2, 0.2, 0.2);
+                _position = position;
+                std::cout << "constr pos addr: "<< position << " " << position->x() << " " << position->y() << " " << position->z() <<std::endl;
+                std::cout << "constr pos addr: "<< _position << " " << _position->x() << " " << _position->y() << " " << _position->z() <<std::endl;
+                _scale = DCoordinate3(0.1, 0.1, 0.1);
             }
 
-            Joint(const Joint& joint): _id(joint._id), _position(joint._position), _links(joint._links) {}
-
+            Joint(const Joint& joint):
+                _position(joint._position),
+                _scale(joint._scale),
+                _mesh(joint._mesh),
+                _prev_link(joint._prev_link),
+                _next_links(joint._next_links)
+            {}
 
             Joint& operator =(const Joint& joint)
             {
                 if (this != &joint)
                 {
-                    _id         = joint._id;
                     _position   = joint._position;
-                    _links      = joint._links;
+                    _scale      = joint._scale;
+                    _mesh       = joint._mesh;
+                    _prev_link  = joint._prev_link;
+                    _next_links = joint._next_links;
                 }
                 return *this;
             }
 
-            bool operator==(const Joint& other) {
-              return _id == other._id;
-            }
-
-            bool operator!=(const Joint& other) {
-              return !(*this == other);
-            }
-
-            void AddNextLink(Link *link)
+            DCoordinate3* Position() const
             {
-                _links.push_back(link);
+                return _position;
             }
 
-            bool Render() const;
+//            bool operator==(const Joint& other) {
+//              return _id == other._id;
+//            }
+
+//            bool operator!=(const Joint& other) {
+//              return !(*this == other);
+//            }
+
+            void AddNextLink(int link)
+            {
+                _next_links.push_back(link);
+            }
+
+            void SetPreviousLink(int prev_link)
+            {
+                _prev_link = prev_link;
+            }
+
+            void Render() const;
+
         };
 
         class Link
         {
         public:
-            unsigned int            _id;
-            Joint                   *_start;
-            Joint                   *_end;
-
+            int                     _start_index;
+            int                     _end_index;
             DCoordinate3            _scale;
+            TriangulatedMesh3       *_mesh;
 
-            const TriangulatedMesh3 *_ptr_cone;
-
-            Link(unsigned int id, Joint *start = 0, Joint *end = 0, const TriangulatedMesh3 *cone = 0): _id(id), _start(start), _end(end), _ptr_cone(cone)
+            Link(int start_index, int end_index, TriangulatedMesh3 *mesh, double length = 0.1): _start_index(start_index), _end_index(end_index), _mesh(mesh)
             {
-                DCoordinate3 k_prime = (*_end->_position) - (*_start->_position);
-                float length = k_prime.length();
                 _scale = DCoordinate3(0.1, 0.1, length);
             }
 
-            bool Render() const;
-
-            Link(const Link& link): _id(link._id), _start(link._start), _end(link._end) {}
+            Link(const Link& link):
+                _start_index(link._start_index),
+                _end_index(link._end_index),
+                _scale(link._scale),
+                _mesh(link._mesh)
+            {}
 
             Link& operator =(const Link& link)
             {
                 if (this != &link)
                 {
-                    _id     = link._id;
-                    _start  = link._start;
-                    _end    = link._end;
+                    _start_index    = link._start_index;
+                    _end_index      = link._end_index;
+                    _scale          = link._scale;
+                    _mesh           = link._mesh;
                 }
                 return *this;
             }
 
-            bool operator==(const Link& other) {
-              return _id == other._id;
+            int StartIndex() const
+            {
+                return _start_index;
             }
 
-            bool operator!=(const Link& other) {
-              return !(*this == other);
+            int EndIndex() const
+            {
+                return _end_index;
             }
+
+            bool Render(DCoordinate3 *start, DCoordinate3 *end) const;
+
+            friend std::ostream& operator <<(std::ostream& lhs, const Link& rhs)
+            {
+                return lhs << "unimplemented";
+            }
+
+////            Link(const Link& link): _id(link._id), _start(link._start), _end(link._end) {}
+
+////            Link& operator =(const Link& link)
+////            {
+////                if (this != &link)
+////                {
+////                    _id     = link._id;
+////                    _start  = link._start;
+////                    _end    = link._end;
+////                }
+////                return *this;
+////            }
+
+////            bool operator==(const Link& other) {
+////              return _id == other._id;
+////            }
+
+////            bool operator!=(const Link& other) {
+////              return !(*this == other);
+////            }
         };
 
         /*
@@ -123,34 +172,57 @@ namespace cagd
         */
 
     protected:
+        unsigned int                _id;
         unsigned int                _link_count;
         unsigned int                _joint_count;
-        std::vector<DCoordinate3>   _vertices;
-        Link                        *_root;
+        unsigned int                _index_count;
 
-        TriangulatedMesh3            _sphere, _cone;
+        //Joint                       *_root;
 
-        void RenderLinks_(Link *link, unsigned int parent_id) const;
-        void RenderJoints_(Joint *joint, unsigned int parent_link_id) const;
-        void AddLink_(Joint *joint, unsigned int parent_id, unsigned int start_index, DCoordinate3 *end_coordinate);
+        TriangulatedMesh3           *_link_mesh, *_joint_mesh;
+        TriangulatedMesh3           _mesh;
+
+        //std::vector<DCoordinate3>   _vertices;
+        std::vector<Link>           _links;
+        std::vector<Joint>          _joints;
+
+        Joint                       *_selected;
+
+        bool                        _render_mesh, _render_links, _render_joints;
+
+//        void RenderLinks_(Link *link, unsigned int parent_id) const;
+//        void RenderJoints_(Joint *joint, unsigned int parent_link_id, bool glLoad) const;
+        bool AddLink_(Joint *joint, unsigned int start_index, DCoordinate3 end_coordinate);
 
     public:
 
-        Skeleton(DCoordinate3 *coord1, DCoordinate3 *coord2);
+//        Joint* GetJoint(unsigned int joint_id) const;
+//        Joint* GetJoint_(Joint *joint, unsigned int parent_link_id, unsigned int joint_id) const;
 
 
-        bool AddLink(unsigned int _start_index, DCoordinate3 *end_coordinate);
+        Skeleton(unsigned int id, double x, double y, double z, TriangulatedMesh3 *joint_mesh, TriangulatedMesh3 *link_mesh);
 
-        bool EraseLink(unsigned int chain_index, unsigned int link_index);
-
-
-        // a vertices tömb elemeit térítik vissza érték, illetve referencia szerint
-
-        DCoordinate3  operator [](unsigned int index) const;
-        DCoordinate3& operator [](unsigned int index);
-
-
+        void Render(bool glLoad) const;
         void RenderLinks() const;
-        void RenderJoints() const;
+        void RenderJoints(bool glLoad) const;
+
+        bool AddLink(unsigned int _start_index, double x, double y, double z);
+//        bool EraseLink(unsigned int chain_index, unsigned int link_index);
+//        void SetSelected(unsigned int selected_id);
+
+//        DCoordinate3* GetSelectedPosition() const;
+
+//        // a vertices tömb elemeit térítik vissza érték, illetve referencia szerint
+
+//        DCoordinate3  operator [](unsigned int index) const;
+//        DCoordinate3& operator [](unsigned int index);
+
+//        void RenderSelected() const;
+
+//        unsigned int JointCount() const;
+        friend std::ostream& operator <<(std::ostream& lhs, const Skeleton& rhs)
+        {
+            return lhs << rhs._id;
+        }
     };
 }

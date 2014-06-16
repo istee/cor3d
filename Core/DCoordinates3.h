@@ -22,6 +22,26 @@ namespace cagd
         // special constructor
         DCoordinate3(GLdouble x, GLdouble y, GLdouble z = 0.0);
 
+        // copy constructor
+        DCoordinate3(const DCoordinate3 &other)
+        {
+            _data[0] = other._data[0];
+            _data[1] = other._data[1];
+            _data[2] = other._data[2];
+        }
+
+        // assignment operator
+        DCoordinate3& operator= (const DCoordinate3 &rhs)
+                                {
+            if( this != &rhs )
+            {
+                _data[0] = rhs._data[0];
+                _data[1] = rhs._data[1];
+                _data[2] = rhs._data[2];
+            }
+            return *this;
+        }
+
         // get components by value
         GLdouble operator [](GLuint index) const;
         GLdouble x() const;
@@ -254,7 +274,6 @@ namespace cagd
 
         return *this;
     }
-
 
     //----------------------------------------------------------------
     // definitions of overloaded input/output from/to stream operators

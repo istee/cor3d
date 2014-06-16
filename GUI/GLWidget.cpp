@@ -6,6 +6,7 @@
 #include "../Core/HCoordinates3.h"
 
 using namespace cagd;
+using namespace std;
 
 #define PI 3.14159265
 
@@ -90,39 +91,49 @@ void GLWidget::initializeGL()
         glEndList();
     }
 
-    _skeleton = 0;
-    _skeleton = new cagd::Skeleton(new cagd::DCoordinate3( 0.0,  0.0, 0.0), new cagd::DCoordinate3( 0.0,  3.0, 0.0));
+    TriangulatedMesh3 mesh;
+    mesh.LoadFromOFF("Models/mouse.off");
+    mesh.UpdateVertexBufferObjects();
 
-    if (_skeleton)
-    {
-            _skeleton->AddLink(2, new cagd::DCoordinate3(0.0, 3.5, 0.0));
-            _skeleton->AddLink(2, new cagd::DCoordinate3(3.0, 1.8, 0.5));
-            _skeleton->AddLink(2, new cagd::DCoordinate3(-3.0, 3.7, 0.4));
-            _skeleton->AddLink(4, new cagd::DCoordinate3(4.0, 4.8, 0.4));
+    cone.LoadFromOFF("Models/cone.off");
+    cone.UpdateVertexBufferObjects();
 
-            _skeleton->AddLink(5, new cagd::DCoordinate3(-4.0, 4.7, 0.4));
-            _skeleton->AddLink(1, new cagd::DCoordinate3(2.0, -4.0, 0.0));
-            _skeleton->AddLink(1, new cagd::DCoordinate3(-2.0, -4.0, 0.0));
-            _skeleton->AddLink(8, new cagd::DCoordinate3(1.5, -7.0, 0.0));
-            _skeleton->AddLink(9, new cagd::DCoordinate3(-1.5, -7.0, 0.0));
+    sphere.LoadFromOFF("Models/sphere.off");
+    sphere.UpdateVertexBufferObjects();
 
-            /*
-            (*_skeleton)[0] = cagd::DCoordinate3( 0.0,  0.0, 0.0);
-            (*_skeleton)[1] = cagd::DCoordinate3( 0.0,  1.0, 0.0);
-            (*_skeleton)[2] = cagd::DCoordinate3( 1.0, -1.0, 0.0);
-            (*_skeleton)[3] = cagd::DCoordinate3( 0.0,  2.0, 0.0);
-            (*_skeleton)[4] = cagd::DCoordinate3( 2.0, -1.0, 0.0);
-            (*_skeleton)[5] = cagd::DCoordinate3( 1.0,  2.0, 0.0);
-            (*_skeleton)[6] = cagd::DCoordinate3( 2.0, -2.0, 0.0);
-            (*_skeleton)[7] = cagd::DCoordinate3( 1.0,  1.0, 0.0);
-            (*_skeleton)[8] = cagd::DCoordinate3( 1.0, -2.0, 0.0);
-            (*_skeleton)[9] = cagd::DCoordinate3( 3.0, -2.0, 0.0);
+    cagd::Skeleton sk = cagd::Skeleton(1, 0.0, 0.0, 0.0, &cone, &sphere);
+    sk.AddLink(0, 0.0, 3.5, 0.0);
+    _skeletons.push_back(sk);
+    cout << "sk created" << endl;
+    //_skeleton = new Skeleton(new cagd::DCoordinate3( 0.0,  0.0, 0.0), new cagd::DCoordinate3( 0.0,  3.0, 0.0));
+//    if (_skeleton)
+//    {
+//            _skeleton->AddLink(2, new cagd::DCoordinate3(0.0, 3.5, 0.0));
+//            _skeleton->AddLink(2, new cagd::DCoordinate3(3.0, 1.8, 0.5));
+//            _skeleton->AddLink(2, new cagd::DCoordinate3(-3.0, 3.7, 0.4));
+//            _skeleton->AddLink(4, new cagd::DCoordinate3(4.0, 4.8, 0.4));
 
-            _skeleton->AddLink(0, 0, 1);
-            _skeleton->AddLink(0, 0, 2);
-            // ...
-            */
-    }
+//            _skeleton->AddLink(5, new cagd::DCoordinate3(-4.0, 4.7, 0.4));
+//            _skeleton->AddLink(1, new cagd::DCoordinate3(2.0, -4.0, 0.0));
+//            _skeleton->AddLink(1, new cagd::DCoordinate3(-2.0, -4.0, 0.0));
+//            _skeleton->AddLink(8, new cagd::DCoordinate3(1.5, -7.0, 0.0));
+//            _skeleton->AddLink(9, new cagd::DCoordinate3(-1.5, -7.0, 0.0));
+
+
+//            (*_skeleton)[0] = cagd::DCoordinate3( 0.0,  0.0, 0.0);
+//            (*_skeleton)[1] = cagd::DCoordinate3( 0.0,  1.0, 0.0);
+//            (*_skeleton)[2] = cagd::DCoordinate3( 1.0, -1.0, 0.0);
+//            (*_skeleton)[3] = cagd::DCoordinate3( 0.0,  2.0, 0.0);
+//            (*_skeleton)[4] = cagd::DCoordinate3( 2.0, -1.0, 0.0);
+//            (*_skeleton)[5] = cagd::DCoordinate3( 1.0,  2.0, 0.0);
+//            (*_skeleton)[6] = cagd::DCoordinate3( 2.0, -2.0, 0.0);
+//            (*_skeleton)[7] = cagd::DCoordinate3( 1.0,  1.0, 0.0);
+//            (*_skeleton)[8] = cagd::DCoordinate3( 1.0, -2.0, 0.0);
+//            (*_skeleton)[9] = cagd::DCoordinate3( 3.0, -2.0, 0.0);
+
+//            _skeleton->AddLink(0, 0, 1);
+//            _skeleton->AddLink(0, 0, 2);
+//    }
 
     glEnable(GL_LIGHTING);
     glEnable(GL_NORMALIZE);
@@ -137,9 +148,7 @@ void GLWidget::initializeGL()
 
     _dir_light->Enable();
 
-
-    mouse.LoadFromOFF("Models/mouse.off");
-    mouse.UpdateVertexBufferObjects();
+    _reposition_unit = 0.1;
 }
 
 //-----------------------
@@ -149,6 +158,8 @@ void GLWidget::paintGL()
 {
     // clears the color and depth buffers
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+//    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     // stores/duplicates the original model view matrix
     glPushMatrix();
@@ -162,45 +173,92 @@ void GLWidget::paintGL()
 
         glScaled(_zoom, _zoom, _zoom);
 
-        // render something
-//        glBegin(GL_TRIANGLES);
-//            glColor3f(1.0, 0.0, 0.0);
-//            glVertex3f(1.0, 0.0, 0.0);
+        for(std::vector<cagd::Skeleton>::iterator it = _skeletons.begin(); it != _skeletons.end(); ++it) {
+            it->Render(false);
+        }
+//        double line_offset = 1 / _zoom;
+//        DCoordinate3 *selected_position = _skeleton->GetSelectedPosition();
 
-//            glColor3f(0.0, 1.0, 0.0);
-//            glVertex3f(0.0, 1.0, 0.0);
+//        glBegin(GL_LINES);
+//            //glColor3f(1.0, 0.0, 0.0);
+//            glVertex3f(selected_position->x(), selected_position->y(), selected_position->z());
+//            glVertex3f(selected_position->x() + line_offset, selected_position->y(), selected_position->z());
 
-//            glColor3f(0.0, 0.0, 1.0);
-//            glVertex3f(0.0, 0.0, 1.0);
+//            //glColor3f(0.0, 1.0, 0.0);
+//            glVertex3f(selected_position->x(), selected_position->y(), selected_position->z());
+//            glVertex3f(selected_position->x(), selected_position->y() + line_offset, selected_position->z());
+//            //glColor3f(0.0, 0.0, 1.0);
+//            glVertex3f(selected_position->x(), selected_position->y(), selected_position->z());
+//            glVertex3f(selected_position->x(), selected_position->y(), selected_position->z() + line_offset);
 //        glEnd();
 
-        /*if (_dl)
-        {
-            glPushMatrix();
-            glRotatef(_angle, 1.0, 1.0, 1.0);
-            glCallList(_dl);
-//            glBegin(GL_LINES);
-//            for (int i = 0; i < _point_count; ++i)
-//            {
-//                glColor3f(_x[i], _y[i], _z[i]);
-//                glVertex3f(_x[i], _y[i], _z[i]);
-//            }
-//            glEnd();
-            glPopMatrix();
-        }
-        */
 
-        if (_skeleton)
-        {
-            glColor3f(1.0, 0.0, 0.0);
-            MatFBBrass.Apply();
-            _skeleton->RenderJoints();
-            MatFBPearl.Apply();
-            _skeleton->RenderLinks();
-        }
+//        MatFBRuby.Apply();
 
-        MatFBTurquoise.Apply();
-        mouse.Render();
+//        float matrix[16];
+
+//        matrix[0] = 0;
+//        matrix[1] = 1;
+//        matrix[2] = 0;
+//        matrix[3] = 0.0;
+
+//        matrix[4] = 1;
+//        matrix[5] = 0;
+//        matrix[6] = 0;
+//        matrix[7] = 0.0;
+
+//        matrix[ 8] = 0;
+//        matrix[ 9] = 0;
+//        matrix[10] = 1;
+//        matrix[11] = 0.0;
+
+//        matrix[12] = selected_position->x();
+//        matrix[13] = selected_position->y();
+//        matrix[14] = selected_position->z();
+//        matrix[15] = 1.0;
+
+//        matrix[12] += line_offset;
+//        glPushMatrix();
+//            glMultMatrixf(matrix);
+//            glRotatef(90, 0.0, 1.0, 0.0);
+//            glRotatef(-90, 1.0, 0.0, 0.0);
+//            glScalef(0.1 / _zoom, 0.1 / _zoom, 0.3 / _zoom);
+//            cone.Render();
+//        glPopMatrix();
+//        matrix[12] -= line_offset;
+
+//        matrix[13] += line_offset;
+//        glPushMatrix();
+//            glMultMatrixf(matrix);
+//            glRotatef(90, 0.0, 1.0, 0.0);
+//            glScalef(0.1 / _zoom, 0.1 / _zoom, 0.3 / _zoom);
+//            cone.Render();
+//        glPopMatrix();
+//        matrix[13] -= line_offset;
+
+//        matrix[14] += line_offset;
+//        glPushMatrix();
+//            glMultMatrixf(matrix);
+//            glScalef(0.1 / _zoom, 0.1 / _zoom, 0.3 / _zoom);
+//            cone.Render();
+//        glPopMatrix();
+
+//        if (_skeleton)
+//        {
+//            glColor3f(1.0, 0.0, 0.0);
+//            MatFBBrass.Apply();
+//            _skeleton->RenderJoints(false);
+//            MatFBPearl.Apply();
+//            //_skeleton->RenderLinks();
+//            MatFBEmerald.Apply();
+//            _skeleton->RenderSelected();
+//        }
+
+//        MatFBTurquoise.Apply();
+//        //mouse.Render();
+
+
+
 
     // pops the current matrix stack, replacing the current matrix with the one below it on the stack,
     // i.e., the original model view matrix is restored
@@ -305,36 +363,133 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
     mouse_pressed_trans_x = _trans_x;
     mouse_pressed_trans_y = _trans_y;
     mouse_pressed_trans_z = _trans_z;
-    std::cout<<"press";
+//    if (event->button() == Qt::LeftButton)
+//    {
+//        GLint viewport[4];
+
+//        glGetIntegerv(GL_VIEWPORT, viewport);
+
+//        GLuint size = 4 * _skeleton->JointCount();
+//        GLuint *pick_buffer = new GLuint[size];
+
+//        if (pick_buffer)
+//        {
+//            glSelectBuffer(size, pick_buffer);
+
+//            glRenderMode(GL_SELECT);
+
+
+//            glInitNames();
+//            glPushName(0);
+
+//            GLfloat projection_matrix[16];
+//            glGetFloatv(GL_PROJECTION_MATRIX, projection_matrix);
+
+//            glMatrixMode(GL_PROJECTION);
+
+//            glPushMatrix();
+
+
+//                glLoadIdentity();
+//                gluPickMatrix((GLdouble)event->x(), (GLdouble)(viewport[3] - event->y()), 5.0, 5.0, viewport);
+
+//                glMultMatrixf(projection_matrix);
+
+//                glMatrixMode(GL_MODELVIEW);
+
+
+//                glPushMatrix();
+
+//                // rotating around the coordinate axes
+//                glRotatef(_angle_x, 1.0, 0.0, 0.0);
+//                glRotatef(_angle_y, 0.0, 1.0, 0.0);
+//                glRotatef(_angle_z, 0.0, 0.0, 1.0);
+
+
+//                // translate
+//                glTranslated(_trans_x, _trans_y, _trans_z);
+
+//                // scaling
+//                glScalef(_zoom, _zoom, _zoom);
+
+//                // a kiválasztáshoz elégséges csak a joint-okat kirajzolni
+
+//                if (_skeleton)
+//                {
+//                    _skeleton->RenderJoints(true); // ahol true a glLoadName() függvény alkalmazását aktíválja
+//                    // ahogy bejárod a skeleton joint-jait a glLoadName függvénynek az egyes joint-ok id-ját kell átadnod
+//                }
+
+
+//            glPopMatrix();
+
+//            glMatrixMode(GL_PROJECTION);
+//            glPopMatrix();
+
+//            glMatrixMode(GL_MODELVIEW);
+
+//            int nhits = glRenderMode(GL_RENDER);
+
+
+//            if (nhits)
+//            {
+//                GLuint closest_selected = pick_buffer[3];
+//                GLuint closest_depth    = pick_buffer[1];
+
+
+//                for (GLuint i = 1; i < nhits; ++i)
+//                {
+//                    GLuint offset = i * 4;
+//                    if (pick_buffer[offset + 1] < closest_depth)
+
+//                    {
+//                        closest_selected = pick_buffer[offset + 3];
+//                        closest_depth    = pick_buffer[offset + 1];
+//                    }
+//                }
+
+//                unsigned int _joint_id = closest_selected;
+//                _skeleton->SetSelected(_joint_id);
+
+//                _joint_position = _skeleton->GetJoint(_joint_id)->_position;
+
+
+//                std::cout << "selected: " << _joint_id <<std::endl;
+//                // ...
+//            }
+
+//            delete pick_buffer, pick_buffer = 0;
+//            updateGL();
+//        }
+//    }
 }
 
 void GLWidget::mouseMoveEvent(QMouseEvent *event)
 {
     event->accept();
-    int disp_x = event->x() - mouse_pressed_x;
-    int disp_y = mouse_pressed_y - event->y();
+    double disp_x = (event->x() - mouse_pressed_x) / 100.0;
+    double disp_y = (mouse_pressed_y - event->y()) / 100.0;
+
 
     double rad_x = _angle_x * PI / 180;
     double rad_y = _angle_y * PI / 180;
     double rad_z = _angle_z * PI / 180;
 
-    double sin_x = cos(rad_x);
-    double sin_y = cos(rad_y);
-    double sin_z = cos(rad_z);
+    double sin_x = sin(rad_x);
+    double sin_y = sin(rad_y);
+    double sin_z = sin(rad_z);
     double cos_x = cos(rad_x);
     double cos_y = cos(rad_y);
     double cos_z = cos(rad_z);
 
     double new_trans_x, new_trans_y, new_trans_z;
-    new_trans_x = disp_x * (cos_y * cos_z + sin_x * sin_y * cos_z + cos_x * cos_z + cos_x * sin_y * cos_z + sin_x * sin_z) / 100.0;
-    new_trans_y = disp_y * (- cos_y * sin_z - sin_x * sin_y * sin_z + cos_x * cos_z - cos_x * sin_y * sin_z + sin_x * cos_z) / 100.0;
-    new_trans_z = (sin_y - sin_x * cos_y + cos_x * cos_y) / 100.0;
+    new_trans_x = disp_x * (cos_y * cos_z) + disp_y * (cos_y * sin_z);
+    new_trans_y = disp_x * (sin_x * sin_y * cos_z) + disp_y * (cos_x * cos_z - sin_x * sin_y * sin_z);
+    new_trans_z = disp_x * (sin_x * sin_z - cos_x * sin_y * cos_z) + disp_y * (cos_x * sin_y * sin_z + sin_x * cos_z);
 
-
-    std::cout << "x: " << disp_x << ", y: " << disp_y << std::endl;
-    set_trans_x(mouse_pressed_trans_x + new_trans_x);
-    set_trans_y(mouse_pressed_trans_y + new_trans_y);
-    set_trans_z(mouse_pressed_trans_z + new_trans_z);
+    emit trans_xChanged(mouse_pressed_trans_x + new_trans_x);
+    emit trans_yChanged(mouse_pressed_trans_y + new_trans_y);
+    emit trans_zChanged(mouse_pressed_trans_z + new_trans_z);
     //if (event->button() == Qt::LeftButton)
     //{
        // if (event->modifiers() & Qt::ShiftModifier)
@@ -348,9 +503,33 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 void GLWidget::wheelEvent(QWheelEvent *event)
 {
     event->accept();
-    double new_zoom = _zoom + event->delta() / 1200.0;
-    if (new_zoom < 0.01)
-        new_zoom = 0.01;
-    std::cout << "zoom:" << new_zoom << std::endl;
-    emit zoomChanged(new_zoom);
+//    if (((event->modifiers() & Qt::ControlModifier) || (event->modifiers() & Qt::AltModifier) || (event->modifiers() & Qt::ShiftModifier)) && _joint_position)
+//    {
+//        if ((event->modifiers() & Qt::ControlModifier))
+
+//        {
+//            (*_joint_position)[0] += event->delta() / 120.0 * _reposition_unit;
+//        }
+
+//        if ((event->modifiers() & Qt::AltModifier))
+//        {
+//            (*_joint_position)[1] += event->delta() / 120.0 * _reposition_unit;
+
+//        }
+
+//        if ((event->modifiers() & Qt::ShiftModifier))
+//        {
+//            (*_joint_position)[2] += event->delta() / 120.0 * _reposition_unit;
+//        }
+//    }
+//    else
+    {
+        double new_zoom = _zoom + event->delta() / 1200.0;
+        if (new_zoom < 0.01)
+            new_zoom = 0.01;
+
+        emit zoomChanged(new_zoom);
+    }
+
+    updateGL();
 }

@@ -38,12 +38,16 @@ private:
 
     unsigned int        _dl;
 
-    cagd::Skeleton      *_skeleton;
     cagd::DirectionalLight  *_dir_light;
-    cagd::TriangulatedMesh3 mouse;
 
-    int                 mouse_pressed_x, mouse_pressed_y;
-    int                 mouse_pressed_trans_x, mouse_pressed_trans_y, mouse_pressed_trans_z;
+    cagd::TriangulatedMesh3 cone, sphere;
+
+    double                  _reposition_unit;
+
+    double                  mouse_pressed_x, mouse_pressed_y;
+    double                  mouse_pressed_trans_x, mouse_pressed_trans_y, mouse_pressed_trans_z;
+
+    std::vector<cagd::Skeleton>   _skeletons;
 
 public:
     // special and default constructor
@@ -80,4 +84,7 @@ public slots:
 
 signals:
     void zoomChanged(double newValue);
+    void trans_xChanged(double newValue);
+    void trans_yChanged(double newValue);
+    void trans_zChanged(double newValue);
 };

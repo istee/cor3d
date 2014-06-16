@@ -1,44 +1,104 @@
 #include "Skeleton.h"
+#include "../Core/Constants.h"
+
+#include <cstdlib>
 
 using namespace cagd;
 using namespace std;
 
-Skeleton::Skeleton(DCoordinate3 *coord1, DCoordinate3 *coord2)
+Skeleton::Skeleton(unsigned int id, double x, double y, double z, TriangulatedMesh3 *link_mesh, TriangulatedMesh3 *joint_mesh)
 {
-    _sphere.LoadFromOFF("Models/sphere.off");
-    _sphere.UpdateVertexBufferObjects();
-
-    _cone.LoadFromOFF("Models/cone.off");
-    _cone.UpdateVertexBufferObjects();
-
+    _id = id;
     _link_count = 0;
     _joint_count = 0;
-    Joint *j1 = new Joint(++_joint_count, coord1, &_sphere);
-    Joint *j2 = new Joint(++_joint_count, coord2, &_sphere);
-    _root = new Link(++_link_count, j1, j2, &_cone);
+    _index_count = 0;
 
+    _link_mesh = link_mesh;
+    _joint_mesh = joint_mesh;
 
+    _render_mesh = false;
+    _render_links = true;
+    _render_joints = true;
+
+    _joints.push_back(Joint(new DCoordinate3(x, y, z), _joint_mesh));
 }
 
-bool Skeleton::Link::Render() const
+bool Skeleton::AddLink(unsigned int start_index, double x, double y, double z)
 {
-    if (_start && _end && _start->_position && _end->_position)
+    bool inserted = false;
+    if (start_index < _joints.size())
     {
-        DCoordinate3 k_prime = (*_end->_position) - (*_start->_position);
+        int end_index = _joints.size();
+        int link_index = _links.size();
+        _joints.push_back(Joint(new DCoordinate3(x, y, z), _joint_mesh, link_index));
+        _links.push_back(Link(start_index, end_index, _link_mesh));
+        _joints[start_index].SetPreviousLink(link_index);
+        inserted = true;
+    }
+
+    return inserted;
+}
+
+void Skeleton::Render(bool glLoad) const
+{
+    if (_render_mesh)
+    {
+        _mesh.Render();
+    }
+    if (_render_links)
+    {
+        RenderLinks();
+    }
+    if (_render_joints)
+    {
+        RenderJoints(glLoad);
+    }
+}
+
+void Skeleton::RenderLinks() const
+{
+    for(std::vector<Link>::const_iterator it = _links.begin(); it != _links.end(); ++it) {
+        DCoordinate3 *s = (_joints[it->StartIndex()]).Position();
+        DCoordinate3 *e = (_joints[it->EndIndex()]).Position();
+        it->Render(s, e);
+    }
+}
+
+void Skeleton::RenderJoints(bool glLoad) const
+{
+    for(std::vector<Joint>::const_iterator it = _joints.begin(); it != _joints.end(); ++it) {
+        it->Render();
+    }
+}
+
+bool Skeleton::Link::Render(DCoordinate3 *start, DCoordinate3 *end) const
+{
+    if (start && end)
+    {
+        DCoordinate3 k_prime = *end - *start;
 
         float length = k_prime.length();
 
         k_prime /= length;
 
-        DCoordinate3 j_prime =  k_prime;
-        j_prime ^= DCoordinate3(1.0, 0.0, 0.0);
+        DCoordinate3 j_prime;
+
+        while (j_prime.length() < EPS)
+        {
+            j_prime =  k_prime;
+            j_prime ^= DCoordinate3((double)rand() / (double)RAND_MAX , (double)rand() / (double)RAND_MAX, (double)rand() / (double)RAND_MAX);
+        }
 
         DCoordinate3 i_prime = j_prime;
         i_prime ^= k_prime;
 
-        DCoordinate3 trans = (*_start->_position);
+        DCoordinate3 trans = *start;
 
         float matrix[16];
+
+        k_prime.normalize();
+        j_prime.normalize();
+        i_prime.normalize();
 
         matrix[0] = i_prime[0];
         matrix[1] = i_prime[1];
@@ -62,12 +122,8 @@ bool Skeleton::Link::Render() const
 
         glPushMatrix();
             glMultMatrixf(matrix);
-            //cout << "Rendering link " << _id << "scale x: " << _scale.x() << ", y: " << _scale.x() << ", z: " <<_scale.z() <<"\n";
-            glScalef(_scale.x(), _scale.y(), _scale.z());
-
-            if (_ptr_cone)
-                _ptr_cone->Render();
-
+            glScalef(_scale.x(), _scale.y(), length);
+            _mesh->Render();
         glPopMatrix();
 
         return true;
@@ -75,123 +131,146 @@ bool Skeleton::Link::Render() const
     return false;
 }
 
-void Skeleton::RenderLinks_(Link *link, unsigned int last_joint_id) const
+void Skeleton::Joint::Render() const
 {
-    link->Render();
-    //cout << "Link " << link->_id << " rendered\n";
-    if (link->_start->_id != last_joint_id) {
-        for (int i = 0; i < link->_start->_links.size(); i++){
-            if (link->_start->_links[i]->_id != link->_id)
-            {
-                RenderLinks_(link->_start->_links[i], link->_start->_id);
-            }
-        }
-    }
-    if (link->_end->_id != last_joint_id) {
-        for (int i = 0; i < link->_end->_links.size(); i++){
-            if (link->_end->_links[i]->_id != link->_id)
-            {
-                RenderLinks_(link->_end->_links[i], link->_end->_id);
-            }
-        }
-    }
+    glPushMatrix();
+        glTranslated(_position->x(), _position->y(), _position->z());
+        glScalef(0.1, 0.1, 0.1);
+        _mesh->Render();
+    glPopMatrix();
 }
 
-void Skeleton::RenderLinks() const
+//void Skeleton::RenderJoints_(Joint *joint, unsigned int parent_link_id, bool glLoad) const
+//{
+//    if (_selected->_id != joint->_id)
+//    {
+//        if (glLoad)
+//        {
+//            glLoadName(joint->_id);
+//        }
+//        joint->Render();
+//    }
+//    //cout << "Joint " << joint->_id << " rendered\n";
+//    for (int i = 0; i < joint->_links.size(); i++){
+//        if (joint->_links[i]->_id != parent_link_id)
+//        {
+//            if (joint->_links[i]->_start == joint)
+//                RenderJoints_(joint->_links[i]->_end, joint->_links[i]->_id, glLoad);
+//            else
+//                RenderJoints_(joint->_links[i]->_start, joint->_links[i]->_id, glLoad);
+//        }
+//    }
+//}
+
+//void Skeleton::RenderJoints(bool glLoad) const
+//{
+//    RenderJoints_(_root->_start, _root->_id, glLoad);
+//    RenderJoints_(_root->_end, _root->_id, glLoad);
+//}
+
+//Skeleton::Joint * Skeleton::GetJoint_(Joint *joint, unsigned int parent_link_id, unsigned int joint_id) const
+//{
+//    if (joint_id == joint->_id)
+//    {
+//        return joint;
+//    }
+//    else {
+//        for (int i = 0; i < joint->_links.size(); i++){
+//            cout << "in for i = " << i << endl;
+//            if (joint->_links[i]->_id != parent_link_id)
+//            {
+//                Joint* id = 0;
+//                if (joint->_links[i]->_start == joint)
+//                    id = GetJoint_(joint->_links[i]->_end, joint->_links[i]->_id, joint_id);
+//                else
+//                    id = GetJoint_(joint->_links[i]->_start, joint->_links[i]->_id, joint_id);
+//                if (id)
+//                    return id;
+//            }
+//        }
+//        return 0;
+//    }
+//}
+
+//Skeleton::Joint * Skeleton::GetJoint(unsigned int joint_id) const
+//{
+//    Joint *joint = 0;
+//    joint = GetJoint_(_root->_start, _root->_id, joint_id);
+//    if (joint)
+//    {
+//        return joint;
+//    }
+//    else
+//    {
+//        return GetJoint_(_root->_end, _root->_id, joint_id);
+//    }
+//}
+
+//void Skeleton::RenderSelected() const
+//{
+//    _selected->Render();
+//}
+
+//DCoordinate3 Skeleton::operator [](unsigned int index) const
+//{
+//    return _vertices[index];
+//}
+
+//DCoordinate3& Skeleton::operator [](unsigned int index)
+//{
+//    return _vertices[index];
+//}
+
+bool Skeleton::AddLink_(Joint *joint, unsigned int start_index, DCoordinate3 end_coordinate)
 {
-    //cout << "Started rendering links\n";
-    RenderLinks_(_root, 0);
-    //cout << "Stopped rendering links\n";
-}
-
-bool Skeleton::Joint::Render() const
-{
-    if (_position)
-    {
-        glPointSize(1.0);
-        glPushMatrix();
-            glTranslated(_position->x(), _position->y(), _position->z());
-            glScalef(_scale.x(), _scale.y(), _scale.z());
-
-            if (_ptr_sphere)
-                _ptr_sphere->Render();
-
-        glPopMatrix();
-
-        return true;
-    }
+//    bool inserted = false;
+//    cout << joint << " " << joint->_id << endl;
+//    if (joint->_id == start_index)
+//    {
+//        cout << "hozzaadas" << endl;
+//        Joint end_joint = Joint(++_index_count, &end_coordinate, _joint_mesh);
+//        Link link = Link(++_index_count, joint, &end_joint, _link_mesh);
+//        joint->AddNextLink(&link);
+//        end_joint.SetPreviousLink(&link);
+//        _vertices.push_back(end_coordinate);
+//        _joints.push_back(end_joint);
+//        _links.push_back(link);
+//        _joint_count++;
+//        _link_count++;
+//        inserted = true;
+//    }
+//    else
+//    {
+//        for (unsigned int i = 0; i < joint->_next_links.size(); i++){
+//            inserted = inserted | AddLink_(joint->_next_links[i]->_end, start_index, end_coordinate);
+//        }
+//    }
+//    return inserted;
     return false;
 }
 
-void Skeleton::RenderJoints_(Joint *joint, unsigned int parent_link_id) const
-{
-    joint->Render();
-    //cout << "Joint " << joint->_id << " rendered\n";
-    for (int i = 0; i < joint->_links.size(); i++){
-        if (joint->_links[i]->_id != parent_link_id)
-        {
-            if (joint->_links[i]->_start == joint)
-                RenderJoints_(joint->_links[i]->_end, joint->_links[i]->_id);
-            else
-                RenderJoints_(joint->_links[i]->_start, joint->_links[i]->_id);
-        }
-    }
-}
+//bool Skeleton::EraseLink(unsigned int chain_index, unsigned int link_index)
+//{
+//    return false;
+//}
 
-void Skeleton::RenderJoints() const
-{
-    //cout << "Started rendering joints\n";
-    RenderJoints_(_root->_start, _root->_id);
-    RenderJoints_(_root->_end, _root->_id);
-    //cout << "Stopped rendering joints\n";
-}
+//void Skeleton::SetSelected(unsigned int selected_id)
+//{
+//    _selected = GetJoint(selected_id);
+//    std::cout<<_selected<<std::endl;
+//}
 
-DCoordinate3 Skeleton::operator [](unsigned int index) const
-{
-    return _vertices[index];
-}
+//unsigned int Skeleton::JointCount() const
+//{
+//    return _joint_count;
+//}
 
-DCoordinate3& Skeleton::operator [](unsigned int index)
-{
-    return _vertices[index];
-}
+//DCoordinate3* Skeleton::GetSelectedPosition() const
+//{
+//    if (_selected)
+//    {
+//        return (_selected->_position);
+//    }
+//    return 0;
+//}
 
-void Skeleton::AddLink_(Joint *joint, unsigned int parent_id, unsigned int start_index, DCoordinate3 *end_coordinate)
-{
-    if (joint->_id == start_index)
-    {
-        Joint *end_joint = new Joint(++_joint_count, end_coordinate, &_sphere);
-        Link *link = new Link(++_link_count, joint, end_joint, &_cone);
-        joint->AddNextLink(link);
-    }
-    else
-    {
-        for (int i = 0; i < joint->_links.size(); i++){
-            if (joint->_links[i]->_id != parent_id)
-            {
-                if (joint->_links[i]->_start == joint)
-                {
-                    AddLink_(joint->_links[i]->_end, joint->_links[i]->_id, start_index, end_coordinate);
-                }
-                else
-                {
-                    AddLink_(joint->_links[i]->_start, joint->_links[i]->_id, start_index, end_coordinate);
-                }
-            }
-        }
-    }
-}
-
-
-bool Skeleton::AddLink(unsigned int start_index, DCoordinate3 *end_coordinate)
-{
-    AddLink_(_root->_start, 1, start_index, end_coordinate);
-    AddLink_(_root->_end, 1, start_index, end_coordinate);
-
-    return false;
-}
-
-bool Skeleton::EraseLink(unsigned int chain_index, unsigned int link_index)
-{
-    return false;
-}

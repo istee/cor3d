@@ -12,7 +12,7 @@ public:
 
 public slots:
     void set_zoom_factor(double value);
-private slots:
-    void on_comboBox_currentIndexChanged(int index);
-    void on_comboBox_currentIndexChanged(QString );
+    void set_trans_x(double value);
+    void set_trans_y(double value);
+    void set_trans_z(double value);
 };
