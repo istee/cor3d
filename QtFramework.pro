@@ -41,4 +41,4 @@ INCLUDEPATH += ./Dependencies/Include
 
 LIBS += ./Dependencies/LIB/GL/glew32.lib ./Dependencies/LIB/GL/glew32.dll
 
-#CONFIG += console
+CONFIG += console

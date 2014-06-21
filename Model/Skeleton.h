@@ -7,7 +7,18 @@
 
 namespace cagd
 {
-    class Skeleton
+    class BaseEntity
+    {
+    protected:
+        unsigned int _id;
+    public:
+        BaseEntity(unsigned int id)
+        {
+            _id = id;
+        }
+    };
+
+    class Skeleton : public BaseEntity
     {
     public:
         enum AlgorithmType{InverseKinematic, ForwardKinematic, SimpleKinematic};
@@ -19,22 +30,22 @@ namespace cagd
         class Link;
         class Chain;
 
-        class Joint
+        class Joint : public BaseEntity
         {
         public:
-            //unsigned int        _id;
             DCoordinate3        *_position;
             DCoordinate3        _scale;
             TriangulatedMesh3   *_mesh;
             int                 _prev_link;
             std::vector<int>    _next_links;
 
-            Joint(DCoordinate3 *position, TriangulatedMesh3 *mesh, int prev_link = -1): _position(position), _mesh(mesh), _prev_link(prev_link)
+            Joint(unsigned int id, DCoordinate3 *position, TriangulatedMesh3 *mesh, int prev_link = -1): BaseEntity(id), _position(position), _mesh(mesh), _prev_link(prev_link)
             {
                 _scale = DCoordinate3(0.1, 0.1, 0.1);
             }
 
             Joint(const Joint& joint):
+                BaseEntity(joint),
                 _position(joint._position),
                 _scale(joint._scale),
                 _mesh(joint._mesh),
@@ -82,7 +93,7 @@ namespace cagd
 
         };
 
-        class Link
+        class Link : public BaseEntity
         {
         public:
             int                     _start_index;
@@ -90,12 +101,17 @@ namespace cagd
             DCoordinate3            _scale;
             TriangulatedMesh3       *_mesh;
 
-            Link(int start_index, int end_index, TriangulatedMesh3 *mesh, double length = 0.1): _start_index(start_index), _end_index(end_index), _mesh(mesh)
+            Link(unsigned int id, int start_index, int end_index, TriangulatedMesh3 *mesh, double length = 0.1):
+                    BaseEntity(id),
+                    _start_index(start_index),
+                    _end_index(end_index),
+                    _mesh(mesh)
             {
                 _scale = DCoordinate3(0.1, 0.1, length);
             }
 
             Link(const Link& link):
+                BaseEntity(link),
                 _start_index(link._start_index),
                 _end_index(link._end_index),
                 _scale(link._scale),
@@ -170,7 +186,7 @@ namespace cagd
 //        Joint* GetJoint_(Joint *joint, unsigned int parent_link_id, unsigned int joint_id) const;
 
 
-        Skeleton(double x, double y, double z, TriangulatedMesh3 mesh, TriangulatedMesh3 *joint_mesh, TriangulatedMesh3 *link_mesh, bool render_mesh = true, bool render_links = true, bool render_joints = true);
+        Skeleton(unsigned int id, double x, double y, double z, TriangulatedMesh3 mesh, TriangulatedMesh3 *joint_mesh, TriangulatedMesh3 *link_mesh, bool render_mesh = true, bool render_links = true, bool render_joints = true);
 
         bool GetRenderMesh();
         void SetRenderMesh(bool value);
@@ -180,14 +196,14 @@ namespace cagd
         void SetRenderJoints(bool value);
 
         void SetSelected(unsigned int selected_id);
+        DCoordinate3* GetSelectedPosition() const;
 
         void Render(bool glLoad) const;
         void RenderLinks() const;
-        void RenderJoints(bool glLoad) const;
+        void RenderJoints(bool glLoad, int offset = 0) const;
 
         bool AddLink(unsigned int _start_index, double x, double y, double z);
 
-//        DCoordinate3* GetSelectedPosition() const;
 
 //        // a vertices tömb elemeit térítik vissza érték, illetve referencia szerint
 

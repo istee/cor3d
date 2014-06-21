@@ -4,11 +4,10 @@
 #include "../Core/Colors4.h"
 #include "../Core/Materials.h"
 #include "../Core/HCoordinates3.h"
+#include "../Core/Constants.h"
 
 using namespace cagd;
 using namespace std;
-
-#define PI 3.14159265
 
 //--------------------------------
 // special and default constructor
@@ -101,10 +100,13 @@ void GLWidget::initializeGL()
     sphere.LoadFromOFF("Models/sphere.off");
     sphere.UpdateVertexBufferObjects();
 
-    cagd::Skeleton sk = cagd::Skeleton(0.1, -1.7, -1.5, mesh, &cone, &sphere);
+    cube.LoadFromOFF("Models/cube.off");
+    cube.UpdateVertexBufferObjects();
+
+    cagd::Skeleton sk = cagd::Skeleton(0, 0.1, -1.7, -1.5, mesh, &cone, &sphere);
     sk.AddLink(0, 0.1, 0.5, -0.7);
     sk.AddLink(1, 0.8, 0.4, -0.7);
-    sk.AddLink(2, 1.7, 0.3, -0.7);
+    sk.AddLink(2, 1.7, 0.3, 0.0);//-0.7);
     _skeletons.push_back(sk);
 
     glEnable(GL_LIGHTING);
@@ -121,6 +123,66 @@ void GLWidget::initializeGL()
     _dir_light->Enable();
 
     _reposition_unit = 0.1;
+
+    drag = false;
+    _drag_matrix = ColumnMatrix<double>(3);
+
+    // Rotation matrix, plane normal vetor test
+    RowMatrix<int> angles = RowMatrix<int>(3);
+    ColumnMatrix<double> normal = ColumnMatrix<double>(3);
+    normal[0] = 0.0;
+    normal[1] = 0.0;
+    normal[2] = 1.0;
+    Matrix<double> result;
+    DCoordinate3 result_vector;
+
+    angles[0] = 0;
+    angles[1] = 0;
+    angles[2] = 0;
+    x_rot_mat = XRotationMatrix(angles[0]);
+    y_rot_mat = YRotationMatrix(angles[1]);
+    z_rot_mat = ZRotationMatrix(angles[2]);
+    result = x_rot_mat * y_rot_mat * z_rot_mat * normal;
+    result_vector = DCoordinate3(result(0,0), result(1, 0), result(2, 0));
+    result_vector.normalize();
+    //cout << x_rot_mat << y_rot_mat << z_rot_mat << result;
+    cout << angles << result_vector << endl << endl;
+
+    angles[0] = 90;
+    angles[1] = 0;
+    angles[2] = 0;
+    x_rot_mat = XRotationMatrix(angles[0]);
+    y_rot_mat = YRotationMatrix(angles[1]);
+    z_rot_mat = ZRotationMatrix(angles[2]);
+    result = x_rot_mat * y_rot_mat * z_rot_mat * normal;
+    result_vector = DCoordinate3(result(0,0), result(1, 0), result(2, 0));
+    result_vector.normalize();
+    //cout << x_rot_mat << y_rot_mat << z_rot_mat << result;
+    cout << angles << result_vector << endl << endl;
+
+    angles[0] = 0;
+    angles[1] = 90;
+    angles[2] = 0;
+    x_rot_mat = XRotationMatrix(angles[0]);
+    y_rot_mat = YRotationMatrix(angles[1]);
+    z_rot_mat = ZRotationMatrix(angles[2]);
+    result = x_rot_mat * y_rot_mat * z_rot_mat * normal;
+    result_vector = DCoordinate3(result(0,0), result(1, 0), result(2, 0));
+    result_vector.normalize();
+    //cout << x_rot_mat << y_rot_mat << z_rot_mat << result;
+    cout << angles << result_vector << endl << endl;
+
+    angles[0] = 0;
+    angles[1] = 0;
+    angles[2] = 90;
+    x_rot_mat = XRotationMatrix(angles[0]);
+    y_rot_mat = YRotationMatrix(angles[1]);
+    z_rot_mat = ZRotationMatrix(angles[2]);
+    result = x_rot_mat * y_rot_mat * z_rot_mat * normal;
+    result_vector = DCoordinate3(result(0,0), result(1, 0), result(2, 0));
+    result_vector.normalize();
+    //cout << x_rot_mat << y_rot_mat << z_rot_mat << result;
+    cout << angles << result_vector << endl << endl;
 }
 
 //-----------------------
@@ -145,103 +207,53 @@ void GLWidget::paintGL()
 
         glScaled(_zoom, _zoom, _zoom);
 
+        glBegin(GL_LINES);
+            float modelViewMatrix[16];
+            glGetFloatv(GL_MODELVIEW_MATRIX, modelViewMatrix);
+//            cout << "matrix: " << endl;
+//            for (int i = 0; i < 4; i++)
+//            {
+//                cout << modelViewMatrix[i * 4] << " " << modelViewMatrix[i * 4 + 1] << " " << modelViewMatrix[i * 4 + 2] << " " << modelViewMatrix[i * 4 + 3] << endl;
+//            }
+            //glColor3f(1.0, 0.0, 0.0);
+            //glVertex3f(0.0, 0.0, 0.0);
+            //glVertex3f(modelViewMatrix[2], modelViewMatrix[6], modelViewMatrix[11]);
+
+            x_rot_mat = XRotationMatrix(_angle_x);
+            y_rot_mat = YRotationMatrix(_angle_y);
+            z_rot_mat = ZRotationMatrix(_angle_z);
+            ColumnMatrix<double> z_unit = ColumnMatrix<double>(3);
+            z_unit[0] = 0.0;
+            z_unit[1] = 0.0;
+            z_unit[2] = 1.0;
+
+            Matrix<double> normal = x_rot_mat * y_rot_mat * z_rot_mat * z_unit;
+            //cout << normal << endl;
+                glColor3f(1.0, 0.0, 0.0);
+                glVertex3f(0, 0, 0);
+                glVertex3f(normal(0,0), normal(1, 0), normal(2,0));
+        glEnd();
+
         glEnable(GL_LIGHTING);
         for(std::vector<cagd::Skeleton>::iterator it = _skeletons.begin(); it != _skeletons.end(); ++it) {
             it->Render(false);
         }
-        glDisable(GL_LIGHTING);
 
-        glBegin(GL_TRIANGLES);
-        glColor3f(1.0, 0.0, 0.0);
-        glVertex3f(1.0, 0.0, 0.0);
-        glColor3f(0.0, 1.0, 0.0);
-        glVertex3f(0.0, 1.0, 0.0);
-        glColor3f(0.0, 0.0, 1.0);
-        glVertex3f(0.0, 0.0, 1.0);
-        glEnd();
-//        double line_offset = 1 / _zoom;
-//        DCoordinate3 *selected_position = _skeleton->GetSelectedPosition();
-
-//        glBegin(GL_LINES);
-//            //glColor3f(1.0, 0.0, 0.0);
-//            glVertex3f(selected_position->x(), selected_position->y(), selected_position->z());
-//            glVertex3f(selected_position->x() + line_offset, selected_position->y(), selected_position->z());
-
-//            //glColor3f(0.0, 1.0, 0.0);
-//            glVertex3f(selected_position->x(), selected_position->y(), selected_position->z());
-//            glVertex3f(selected_position->x(), selected_position->y() + line_offset, selected_position->z());
-//            //glColor3f(0.0, 0.0, 1.0);
-//            glVertex3f(selected_position->x(), selected_position->y(), selected_position->z());
-//            glVertex3f(selected_position->x(), selected_position->y(), selected_position->z() + line_offset);
+//        glDisable(GL_LIGHTING);
+//        glBegin(GL_TRIANGLES);
+//        glColor3f(1.0, 0.0, 0.0);
+//        glVertex3f(1.0, 0.0, 0.0);
+//        glColor3f(0.0, 1.0, 0.0);
+//        glVertex3f(0.0, 1.0, 0.0);
+//        glColor3f(0.0, 0.0, 1.0);
+//        glVertex3f(0.0, 0.0, 1.0);
 //        glEnd();
 
-
-//        MatFBRuby.Apply();
-
-//        float matrix[16];
-
-//        matrix[0] = 0;
-//        matrix[1] = 1;
-//        matrix[2] = 0;
-//        matrix[3] = 0.0;
-
-//        matrix[4] = 1;
-//        matrix[5] = 0;
-//        matrix[6] = 0;
-//        matrix[7] = 0.0;
-
-//        matrix[ 8] = 0;
-//        matrix[ 9] = 0;
-//        matrix[10] = 1;
-//        matrix[11] = 0.0;
-
-//        matrix[12] = selected_position->x();
-//        matrix[13] = selected_position->y();
-//        matrix[14] = selected_position->z();
-//        matrix[15] = 1.0;
-
-//        matrix[12] += line_offset;
-//        glPushMatrix();
-//            glMultMatrixf(matrix);
-//            glRotatef(90, 0.0, 1.0, 0.0);
-//            glRotatef(-90, 1.0, 0.0, 0.0);
-//            glScalef(0.1 / _zoom, 0.1 / _zoom, 0.3 / _zoom);
-//            cone.Render();
-//        glPopMatrix();
-//        matrix[12] -= line_offset;
-
-//        matrix[13] += line_offset;
-//        glPushMatrix();
-//            glMultMatrixf(matrix);
-//            glRotatef(90, 0.0, 1.0, 0.0);
-//            glScalef(0.1 / _zoom, 0.1 / _zoom, 0.3 / _zoom);
-//            cone.Render();
-//        glPopMatrix();
-//        matrix[13] -= line_offset;
-
-//        matrix[14] += line_offset;
-//        glPushMatrix();
-//            glMultMatrixf(matrix);
-//            glScalef(0.1 / _zoom, 0.1 / _zoom, 0.3 / _zoom);
-//            cone.Render();
-//        glPopMatrix();
-
-//        if (_skeleton)
-//        {
-//            glColor3f(1.0, 0.0, 0.0);
-//            MatFBBrass.Apply();
-//            _skeleton->RenderJoints(false);
-//            MatFBPearl.Apply();
-//            //_skeleton->RenderLinks();
-//            MatFBEmerald.Apply();
-//            _skeleton->RenderSelected();
-//        }
-
-//        MatFBTurquoise.Apply();
-//        //mouse.Render();
-
-
-
+        DCoordinate3 *selected_position = _skeletons[0].GetSelectedPosition();
+        if (selected_position)
+        {
+            RenderMoveArrows(selected_position);
+        }
 
     // pops the current matrix stack, replacing the current matrix with the one below it on the stack,
     // i.e., the original model view matrix is restored
@@ -397,7 +409,21 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 
                 // a kiválasztáshoz elégséges csak a joint-okat kirajzolni
 
-                _skeletons[0].RenderJoints(true); // ahol true a glLoadName() függvény alkalmazását aktíválja
+//                glBegin(GL_LINES);
+//                    glColor3f(1.0, 0.0, 0.0);
+//                    //glVertex3f(m_start_x, m_start_y, m_start_z);
+//                    //glVertex3f(m_end_x, m_end_y, m_end_z);
+//                    glVertex3f(0, 0, 0);
+//                    glVertex3f(6, 6, 6);
+//                glEnd();
+
+                DCoordinate3 *selected_position = _skeletons[0].GetSelectedPosition();
+                if (selected_position)
+                {
+                    RenderMoveArrows(selected_position, true);
+                }
+
+                _skeletons[0].RenderJoints(true, 6); // ahol true a glLoadName() függvény alkalmazását aktíválja
                     // ahogy bejárod a skeleton joint-jait a glLoadName függvénynek az egyes joint-ok id-ját kell átadnod
                 }
 
@@ -414,7 +440,6 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 
             if (nhits)
             {
-                cout<<"nhits: " << nhits << endl;
                 GLuint closest_selected = pick_buffer[3];
                 GLuint closest_depth    = pick_buffer[1];
 
@@ -430,14 +455,22 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
                     }
                 }
 
-                unsigned int _joint_id = closest_selected;
-                _skeletons[0].SetSelected(_joint_id);
-
-                //_joint_position = _skeleton->GetJoint(_joint_id)->_position;
-
-
-                std::cout << "selected: " << _joint_id <<std::endl;
-                // ...
+                if (closest_selected < 6)
+                {
+                    drag = true;
+                    _drag_matrix[0] = 0.0;
+                    _drag_matrix[1] = 0.0;
+                    _drag_matrix[2] = 1.0;
+                    _drag_type = closest_selected;
+                }
+                else
+                {
+                    _skeletons[0].SetSelected(closest_selected - 6);
+                }
+            }
+            else
+            {
+                _skeletons[0].SetSelected(-1);
             }
 
             delete pick_buffer, pick_buffer = 0;
@@ -448,38 +481,127 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 void GLWidget::mouseMoveEvent(QMouseEvent *event)
 {
     event->accept();
-    double disp_x = (event->x() - mouse_pressed_x) / 100.0;
-    double disp_y = (mouse_pressed_y - event->y()) / 100.0;
+    if (drag)
+    {
+        x_rot_mat = XRotationMatrix(_angle_x);
+        y_rot_mat = YRotationMatrix(_angle_y);
+        z_rot_mat = ZRotationMatrix(_angle_z);
+
+        Matrix<double> normal = z_rot_mat * y_rot_mat * x_rot_mat * _drag_matrix;
+        DCoordinate3 n = DCoordinate3(normal(0,0), normal(1,0), normal(2,0));
+
+        DCoordinate3 p0 = DCoordinate3(*(_skeletons[0].GetSelectedPosition()));
+
+        double mouseX = event->x();
+        double mouseY = event->y();
+
+        DCoordinate3 l1;
+        DCoordinate3 l2;
+        double  x,  y,  z;
+
+        double matModelView[16], matProjection[16];
+        int viewport[4];
+
+        // get matrix and viewport:
+        glGetDoublev( GL_MODELVIEW_MATRIX, matModelView );
+        glGetDoublev( GL_PROJECTION_MATRIX, matProjection );
+        glGetIntegerv( GL_VIEWPORT, viewport );
+
+        // window pos of mouse, Y is inverted on Windows
+        double winX = (double)mouseX;
+        double winY = viewport[3] - (double)mouseY;
+
+        // get point on the 'near' plane (third param is set to 0.0)
+        gluUnProject(winX, winY, 0.0, matModelView, matProjection, viewport, &x, &y, &z);
+        l1 = DCoordinate3(x, y, z);
+
+        // get point on the 'far' plane (third param is set to 1.0)
+        gluUnProject(winX, winY, 1.0, matModelView, matProjection, viewport, &x, &y, &z);
+        l2 = DCoordinate3(x, y, z);
+
+        double d = ((p0 - l1) * n) / ((l2 - l1) * n);
+        DCoordinate3 result = l1 + (l2 * d);
+        cout << "d: " << d << endl;
+        cout << "normal: " << n << endl;
+        cout << "p0: " << p0 << endl;
+        cout << "point: " << result << endl;
 
 
-    double rad_x = _angle_x * PI / 180;
-    double rad_y = _angle_y * PI / 180;
-    double rad_z = _angle_z * PI / 180;
+        DCoordinate3 *new_coord = _skeletons[0].GetSelectedPosition();
+        if (_drag_type == 0)
+        {
+            (*new_coord)[0] = result[0] - 1;
+        }
+        else if (_drag_type == 1)
+        {
+            (*new_coord)[1] = result[1] - 1;
+        }
+        else if (_drag_type == 2)
+        {
+            (*new_coord)[2] = -result[2];
+        }
+        else if (_drag_type == 3)
+        {
+            (*new_coord)[1] = result[1] - 0.5;
+            (*new_coord)[2] = -result[2];
+        }
+        else if (_drag_type == 4)
+        {
+            (*new_coord)[0] = result[0] - 0.5;
+            (*new_coord)[2] = -result[2];
+        }
+        else if (_drag_type == 5)
+        {
+            (*new_coord)[0] = result[0] - 0.5;
+            (*new_coord)[1] = result[1] - 0.5;
+        }
+    }
+    else
+    {
+        double disp_x = (event->x() - mouse_pressed_x) / 100.0;
+        double disp_y = (mouse_pressed_y - event->y()) / 100.0;
 
-    double sin_x = sin(rad_x);
-    double sin_y = sin(rad_y);
-    double sin_z = sin(rad_z);
-    double cos_x = cos(rad_x);
-    double cos_y = cos(rad_y);
-    double cos_z = cos(rad_z);
+//        double rad_x = _angle_x * PI / 180;
+//        double rad_y = _angle_y * PI / 180;
+//        double rad_z = _angle_z * PI / 180;
 
-    double new_trans_x, new_trans_y, new_trans_z;
-    new_trans_x = disp_x * (cos_y * cos_z) + disp_y * (cos_y * sin_z);
-    new_trans_y = disp_x * (sin_x * sin_y * cos_z) + disp_y * (cos_x * cos_z - sin_x * sin_y * sin_z);
-    new_trans_z = disp_x * (sin_x * sin_z - cos_x * sin_y * cos_z) + disp_y * (cos_x * sin_y * sin_z + sin_x * cos_z);
+//        double sin_x = sin(rad_x);
+//        double sin_y = sin(rad_y);
+//        double sin_z = sin(rad_z);
+//        double cos_x = cos(rad_x);
+//        double cos_y = cos(rad_y);
+//        double cos_z = cos(rad_z);
 
-    emit trans_xChanged(mouse_pressed_trans_x + new_trans_x);
-    emit trans_yChanged(mouse_pressed_trans_y + new_trans_y);
-    emit trans_zChanged(mouse_pressed_trans_z + new_trans_z);
-    //if (event->button() == Qt::LeftButton)
-    //{
-       // if (event->modifiers() & Qt::ShiftModifier)
-      //  {
+//        double new_trans_x, new_trans_y, new_trans_z;
+//        new_trans_x = disp_x * (cos_y * cos_z) + disp_y * (cos_y * sin_z);
+//        new_trans_y = disp_x * (sin_x * sin_y * cos_z) + disp_y * (cos_x * cos_z - sin_x * sin_y * sin_z);
+//        new_trans_z = disp_x * (sin_x * sin_z - cos_x * sin_y * cos_z) + disp_y * (cos_x * sin_y * sin_z + sin_x * cos_z);
+
+        x_rot_mat = XRotationMatrix(_angle_x);
+        y_rot_mat = YRotationMatrix(_angle_y);
+        z_rot_mat = ZRotationMatrix(_angle_z);
+        ColumnMatrix<double> mouse = ColumnMatrix<double>(3);
+        mouse[0] = disp_x;
+        mouse[1] = disp_y;
+        mouse[2] = 0.0;
+
+        Matrix<double> normal = z_rot_mat * y_rot_mat * x_rot_mat * mouse;
+
+        emit trans_xChanged(mouse_pressed_trans_x + normal(0,0));
+        emit trans_yChanged(mouse_pressed_trans_y + normal(1,0));
+        emit trans_zChanged(mouse_pressed_trans_z + normal(2,0));
+    }
+
+
+//    if (event->button() == Qt::LeftButton)
+//    {
+//        if (event->modifiers() & Qt::ShiftModifier)
+//        {
 //            Qt::AltModifier, Qt::ControlModifier
-        //}
-    //}
+//        }
+//    }
+    updateGL();
 }
-
 
 void GLWidget::wheelEvent(QWheelEvent *event)
 {
@@ -546,4 +668,119 @@ void GLWidget::set_render_joints(int skeleton_id, bool value)
         }
     }
     updateGL();
+}
+
+void GLWidget::RenderMoveArrows(DCoordinate3 *position, bool glLoad)
+{
+    double line_offset = 1;
+    glBegin(GL_LINES);
+        glColor3f(1.0, 0.0, 0.0);
+        glVertex3f(position->x(), position->y(), position->z());
+        glVertex3f(position->x() + line_offset, position->y(), position->z());
+
+        glColor3f(0.0, 1.0, 0.0);
+        glVertex3f(position->x(), position->y(), position->z());
+        glVertex3f(position->x(), position->y() + line_offset, position->z());
+
+        glColor3f(0.0, 0.0, 1.0);
+        glVertex3f(position->x(), position->y(), position->z());
+        glVertex3f(position->x(), position->y(), position->z() + line_offset);
+    glEnd();
+
+    float matrix[16];
+
+    matrix[0] = 1;
+    matrix[1] = 0;
+    matrix[2] = 0;
+    matrix[3] = 0.0;
+
+    matrix[4] = 0;
+    matrix[5] = 1;
+    matrix[6] = 0;
+    matrix[7] = 0.0;
+
+    matrix[ 8] = 0;
+    matrix[ 9] = 0;
+    matrix[10] = 1;
+    matrix[11] = 0.0;
+
+    matrix[12] = position->x();
+    matrix[13] = position->y();
+    matrix[14] = position->z();
+    matrix[15] = 1.0;
+
+    glPushMatrix();
+        MatFBRuby.Apply();
+        glMultMatrixf(matrix);
+        glScalef(0.01 / _zoom, 0.5 / _zoom, 0.5 / _zoom);
+        if (glLoad)
+        {
+            glLoadName(3);
+        }
+        cube.Render();
+    glPopMatrix();
+    glPushMatrix();
+        MatFBTurquoise.Apply();
+        glMultMatrixf(matrix);
+        glScalef(0.5 / _zoom, 0.01 / _zoom, 0.5 / _zoom);
+        if (glLoad)
+        {
+            glLoadName(4);
+        }
+        cube.Render();
+    glPopMatrix();
+    glPushMatrix();
+        MatFBEmerald.Apply();
+        glMultMatrixf(matrix);
+        glScalef(0.5 / _zoom, 0.5 / _zoom, 0.01 / _zoom);
+        if (glLoad)
+        {
+            glLoadName(5);
+        }
+        cube.Render();
+    glPopMatrix();
+
+    matrix[12] += line_offset;
+    glPushMatrix();
+        MatFBRuby.Apply();
+        glMultMatrixf(matrix);
+        glRotatef(90, 0.0, 1.0, 0.0);
+        //glRotatef(-90, 1.0, 0.0, 0.0);
+        glScalef(0.1 / _zoom, 0.1 / _zoom, 0.3 / _zoom);
+        glColor3f(1.0, 0.0, 0.0);
+        if (glLoad)
+        {
+            glLoadName(0);
+        }
+        cone.Render();
+    glPopMatrix();
+    matrix[12] -= line_offset;
+
+    matrix[13] += line_offset;
+    glPushMatrix();
+        MatFBTurquoise.Apply();
+        glMultMatrixf(matrix);
+        glRotatef(-90, 1.0, 0.0, 0.0);
+        glScalef(0.1 / _zoom, 0.1 / _zoom, 0.3 / _zoom);
+        glColor3f(0.0, 1.0, 0.0);
+        if (glLoad)
+        {
+            glLoadName(1);
+        }
+        cone.Render();
+    glPopMatrix();
+    matrix[13] -= line_offset;
+
+    matrix[14] += line_offset;
+    glPushMatrix();
+        MatFBEmerald.Apply();
+        glMultMatrixf(matrix);
+        glScalef(0.1 / _zoom, 0.1 / _zoom, 0.3 / _zoom);
+        glColor3f(0.0, 0.0, 1.0);
+        if (glLoad)
+        {
+            glLoadName(2);
+        }
+        cone.Render();
+    glPopMatrix();
 }

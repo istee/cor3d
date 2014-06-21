@@ -7,7 +7,7 @@
 using namespace cagd;
 using namespace std;
 
-Skeleton::Skeleton(double x, double y, double z, TriangulatedMesh3 mesh, TriangulatedMesh3 *link_mesh, TriangulatedMesh3 *joint_mesh, bool render_mesh, bool render_links, bool render_joints)
+Skeleton::Skeleton(unsigned int id, double x, double y, double z, TriangulatedMesh3 mesh, TriangulatedMesh3 *link_mesh, TriangulatedMesh3 *joint_mesh, bool render_mesh, bool render_links, bool render_joints) : BaseEntity(id)
 {
     _selected = -1;
 
@@ -19,7 +19,7 @@ Skeleton::Skeleton(double x, double y, double z, TriangulatedMesh3 mesh, Triangu
     _render_links = render_links;
     _render_joints = render_joints;
 
-    _joints.push_back(Joint(new DCoordinate3(x, y, z), _joint_mesh));
+    _joints.push_back(Joint(0, new DCoordinate3(x, y, z), _joint_mesh));
 }
 
 bool Skeleton::GetRenderMesh()
@@ -59,8 +59,8 @@ bool Skeleton::AddLink(unsigned int start_index, double x, double y, double z)
     {
         int end_index = _joints.size();
         int link_index = _links.size();
-        _joints.push_back(Joint(new DCoordinate3(x, y, z), _joint_mesh, link_index));
-        _links.push_back(Link(start_index, end_index, _link_mesh));
+        _joints.push_back(Joint(end_index, new DCoordinate3(x, y, z), _joint_mesh, link_index));
+        _links.push_back(Link(_links.size(), start_index, end_index, _link_mesh));
         _joints[start_index].SetPreviousLink(link_index);
         inserted = true;
     }
@@ -80,11 +80,6 @@ void Skeleton::Render(bool glLoad) const
     {
         MatFBSilver.Apply();
         RenderJoints(glLoad);
-        if (_selected >= 0)
-        {
-            MatFBBrass.Apply();
-            _joints[_selected].Render();
-        }
     }
 
     if (_render_mesh)
@@ -109,18 +104,29 @@ void Skeleton::RenderLinks() const
     }
 }
 
-void Skeleton::RenderJoints(bool glLoad) const
+void Skeleton::RenderJoints(bool glLoad, int offset) const
 {
     for(std::vector<Joint>::const_iterator it = _joints.begin(); it != _joints.end(); ++it)
     {
-        if (glLoad)
-        {
-            glLoadName(it - _joints.begin());
-        }
         if (it - _joints.begin() != _selected)
         {
+            if (glLoad)
+            {
+                glLoadName(offset + it - _joints.begin());
+            }
+
             it->Render();
         }
+    }
+
+    if (_selected >= 0)
+    {
+        MatFBBrass.Apply();
+        if (glLoad)
+        {
+            glLoadName(offset + _selected);
+        }
+        _joints[_selected].Render();
     }
 }
 
@@ -230,20 +236,19 @@ void Skeleton::Joint::Render() const
 void Skeleton::SetSelected(unsigned int selected_id)
 {
     _selected = selected_id;
-    std::cout<<_selected<<std::endl;
+}
+
+DCoordinate3* Skeleton::GetSelectedPosition() const
+{
+    if (_selected >= 0)
+    {
+        return (_joints[_selected]._position);
+    }
+    return 0;
 }
 
 unsigned int Skeleton::JointCount() const
 {
     return _joints.size();
 }
-
-//DCoordinate3* Skeleton::GetSelectedPosition() const
-//{
-//    if (_selected)
-//    {
-//        return (_selected->_position);
-//    }
-//    return 0;
-//}
 

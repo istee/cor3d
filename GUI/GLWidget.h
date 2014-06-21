@@ -13,6 +13,8 @@
 
 #include "../Model/Skeleton.h"
 #include "../Core/Lights.h"
+#include "../Core/DCoordinates3.h"
+#include "../Core/Matrices.h"
 
 class GLWidget: public QGLWidget
 {
@@ -40,14 +42,25 @@ private:
 
     cagd::DirectionalLight  *_dir_light;
 
-    cagd::TriangulatedMesh3 cone, sphere;
+    cagd::TriangulatedMesh3 cone, sphere, cube;
 
     double                  _reposition_unit;
+
+    cagd::XRotationMatrix x_rot_mat;
+    cagd::YRotationMatrix y_rot_mat;
+    cagd::ZRotationMatrix z_rot_mat;
 
     double                  mouse_pressed_x, mouse_pressed_y;
     double                  mouse_pressed_trans_x, mouse_pressed_trans_y, mouse_pressed_trans_z;
 
     std::vector<cagd::Skeleton>   _skeletons;
+
+    bool drag;
+    unsigned int _drag_type;
+    cagd::DCoordinate3 _drag_offset;
+    cagd::ColumnMatrix<double> _drag_matrix;
+
+    void RenderMoveArrows(cagd::DCoordinate3 *position, bool glLoad = false);
 
 public:
     // special and default constructor

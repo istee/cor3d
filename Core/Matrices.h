@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <vector>
+#include "Constants.h"
 
 namespace cagd
 {
@@ -20,6 +21,18 @@ namespace cagd
     // forward declaration of template class TriangularMatrix
     template <typename T>
             class TriangularMatrix;
+
+    // forward declaration of class RotationMatrix
+    class RotationMatrix;
+
+    // forward declaration of class RotationMatrix
+    class XRotationMatrix;
+
+    // forward declaration of class RotationMatrix
+    class YRotationMatrix;
+
+    // forward declaration of class RotationMatrix
+    class ZRotationMatrix;
 
     // forward declarations of overloaded and templated input/output from/to stream operators
     template <typename T>
@@ -50,6 +63,9 @@ namespace cagd
 
         // assignment operator
         Matrix& operator =(const Matrix& m);
+
+        // * operator
+        const Matrix operator *(const Matrix& rhs) const;
 
         // get element by reference
         T& operator ()(unsigned int row, unsigned int column);
@@ -147,6 +163,87 @@ namespace cagd
         bool ResizeRows(unsigned int row_count);
     };
 
+    //-------------------------
+    // class RotationMatrix
+    //-------------------------
+    class RotationMatrix: public Matrix<double>
+    {
+    public:
+        RotationMatrix(): Matrix<double>(3, 3){}
+    };
+
+    //-------------------------
+    // class XRotationMatrix
+    //-------------------------
+    class XRotationMatrix: public RotationMatrix
+    {
+    public:
+        XRotationMatrix(int theta = 0): RotationMatrix()
+        {
+            double rad_theta = theta * PI / 180;
+
+            this->_data[0][0] = 1;
+            this->_data[0][1] = 0;
+            this->_data[0][2] = 0;
+
+            this->_data[1][0] = 0;
+            this->_data[1][1] = cos(rad_theta);
+            this->_data[1][2] = -sin(rad_theta);
+
+            this->_data[2][0] = 0;
+            this->_data[2][1] = -sin(rad_theta);
+            this->_data[2][2] = cos(rad_theta);
+        }
+    };
+
+    //-------------------------
+    // template class YRotationMatrix
+    //-------------------------
+    class YRotationMatrix: public RotationMatrix
+    {
+    public:
+        YRotationMatrix(int theta = 0): RotationMatrix()
+        {
+            double rad_theta = theta * PI / 180;
+
+            this->_data[0][0] = cos(rad_theta);
+            this->_data[0][1] = 0;
+            this->_data[0][2] = -sin(rad_theta);
+
+            this->_data[1][0] = 0;
+            this->_data[1][1] = 1;
+            this->_data[1][2] = 0;
+
+            this->_data[2][0] = sin(rad_theta);
+            this->_data[2][1] = 0;
+            this->_data[2][2] = cos(rad_theta);
+        }
+    };
+
+    //-------------------------
+    // template class ZRotationMatrix
+    //-------------------------
+    class ZRotationMatrix: public RotationMatrix
+    {
+    public:
+        ZRotationMatrix(int theta = 0): RotationMatrix()
+        {
+            double rad_theta = theta * PI / 180;
+
+            this->_data[0][0] = cos(rad_theta);
+            this->_data[0][1] = sin(rad_theta);
+            this->_data[0][2] = 0;
+
+            this->_data[1][0] = -sin(rad_theta);
+            this->_data[1][1] = cos(rad_theta);
+            this->_data[1][2] = 0;
+
+            this->_data[2][0] = 0;
+            this->_data[2][1] = 0;
+            this->_data[2][2] = 1;
+        }
+    };
+
     //--------------------------------------------------
     // implementation of template class Matrix
     //--------------------------------------------------
@@ -177,6 +274,32 @@ namespace cagd
             _data = rhs._data;
         }
         return *this;
+    }
+
+    // * operator
+    template <typename T>
+    const Matrix<T> Matrix<T>::operator *(const Matrix<T>& rhs) const
+    {
+        Matrix<T> result = Matrix<T>(_row_count, rhs._column_count);
+        for (unsigned int i = 0; i < result._row_count; i++)
+        {
+            for (unsigned int j = 0; j < result._column_count; j++)
+            {
+                result._data[i][j] = T();
+            }
+        }
+
+        for (unsigned int i = 0; i < result._row_count; i++)
+        {
+            for (unsigned int j = 0; j < result._column_count; j++)
+            {
+                for (unsigned int k = 0; k < _column_count; k++)
+                {
+                    result._data[i][j] += _data[i][k] * rhs._data[k][j];
+                }
+            }
+        }
+        return result;
     }
 
     // get element by reference
@@ -480,4 +603,35 @@ namespace cagd
 
         return lhs;
     }
+
+    //--------------------------------------------------------
+    // implementation of class RotationMatrix
+    //--------------------------------------------------------
+
+    // constructor
+    //RotationMatrix::RotationMatrix(): Matrix<double>(3, 3)
+    //{
+    //}
+
+    //-----------------------------------------------------
+    // implementation of class RotationMatrix
+    //-----------------------------------------------------
+
+    // constructor
+//    XRotationMatrix::XRotationMatrix(int theta): RotationMatrix()
+//    {
+//        double rad_theta = 0;//theta * PI / 180;
+
+//        this->_data[0][0] = 1;
+//        this->_data[0][1] = 0;
+//        this->_data[0][2] = 0;
+
+//        this->_data[1][0] = 0;
+//        this->_data[1][1] = cos(rad_theta);
+//        this->_data[1][2] = -sin(rad_theta);
+
+//        this->_data[2][1] = 0;
+//        this->_data[2][2] = sin(rad_theta);
+//        this->_data[2][3] = cos(rad_theta);
+//    }
 }
