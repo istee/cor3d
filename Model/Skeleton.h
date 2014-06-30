@@ -8,10 +8,10 @@
 namespace cagd
 {
     class BaseEntity
-    {
-    protected:
-        unsigned int _id;
+    {     
     public:
+        unsigned int _id;
+
         BaseEntity(unsigned int id)
         {
             _id = id;
@@ -39,8 +39,9 @@ namespace cagd
             int                 _prev_link;
             std::vector<int>    _next_links;
 
-            Joint(unsigned int id, DCoordinate3 *position, TriangulatedMesh3 *mesh, int prev_link = -1): BaseEntity(id), _position(position), _mesh(mesh), _prev_link(prev_link)
+            Joint(unsigned int id, DCoordinate3 *position, TriangulatedMesh3 *mesh, int prev_link = -1): BaseEntity(id), _position(position), _mesh(mesh)
             {
+                _prev_link = prev_link;
                 _scale = DCoordinate3(0.1, 0.1, 0.1);
             }
 
@@ -57,6 +58,7 @@ namespace cagd
             {
                 if (this != &joint)
                 {
+                    this->_id   = joint._id;
                     _position   = joint._position;
                     _scale      = joint._scale;
                     _mesh       = joint._mesh;
@@ -91,6 +93,19 @@ namespace cagd
 
             void Render() const;
 
+            friend std::ostream& operator <<(std::ostream& lhs, const Joint& rhs)
+            {
+                lhs << "Joint " << rhs._id << std::endl;
+                lhs << "position: " << *rhs._position << std::endl;
+                lhs << "scale: " << rhs._scale << std::endl;
+                lhs << "previous link: " << rhs._prev_link << std::endl << "next links: ";
+                for(std::vector<int>::const_iterator it = rhs._next_links.begin(); it != rhs._next_links.end(); ++it)
+                {
+                    lhs << *it << " ";
+                }
+                lhs << std::endl;
+                return lhs;
+            }
         };
 
         class Link : public BaseEntity
@@ -169,6 +184,32 @@ namespace cagd
 ////            }
         };
 
+        class Chain
+        {
+        public:
+            int                     _id;
+            int                     _parent_id;
+            std::vector<Joint>      _joints;
+
+            Chain(int id, int parent_id)
+            {
+                _id         = id;
+                _parent_id  = parent_id;
+            }
+
+            friend std::ostream& operator <<(std::ostream& lhs, const Chain& rhs)
+            {
+                lhs << "Chain " << rhs._id << std::endl;
+                lhs << "Parent chain " << rhs._parent_id << std::endl;
+                for (int i = 0; i < rhs._joints.size(); i++)
+                {
+                    lhs << rhs._joints[i]._id << ", ";
+                }
+
+                return lhs;
+            }
+        };
+
     protected:
         TriangulatedMesh3           *_link_mesh, *_joint_mesh;
         TriangulatedMesh3           _mesh;
@@ -177,8 +218,13 @@ namespace cagd
         std::vector<Joint>          _joints;
 
         int                         _selected;
+        std::vector<Chain>          _chains;
+        bool                        _chains_moved;
 
         bool                        _render_mesh, _render_links, _render_joints;
+
+        unsigned int Consruct_Chains(Joint *start, int index, int parent_index, int branch_link_index = -1);
+        void FABRIK(Chain chain, DCoordinate3 target, double tolerance);
 
     public:
 
@@ -195,12 +241,14 @@ namespace cagd
         bool GetRenderJoints();
         void SetRenderJoints(bool value);
 
-        void SetSelected(unsigned int selected_id);
+        void SetSelected(int selected_id);
         DCoordinate3* GetSelectedPosition() const;
+        void MoveSelected(double x, double y, double z);
 
         void Render(bool glLoad) const;
         void RenderLinks() const;
         void RenderJoints(bool glLoad, int offset = 0) const;
+        void RenderChains() const;
 
         bool AddLink(unsigned int _start_index, double x, double y, double z);
 
@@ -213,9 +261,22 @@ namespace cagd
 //        void RenderSelected() const;
 
         unsigned int JointCount() const;
+
         friend std::ostream& operator <<(std::ostream& lhs, const Skeleton& rhs)
         {
-            return lhs;// << rhs._id;
+            lhs << "Joints: " << std::endl;
+            for (int i = 0; i < rhs._joints.size(); i++)
+            {
+                lhs << rhs._joints[i] << std::endl;
+            }
+
+            lhs << "Chains: " << std::endl;
+            for (int i = 0; i < rhs._chains.size(); i++)
+            {
+                lhs << rhs._chains[i] << std::endl;
+            }
+
+            return lhs;
         }
     };
 }

@@ -105,10 +105,19 @@ void GLWidget::initializeGL()
 
     cagd::Skeleton sk = cagd::Skeleton(0, 0.1, -1.7, -1.5, mesh, &cone, &sphere);
     sk.AddLink(0, 0.1, 0.5, -0.7);
-    sk.AddLink(1, 0.8, 0.4, -0.7);
-    sk.AddLink(2, 1.7, 0.3, 0.0);//-0.7);
+    sk.AddLink(1, 0.8, 0.4, -0.6);
+    sk.AddLink(2, 1.9, 0.3, -0.55);
+    sk.AddLink(3, 2.4, 0.3, -0.7);
+    sk.AddLink(3, 2.5, 0.3, -0.55);
+    sk.AddLink(3, 2.45, 0.3, -0.4);
+    sk.AddLink(3, 2.1, 0.3, -0.2);
+    sk.AddLink(0, 0.9, -2.3, -0.85);
+    sk.AddLink(8, 0.9, -2.3, 0.7);
+    sk.AddLink(0, 0.1, -1.9, -2.65);
+    sk.AddLink(10, 0.1, -2.1, -3.8);
     _skeletons.push_back(sk);
 
+    //cout << _skeletons[0] << endl;
     glEnable(GL_LIGHTING);
     glEnable(GL_NORMALIZE);
 
@@ -146,7 +155,7 @@ void GLWidget::initializeGL()
     result_vector = DCoordinate3(result(0,0), result(1, 0), result(2, 0));
     result_vector.normalize();
     //cout << x_rot_mat << y_rot_mat << z_rot_mat << result;
-    cout << angles << result_vector << endl << endl;
+    //cout << angles << result_vector << endl << endl;
 
     angles[0] = 90;
     angles[1] = 0;
@@ -158,7 +167,7 @@ void GLWidget::initializeGL()
     result_vector = DCoordinate3(result(0,0), result(1, 0), result(2, 0));
     result_vector.normalize();
     //cout << x_rot_mat << y_rot_mat << z_rot_mat << result;
-    cout << angles << result_vector << endl << endl;
+    //cout << angles << result_vector << endl << endl;
 
     angles[0] = 0;
     angles[1] = 90;
@@ -170,7 +179,7 @@ void GLWidget::initializeGL()
     result_vector = DCoordinate3(result(0,0), result(1, 0), result(2, 0));
     result_vector.normalize();
     //cout << x_rot_mat << y_rot_mat << z_rot_mat << result;
-    cout << angles << result_vector << endl << endl;
+    //cout << angles << result_vector << endl << endl;
 
     angles[0] = 0;
     angles[1] = 0;
@@ -182,7 +191,7 @@ void GLWidget::initializeGL()
     result_vector = DCoordinate3(result(0,0), result(1, 0), result(2, 0));
     result_vector.normalize();
     //cout << x_rot_mat << y_rot_mat << z_rot_mat << result;
-    cout << angles << result_vector << endl << endl;
+    //cout << angles << result_vector << endl << endl;
 }
 
 //-----------------------
@@ -366,7 +375,6 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 
         GLuint size = 4 * _skeletons[0].JointCount();
         GLuint *pick_buffer = new GLuint[size];
-
         if (pick_buffer)
         {
             glSelectBuffer(size, pick_buffer);
@@ -407,22 +415,13 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
                 // scaling
                 glScalef(_zoom, _zoom, _zoom);
 
-                // a kiválasztáshoz elégséges csak a joint-okat kirajzolni
-
-//                glBegin(GL_LINES);
-//                    glColor3f(1.0, 0.0, 0.0);
-//                    //glVertex3f(m_start_x, m_start_y, m_start_z);
-//                    //glVertex3f(m_end_x, m_end_y, m_end_z);
-//                    glVertex3f(0, 0, 0);
-//                    glVertex3f(6, 6, 6);
-//                glEnd();
-
                 DCoordinate3 *selected_position = _skeletons[0].GetSelectedPosition();
                 if (selected_position)
                 {
                     RenderMoveArrows(selected_position, true);
                 }
 
+                // a kiválasztáshoz elégséges csak a joint-okat kirajzolni
                 _skeletons[0].RenderJoints(true, 6); // ahol true a glLoadName() függvény alkalmazását aktíválja
                     // ahogy bejárod a skeleton joint-jait a glLoadName függvénynek az egyes joint-ok id-ját kell átadnod
                 }
@@ -436,7 +435,6 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
             glMatrixMode(GL_MODELVIEW);
 
             int nhits = glRenderMode(GL_RENDER);
-
 
             if (nhits)
             {
@@ -470,6 +468,7 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
             }
             else
             {
+                drag = false;
                 _skeletons[0].SetSelected(-1);
             }
 
@@ -521,16 +520,17 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 
         double d = ((p0 - l1) * n) / ((l2 - l1) * n);
         DCoordinate3 result = l1 + (l2 * d);
-        cout << "d: " << d << endl;
-        cout << "normal: " << n << endl;
-        cout << "p0: " << p0 << endl;
-        cout << "point: " << result << endl;
+        //cout << "d: " << d << endl;
+        //cout << "normal: " << n << endl;
+        //cout << "p0: " << p0 << endl;
+        //cout << "point: " << result << endl;
 
 
         DCoordinate3 *new_coord = _skeletons[0].GetSelectedPosition();
         if (_drag_type == 0)
         {
-            (*new_coord)[0] = result[0] - 1;
+            //(*new_coord)[0] = result[0] - 1;
+            _skeletons[0].MoveSelected(1,1,1);
         }
         else if (_drag_type == 1)
         {
