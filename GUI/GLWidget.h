@@ -58,7 +58,9 @@ private:
     bool drag;
     unsigned int _drag_type;
     cagd::DCoordinate3 _drag_offset;
-    cagd::ColumnMatrix<double> _drag_matrix;
+    cagd::ColumnMatrix<double> _initial_normal;
+
+    GLuint _dl_grid;
 
     void RenderMoveArrows(cagd::DCoordinate3 *position, bool glLoad = false);
 

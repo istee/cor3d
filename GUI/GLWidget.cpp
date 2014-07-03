@@ -5,6 +5,7 @@
 #include "../Core/Materials.h"
 #include "../Core/HCoordinates3.h"
 #include "../Core/Constants.h"
+#include "../Core/Transformations.h"
 
 using namespace cagd;
 using namespace std;
@@ -134,14 +135,13 @@ void GLWidget::initializeGL()
     _reposition_unit = 0.1;
 
     drag = false;
-    _drag_matrix = ColumnMatrix<double>(3);
 
     // Rotation matrix, plane normal vetor test
     RowMatrix<int> angles = RowMatrix<int>(3);
-    ColumnMatrix<double> normal = ColumnMatrix<double>(3);
-    normal[0] = 0.0;
-    normal[1] = 0.0;
-    normal[2] = 1.0;
+    _initial_normal = ColumnMatrix<double>(3);
+    _initial_normal[0] = 0.0;
+    _initial_normal[1] = 0.0;
+    _initial_normal[2] = 1.0;
     Matrix<double> result;
     DCoordinate3 result_vector;
 
@@ -151,7 +151,7 @@ void GLWidget::initializeGL()
     x_rot_mat = XRotationMatrix(angles[0]);
     y_rot_mat = YRotationMatrix(angles[1]);
     z_rot_mat = ZRotationMatrix(angles[2]);
-    result = x_rot_mat * y_rot_mat * z_rot_mat * normal;
+    result = x_rot_mat * y_rot_mat * z_rot_mat * _initial_normal;
     result_vector = DCoordinate3(result(0,0), result(1, 0), result(2, 0));
     result_vector.normalize();
     //cout << x_rot_mat << y_rot_mat << z_rot_mat << result;
@@ -163,7 +163,7 @@ void GLWidget::initializeGL()
     x_rot_mat = XRotationMatrix(angles[0]);
     y_rot_mat = YRotationMatrix(angles[1]);
     z_rot_mat = ZRotationMatrix(angles[2]);
-    result = x_rot_mat * y_rot_mat * z_rot_mat * normal;
+    result = x_rot_mat * y_rot_mat * z_rot_mat * _initial_normal;
     result_vector = DCoordinate3(result(0,0), result(1, 0), result(2, 0));
     result_vector.normalize();
     //cout << x_rot_mat << y_rot_mat << z_rot_mat << result;
@@ -175,7 +175,7 @@ void GLWidget::initializeGL()
     x_rot_mat = XRotationMatrix(angles[0]);
     y_rot_mat = YRotationMatrix(angles[1]);
     z_rot_mat = ZRotationMatrix(angles[2]);
-    result = x_rot_mat * y_rot_mat * z_rot_mat * normal;
+    result = x_rot_mat * y_rot_mat * z_rot_mat * _initial_normal;
     result_vector = DCoordinate3(result(0,0), result(1, 0), result(2, 0));
     result_vector.normalize();
     //cout << x_rot_mat << y_rot_mat << z_rot_mat << result;
@@ -187,11 +187,55 @@ void GLWidget::initializeGL()
     x_rot_mat = XRotationMatrix(angles[0]);
     y_rot_mat = YRotationMatrix(angles[1]);
     z_rot_mat = ZRotationMatrix(angles[2]);
-    result = x_rot_mat * y_rot_mat * z_rot_mat * normal;
+    result = x_rot_mat * y_rot_mat * z_rot_mat * _initial_normal;
     result_vector = DCoordinate3(result(0,0), result(1, 0), result(2, 0));
     result_vector.normalize();
     //cout << x_rot_mat << y_rot_mat << z_rot_mat << result;
     //cout << angles << result_vector << endl << endl;
+
+    GLdouble x_min = -3.0, x_max = 3.0;
+    GLdouble y_min = -3.0, y_max = 3.0;
+    GLdouble z_min = -3.0, z_max = 3.0;
+
+    GLuint div = 10;
+
+    GLdouble dx = (x_max - x_min) / (div - 1);
+    GLdouble dy = (y_max - y_min) / (div - 1);
+    GLdouble dz = (z_max - z_min) / (div - 1);
+
+    _dl_grid = 0;
+    _dl_grid = glGenLists(1);
+
+    glNewList(_dl_grid, GL_COMPILE);
+
+        glPointSize(5.0);
+        glBegin(GL_POINTS);
+
+            for (GLuint i = 0; i < div; ++i)
+            {
+                GLdouble x = x_min + i * dx;
+
+                for (GLuint j = 0; j < div; ++j)
+                {
+                    GLdouble y = y_min + j * dy;
+
+                    for (GLuint k = 0; k < div; ++k)
+                    {
+                        GLdouble z = z_min + k * dz;
+
+                        glColor3d(x, y, z);
+                        glVertex3d(x, y, z);
+                    }
+                }
+
+            }
+
+        glEnd();
+
+        glPointSize(1.0);
+
+    glEndList();
+
 }
 
 //-----------------------
@@ -216,6 +260,10 @@ void GLWidget::paintGL()
 
         glScaled(_zoom, _zoom, _zoom);
 
+        glDisable(GL_LIGHTING);
+        //glCallList(_dl_grid);
+
+
         glBegin(GL_LINES);
             float modelViewMatrix[16];
             glGetFloatv(GL_MODELVIEW_MATRIX, modelViewMatrix);
@@ -238,9 +286,9 @@ void GLWidget::paintGL()
 
             Matrix<double> normal = x_rot_mat * y_rot_mat * z_rot_mat * z_unit;
             //cout << normal << endl;
-                glColor3f(1.0, 0.0, 0.0);
-                glVertex3f(0, 0, 0);
-                glVertex3f(normal(0,0), normal(1, 0), normal(2,0));
+            //glColor3f(1.0, 0.0, 0.0);
+            //glVertex3f(0, 0, 0);
+            //glVertex3f(normal(0,0), normal(1, 0), normal(2,0));
         glEnd();
 
         glEnable(GL_LIGHTING);
@@ -266,6 +314,8 @@ void GLWidget::paintGL()
 
     // pops the current matrix stack, replacing the current matrix with the one below it on the stack,
     // i.e., the original model view matrix is restored
+
+
     glPopMatrix();
 }
 
@@ -456,9 +506,6 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
                 if (closest_selected < 6)
                 {
                     drag = true;
-                    _drag_matrix[0] = 0.0;
-                    _drag_matrix[1] = 0.0;
-                    _drag_matrix[2] = 1.0;
                     _drag_type = closest_selected;
                 }
                 else
@@ -475,6 +522,36 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
             delete pick_buffer, pick_buffer = 0;
             updateGL();
         }
+
+    // test
+    GLint viewport[4]; //var to hold the viewport info
+    GLdouble modelview[16]; //var to hold the modelview info
+    GLdouble projection[16]; //var to hold the projection matrix info
+    GLfloat winX, winY, winZ; //variables to hold screen x,y,z coordinates
+    GLdouble worldX, worldY, worldZ; //variables to hold world x,y,z coordinates
+
+    glGetDoublev( GL_MODELVIEW_MATRIX, modelview ); //get the modelview info
+    glGetDoublev( GL_PROJECTION_MATRIX, projection ); //get the projection matrix info
+    glGetIntegerv( GL_VIEWPORT, viewport ); //get the viewport info
+
+    winX = (float)event->x();
+    winY = (float)viewport[3] - (float)event->y();
+    winZ = 1.0;
+
+    float modelViewMatrix[16];
+    glGetFloatv(GL_MODELVIEW_MATRIX, modelViewMatrix);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    //get the world coordinates from the screen coordinates
+    gluUnProject( winX, winY, winZ, modelview, projection, viewport, &worldX, &worldY, &worldZ);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glMultMatrixf(modelViewMatrix);
+
+    cout << worldX << " " << worldY << " " << worldZ << endl;
 }
 
 void GLWidget::mouseMoveEvent(QMouseEvent *event)
@@ -486,18 +563,6 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
         y_rot_mat = YRotationMatrix(_angle_y);
         z_rot_mat = ZRotationMatrix(_angle_z);
 
-        Matrix<double> normal = z_rot_mat * y_rot_mat * x_rot_mat * _drag_matrix;
-        DCoordinate3 n = DCoordinate3(normal(0,0), normal(1,0), normal(2,0));
-
-        DCoordinate3 p0 = DCoordinate3(*(_skeletons[0].GetSelectedPosition()));
-
-        double mouseX = event->x();
-        double mouseY = event->y();
-
-        DCoordinate3 l1;
-        DCoordinate3 l2;
-        double  x,  y,  z;
-
         double matModelView[16], matProjection[16];
         int viewport[4];
 
@@ -506,54 +571,100 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
         glGetDoublev( GL_PROJECTION_MATRIX, matProjection );
         glGetIntegerv( GL_VIEWPORT, viewport );
 
-        // window pos of mouse, Y is inverted on Windows
-        double winX = (double)mouseX;
-        double winY = viewport[3] - (double)mouseY;
+        Transformation TMV(matModelView);
+        Transformation TIMV;
 
-        // get point on the 'near' plane (third param is set to 0.0)
-        gluUnProject(winX, winY, 0.0, matModelView, matProjection, viewport, &x, &y, &z);
-        l1 = DCoordinate3(x, y, z);
+        if (TMV.GetInverse(TIMV))
+        {
+            Transformation TIMVT = TIMV.Transpose();
+//            Matrix<double> normal = z_rot_mat * y_rot_mat * x_rot_mat * _initial_normal;
+//            DCoordinate3 n = DCoordinate3(normal(0,0), normal(1,0), normal(2,0));
+            DCoordinate3 n = TIMVT * DCoordinate3(0.0, 0.0, 1.0);
+//            cout << "before normalizing: " << n << " , " << n.length() << endl;
+            n.normalize();
 
-        // get point on the 'far' plane (third param is set to 1.0)
-        gluUnProject(winX, winY, 1.0, matModelView, matProjection, viewport, &x, &y, &z);
-        l2 = DCoordinate3(x, y, z);
+            DCoordinate3 p0 = DCoordinate3(*(_skeletons[0].GetSelectedPosition()));
 
-        double d = ((p0 - l1) * n) / ((l2 - l1) * n);
-        DCoordinate3 result = l1 + (l2 * d);
-        //cout << "d: " << d << endl;
-        //cout << "normal: " << n << endl;
-        //cout << "p0: " << p0 << endl;
-        //cout << "point: " << result << endl;
+            double mouseX = event->x();
+            double mouseY = event->y();
+
+            DCoordinate3 l1;
+            DCoordinate3 l2;
+            double  x,  y,  z;
 
 
-        DCoordinate3 *new_coord = _skeletons[0].GetSelectedPosition();
-        if (_drag_type == 0)
-        {
-            //(*new_coord)[0] = result[0] - 1;
-            _skeletons[0].MoveSelected(1,1,1);
-        }
-        else if (_drag_type == 1)
-        {
-            (*new_coord)[1] = result[1] - 1;
-        }
-        else if (_drag_type == 2)
-        {
-            (*new_coord)[2] = -result[2];
-        }
-        else if (_drag_type == 3)
-        {
-            (*new_coord)[1] = result[1] - 0.5;
-            (*new_coord)[2] = -result[2];
-        }
-        else if (_drag_type == 4)
-        {
-            (*new_coord)[0] = result[0] - 0.5;
-            (*new_coord)[2] = -result[2];
-        }
-        else if (_drag_type == 5)
-        {
-            (*new_coord)[0] = result[0] - 0.5;
-            (*new_coord)[1] = result[1] - 0.5;
+            // window pos of mouse, Y is inverted on Windows
+            double winX = (double)mouseX;
+            double winY = viewport[3] - (double)mouseY;
+
+            glMatrixMode(GL_MODELVIEW);
+            glLoadIdentity();
+
+            // get point on the 'near' plane (third param is set to 0.0)
+            gluUnProject(winX, winY, 0.0, matModelView, matProjection, viewport, &x, &y, &z);
+            l1 = DCoordinate3(x, y, z);
+
+            // get point on the 'far' plane (third param is set to 1.0)
+            gluUnProject(winX, winY, 1.0, matModelView, matProjection, viewport, &x, &y, &z);
+            l2 = DCoordinate3(x, y, z);
+
+            glMatrixMode(GL_MODELVIEW);
+            glLoadIdentity();
+            glMultMatrixd(matModelView);
+
+            double d = ((p0 - l1) * n) / ((l2 - l1) * n);
+
+            cout << "d: " << d << endl;
+
+            if (d >= 0.0 && d <= 1.0)
+            {
+                DCoordinate3 result = l1 + ((l2 - l1) * d);
+                ColumnMatrix<double> result_matrix = ColumnMatrix<double>(3);
+                result_matrix[0] = result[0];
+                result_matrix[1] = result[1];
+                result_matrix[2] = result[2];
+
+                Matrix<double> rotated_result_matrix = z_rot_mat * y_rot_mat * x_rot_mat * result_matrix;
+                result[0] = rotated_result_matrix(0, 0);
+                result[1] = rotated_result_matrix(1, 0);
+                result[2] = rotated_result_matrix(2, 0);
+//                cout << "d: " << d << endl;
+//                cout << "normal: " << n << endl;
+//                cout << "p0: " << p0 << endl;
+//                cout << "point: " << result << endl;
+
+
+                DCoordinate3 *new_coord = _skeletons[0].GetSelectedPosition();
+                if (_drag_type == 0)
+                {
+                    (*new_coord)[0] = result[0] - 1;
+                    //_skeletons[0].MoveSelected(result[0] - 1, (*new_coord)[1], (*new_coord)[2]);
+                }
+                else if (_drag_type == 1)
+                {
+                    (*new_coord)[1] = result[1];
+                    //_skeletons[0].MoveSelected((*new_coord)[0], result[1] - 1, (*new_coord)[2]);
+                }
+                else if (_drag_type == 2)
+                {
+                    (*new_coord)[2] = result[2];
+                }
+                else if (_drag_type == 3)
+                {
+                    (*new_coord)[1] = result[1] - 0.5;
+                    (*new_coord)[2] = -result[2];
+                }
+                else if (_drag_type == 4)
+                {
+                    (*new_coord)[0] = result[0] - 0.5;
+                    (*new_coord)[2] = -result[2];
+                }
+                else if (_drag_type == 5)
+                {
+                    (*new_coord)[0] = result[0] - 0.5;
+                    (*new_coord)[1] = result[1] - 0.5;
+                }
+            }
         }
     }
     else

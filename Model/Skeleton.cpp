@@ -84,8 +84,11 @@ void Skeleton::Render(bool glLoad) const
         RenderJoints(glLoad);
     }
 
-    MatFBRuby.Apply();
-    RenderChains();
+    if (_chains_moved)
+    {
+        MatFBRuby.Apply();
+        RenderChains();
+    }
 
     if (_render_mesh)
     {
@@ -142,7 +145,11 @@ void Skeleton::RenderChains() const
         for(std::vector<Joint>::const_iterator it = chain_it->_joints.begin(); it != chain_it->_joints.end(); ++it)
         {
             it->Render();
-            cout << *it;
+        }
+        Link link = Link(-1, 0, 0, _link_mesh);
+        for(std::vector<Joint>::const_iterator it = ++chain_it->_joints.begin(); it != chain_it->_joints.end(); ++it)
+        {
+            link.Render((it - 1)->_position, it->_position);
         }
     }
 }
@@ -216,48 +223,12 @@ void Skeleton::Joint::Render() const
     glPopMatrix();
 }
 
-//Skeleton::Joint * Skeleton::GetJoint(unsigned int joint_id) const
-//{
-//    Joint *joint = 0;
-//    joint = GetJoint_(_root->_start, _root->_id, joint_id);
-//    if (joint)
-//    {
-//        return joint;
-//    }
-//    else
-//    {
-//        return GetJoint_(_root->_end, _root->_id, joint_id);
-//    }
-//}
-
-//void Skeleton::RenderSelected() const
-//{
-//    _selected->Render();
-//}
-
-//DCoordinate3 Skeleton::operator [](unsigned int index) const
-//{
-//    return _vertices[index];
-//}
-
-//DCoordinate3& Skeleton::operator [](unsigned int index)
-//{
-//    return _vertices[index];
-//}
-
-//bool Skeleton::EraseLink(unsigned int chain_index, unsigned int link_index)
-//{
-//    return false;
-//}
-
 unsigned int Skeleton::Consruct_Chains(Joint *start, int index, int parent_index, int branch_link_index)
 {
     if (start->_next_links.size() > 0)
     {
-        cout << "nem vegpont" << endl;
         if (branch_link_index >= 0)
         {
-            cout << "van branch link index" << endl;
             Chain chain = Chain(index, parent_index);
             chain._joints.push_back(*start);
             start = &_joints[_links[start->_next_links[branch_link_index]]._end_index];
@@ -285,6 +256,10 @@ unsigned int Skeleton::Consruct_Chains(Joint *start, int index, int parent_index
 void Skeleton::SetSelected(int selected_id)
 {
     _chains_moved = false;
+    if (_selected != selected_id)
+    {
+        _chains.clear();
+    }
     _selected = selected_id;
     if (_selected >= 0)
     {
@@ -321,60 +296,93 @@ void Skeleton::SetSelected(int selected_id)
 
         Consruct_Chains(j, 1, 0);
     }
-
-    cout << *this;
 }
 
 void Skeleton::MoveSelected(double x, double y, double z)
 {
+    _chains_moved = true;
     DCoordinate3 target(x, y, z);
-    FABRIK(_chains[0], target, 0.01);
+    FABRIK(&_chains[0], target, 0.1);
+    cout << *this << endl;
+    for (unsigned int i = 1; i < _chains.size(); i++)
+    {
+        SimpleForwardFABRIK(&_chains[i], *_chains[_chains[i]._parent_id]._joints[_chains[_chains[i]._parent_id]._joints.size() - 1]._position, 0.1);
+    }
 }
 
-void Skeleton::FABRIK(Chain chain, DCoordinate3 target, double tolerance)
+void Skeleton::FABRIK(Chain *chain, DCoordinate3 target, double tolerance)
 {
-    double *lengths = new double[chain._joints.size()];
+    double *lengths = new double[chain->_joints.size()];
     double total_length = 0.0;
-    for (int i = 0; i < chain._joints.size() - 1; i++)
+    for (int i = 0; i < chain->_joints.size() - 1; i++)
     {
-        lengths[i] = (*chain._joints[i]._position - *chain._joints[i + 1]._position).length();
+        lengths[i] = (*chain->_joints[i]._position - *chain->_joints[i + 1]._position).length();
         total_length += lengths[i];
-        //cout << lengths[i] << ", ";
     }
-    double distance = (target - *chain._joints[chain._joints.size() - 1]._position).length();
-    //cout << total_length << ", " << distance;
-    //cout << endl;
+    double distance = (target - *chain->_joints[chain->_joints.size() - 1]._position).length();
     if (distance > total_length)
     {
-        for (int i = 0; i < chain._joints.size() - 1; i++)
+        for (int i = 0; i < chain->_joints.size() - 1; i++)
         {
-            double r = (target - *chain._joints[i]._position).length();
+            double r = (target - *chain->_joints[i]._position).length();
             double lambda = lengths[i] / r;
-            chain._joints[i]._position = new DCoordinate3((1 - lambda) * *chain._joints[i]._position + lambda * target);
+            chain->_joints[i + 1]._position = new DCoordinate3((1 - lambda) * *chain->_joints[i]._position + lambda * target);
         }
     }
     else
     {
-        DCoordinate3 b = *chain._joints[0]._position;
-        double dif_A = (target - *chain._joints[chain._joints.size()]._position).length();
-        while (dif_A > tolerance)
+        DCoordinate3 b = DCoordinate3(*chain->_joints[0]._position);
+        double dif_A = (target - *chain->_joints[chain->_joints.size() - 1]._position).length();
+        unsigned int iteration_count = 0, max_iteration = 10;
+        while (dif_A > tolerance && iteration_count < max_iteration)
         {
-            chain._joints[chain._joints.size()]._position = new DCoordinate3(target);
-            for (int i = chain._joints.size() - 1; i > 0; i--)
+            iteration_count++;
+            chain->_joints[chain->_joints.size() - 1]._position = new DCoordinate3(target);
+            for (int i = chain->_joints.size() - 2; i >= 0; i--)
             {
-                double r = (*chain._joints[i + 1]._position - *chain._joints[i]._position).length();
+                double r = (*chain->_joints[i + 1]._position - *chain->_joints[i]._position).length();
                 double lambda = lengths[i] / r;
-                chain._joints[i]._position = new DCoordinate3((1 - lambda) * *chain._joints[i]._position + lambda * *chain._joints[i + 1]._position);
+                chain->_joints[i]._position = new DCoordinate3((1 - lambda) * *chain->_joints[i + 1]._position + lambda * *chain->_joints[i]._position);
             }
+            chain->_joints[0]._position = new DCoordinate3(b);
+            for (int i = 0; i < chain->_joints.size() - 1; i++)
+            {
+                double r = (*chain->_joints[i + 1]._position - *chain->_joints[i]._position).length();
+                double lambda = lengths[i] / r;
+                chain->_joints[i + 1]._position = new DCoordinate3((1 - lambda) * *chain->_joints[i]._position + lambda * *chain->_joints[i + 1]._position);
+            }
+            dif_A = (target - *chain->_joints[chain->_joints.size() - 1]._position).length();
+        }
+    }
+}
 
-            chain._joints[0]._position = new DCoordinate3(b);
-            for (int i = 0; i < chain._joints.size() - 1; i++)
-            {
-                double r = (*chain._joints[i + 1]._position - *chain._joints[i]._position).length();
-                double lambda = lengths[i] / r;
-                chain._joints[i + 1]._position = new DCoordinate3((1 - lambda) * *chain._joints[i]._position + lambda * *chain._joints[i + 1]._position);
-            }
-            double dif_A = (target - *chain._joints[chain._joints.size()]._position).length();
+void Skeleton::SimpleForwardFABRIK(Chain *chain, DCoordinate3 target, double tolerance)
+{
+    double *lengths = new double[chain->_joints.size()];
+    double total_length = 0.0;
+    for (int i = 0; i < chain->_joints.size() - 1; i++)
+    {
+        lengths[i] = (*chain->_joints[i]._position - *chain->_joints[i + 1]._position).length();
+        total_length += lengths[i];
+    }
+    double distance = (target - *chain->_joints[chain->_joints.size() - 1]._position).length();
+    if (distance > total_length)
+    {
+        for (int i = 0; i < chain->_joints.size() - 1; i++)
+        {
+            double r = (target - *chain->_joints[i]._position).length();
+            double lambda = lengths[i] / r;
+            chain->_joints[i + 1]._position = new DCoordinate3((1 - lambda) * *chain->_joints[i]._position + lambda * target);
+        }
+    }
+    else
+    {
+        chain->_joints[chain->_joints.size() - 1]._position = new DCoordinate3(target);
+        for (int i = chain->_joints.size() - 2; i >= 0; i--)
+        {
+            double r = (*chain->_joints[i + 1]._position - *chain->_joints[i]._position).length();
+            double lambda = lengths[i] / r;
+            chain->_joints[i]._position = new DCoordinate3((1 - lambda) * *chain->_joints[i + 1]._position + lambda * *chain->_joints[i]._position);
         }
     }
 }
@@ -383,7 +391,14 @@ DCoordinate3* Skeleton::GetSelectedPosition() const
 {
     if (_selected >= 0)
     {
-        return (_joints[_selected]._position);
+        if (!_chains_moved)
+        {
+            return (_joints[_selected]._position);
+        }
+        else
+        {
+            return _chains[0]._joints[_chains[0]._joints.size() - 1]._position;
+        }
     }
     return 0;
 }

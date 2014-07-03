@@ -203,7 +203,7 @@ namespace cagd
                 lhs << "Parent chain " << rhs._parent_id << std::endl;
                 for (int i = 0; i < rhs._joints.size(); i++)
                 {
-                    lhs << rhs._joints[i]._id << ", ";
+                    lhs << rhs._joints[i];
                 }
 
                 return lhs;
@@ -224,7 +224,8 @@ namespace cagd
         bool                        _render_mesh, _render_links, _render_joints;
 
         unsigned int Consruct_Chains(Joint *start, int index, int parent_index, int branch_link_index = -1);
-        void FABRIK(Chain chain, DCoordinate3 target, double tolerance);
+        void FABRIK(Chain *chain, DCoordinate3 target, double tolerance);
+        void SimpleForwardFABRIK(Chain *chain, DCoordinate3 target, double tolerance);
 
     public:
 
