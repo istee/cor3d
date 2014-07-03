@@ -49,6 +49,7 @@ private:
     cagd::Rotation          x_rot_mat;
     cagd::Rotation          y_rot_mat;
     cagd::Rotation          z_rot_mat;
+    cagd::Translate         translation;
 
     double                  mouse_pressed_x, mouse_pressed_y;
     double                  mouse_pressed_trans_x, mouse_pressed_trans_y, mouse_pressed_trans_z;

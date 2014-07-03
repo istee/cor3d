@@ -342,6 +342,7 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
     mouse_pressed_trans_x = _trans_x;
     mouse_pressed_trans_y = _trans_y;
     mouse_pressed_trans_z = _trans_z;
+    translation = Translate(_trans_x, _trans_y, _trans_z);
     if (event->button() == Qt::LeftButton)
     {
         GLint viewport[4];
@@ -583,16 +584,12 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
         double disp_y = (mouse_pressed_y - event->y()) / 100.0;
 
         DCoordinate3 mouse = DCoordinate3(disp_x, disp_y);
-        Transformation t = z_rot_mat * y_rot_mat * x_rot_mat;
-        //cout << t;
-        //cout << mouse << endl << endl;
-        DCoordinate3 normal = t * mouse;
+        DCoordinate3 transform = z_rot_mat * y_rot_mat * x_rot_mat * translation * mouse;
+        //cout << transform;
 
-        //cout << normal << endl << endl;
-
-        emit trans_xChanged(mouse_pressed_trans_x + normal[0]);
-        emit trans_yChanged(mouse_pressed_trans_y + normal[1]);
-        emit trans_zChanged(mouse_pressed_trans_z + normal[2]);
+        emit trans_xChanged(transform[0]);
+        emit trans_yChanged(transform[1]);
+        emit trans_zChanged(transform[2]);
     }
 
 

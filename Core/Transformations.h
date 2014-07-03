@@ -68,6 +68,7 @@ namespace cagd
     class Translate: public Transformation
     {
     public:
+        Translate();
         Translate(double t_x, double t_y, double t_z);
     };
 }

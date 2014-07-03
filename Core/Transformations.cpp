@@ -359,16 +359,16 @@ namespace cagd
         glMultMatrixd(_mat);
     }
 
-    Rotation::Rotation() : Transformation()
+    Rotation::Rotation(): Transformation()
     {
 
     }
 
-     Rotation::Rotation(double degree, DCoordinate3& axis)
-     {
-         double radian = degree * PI / 180.0;
-         double cosine = cos(radian);
-         double sine = sin(radian);
+    Rotation::Rotation(double degree, DCoordinate3& axis)
+    {
+        double radian = degree * PI / 180.0;
+        double cosine = cos(radian);
+        double sine = sin(radian);
 
         _mat[0] = 1 + (axis[1] * axis[1]  + axis[2] * axis[2]) * (cosine - 1);
         _mat[1] = axis[0] * axis[1] * (1 - cosine) - axis[2] * sine;
@@ -391,22 +391,34 @@ namespace cagd
         _mat[15] = 1.0;
     }
 
-     // output to stream
-     std::ostream& operator <<(std::ostream& lhs, const Transformation& rhs)
-     {
-         lhs << "Rotation" << std::endl;
-         for (unsigned int i = 0; i < 16; ++i)
-         {
-             lhs << rhs._mat[i];
-             if ((i + 1) % 4 == 0)
-             {
-                 lhs << std::endl;
-             }
-             else
-             {
+    Translate::Translate(): Transformation()
+    {
+
+    }
+
+    Translate::Translate(double t_x, double t_y, double t_z): Transformation()
+    {
+        _mat[12] = t_x;
+        _mat[13] = t_y;
+        _mat[14] = t_z;
+    }
+
+    // output to stream
+    std::ostream& operator <<(std::ostream& lhs, const Transformation& rhs)
+    {
+        lhs << "Rotation" << std::endl;
+        for (unsigned int i = 0; i < 16; ++i)
+        {
+            lhs << rhs._mat[i];
+            if ((i + 1) % 4 == 0)
+            {
+                lhs << std::endl;
+            }
+            else
+            {
                 lhs << ", ";
-             }
-         }
-         lhs << std::endl;
+            }
+        }
+        lhs << std::endl;
      }
 }
