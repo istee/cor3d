@@ -10,6 +10,7 @@ namespace cagd
     {
 
         friend Transformation operator *(const double& lhs, const Transformation& rhs);
+        friend std::ostream& operator <<(std::ostream& lhs, const Transformation& rhs);
 
     protected:
         double _mat[16];
@@ -53,6 +54,7 @@ namespace cagd
     class Rotation: public Transformation
     {
     public:
+        Rotation();
         Rotation(double degree, DCoordinate3& axis);
     };
 

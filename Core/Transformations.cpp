@@ -5,10 +5,7 @@ namespace cagd
 {
     Transformation::Transformation()
     {
-        for (int i = 0; i < 16; ++i)
-        {
-            _mat[i] = (i % 5) ? 0.0 : 1.0;
-        }
+        LoadIdentityMatrix();
     }
 
     Transformation::Transformation(const double mat[])
@@ -27,6 +24,14 @@ namespace cagd
         }
     }
 
+    void Transformation::LoadIdentityMatrix()
+    {
+        for (int i = 0; i < 16; ++i)
+        {
+            _mat[i] = (i % 5) ? 0.0 : 1.0;
+        }
+    }
+
     Transformation Transformation::Transpose() const
     {
         double transpose[16];
@@ -40,6 +45,180 @@ namespace cagd
         }
 
         return Transformation(transpose);
+    }
+
+    double Transformation::operator ()(int row, int column) const
+    {
+        return _mat[row * 4 + column];
+    }
+
+    double& Transformation::operator ()(int row, int column)
+    {
+        return _mat[row * 4 + column];
+    }
+
+    Transformation Transformation::operator *(const Transformation& rhs) const
+    {
+        Transformation result;
+        result.LoadNullMatrix();
+
+        for (unsigned int i = 0; i < 4; ++i)
+        {
+            for (unsigned int j = 0; j < 4; ++j)
+            {
+                for (unsigned int k = 0; k < 4; ++k)
+                {
+                    result._mat[i * 4 + j] += _mat[i * 4 + k] * rhs._mat[k * 4 + j];
+                }
+            }
+        }
+
+        return result;
+    }
+
+    Transformation& Transformation::operator *=(const Transformation& rhs)
+    {
+        std::cout << *this;
+        std::cout << rhs;
+
+        double result[16];
+        for (unsigned int i = 0; i < 16; ++i)
+        {
+            result[i] = 0.0;
+        }
+
+        for (unsigned int i = 0; i < 16; i+=4)
+        {
+            for (unsigned int j = 0; j < 16; j+=4)
+            {
+                for (unsigned int k = 0; k < 16; ++k)
+                {
+                    result[i * 4 + j] += _mat[i * 4 + k] * rhs._mat[k * 4 + j];
+                }
+            }
+        }
+
+        for (unsigned int i = 0; i < 16; ++i)
+        {
+            _mat[i] = result[i];
+        }
+
+        return *this;
+    }
+
+    Transformation Transformation::operator +(const Transformation& rhs) const
+    {
+        Transformation result;
+
+        for (unsigned int i = 0; i < 16; i++)
+        {
+            result._mat[i] = _mat[i] + rhs._mat[i];
+        }
+
+        return result;
+    }
+
+    Transformation& Transformation::operator +=(const Transformation& rhs)
+    {
+        for (unsigned int i = 0; i < 16; i++)
+        {
+            _mat[i] += rhs._mat[i];
+        }
+
+        return *this;
+    }
+
+    Transformation Transformation::operator -(const Transformation& rhs) const
+    {
+        Transformation result;
+
+        for (unsigned int i = 0; i < 16; i++)
+        {
+            result._mat[i] = _mat[i] - rhs._mat[i];
+        }
+
+        return result;
+    }
+
+    Transformation& Transformation::operator -=(const Transformation& rhs)
+    {
+        for (unsigned int i = 0; i < 16; i++)
+        {
+            _mat[i] -= rhs._mat[i];
+        }
+
+        return *this;
+    }
+
+    Transformation Transformation::operator *(const double& rhs) const
+    {
+        Transformation result;
+
+        for (unsigned int i = 0; i < 16; i++)
+        {
+            result._mat[i] = _mat[i] * rhs;
+        }
+
+        return result;
+    }
+
+    Transformation& Transformation::operator *=(const double& rhs)
+    {
+        for (unsigned int i = 0; i < 16; i++)
+        {
+            _mat[i] *= rhs;
+        }
+
+        return *this;
+    }
+
+    DCoordinate3 Transformation::operator *(const DCoordinate3& rhs) const
+    {
+        double w = 0.0;
+
+        for (int j = 0; j < 3; ++j)
+        {
+            w += _mat[3 + 4 * j] * rhs[j];
+        }
+        w += _mat[15];
+        std::cout << "w: " << w << std::endl;
+
+        DCoordinate3 result;
+
+        for (int i = 0; i < 3; ++i)
+        {
+            for (int j = 0; j < 3; ++j)
+            {
+                result[i] += _mat[i + 4 * j] * rhs[j];
+            }
+            result[i] += _mat[i + 12];
+        }
+
+        result /= w;
+
+        return result;
+    }
+
+    HCoordinate3 Transformation::operator *(const HCoordinate3& rhs) const
+    {
+        HCoordinate3 result;
+        result[3] = 0.0;
+
+        for (int i = 0; i < 4; ++i)
+        {
+            for (int j = 0; j < 4; ++j)
+            {
+                result[i] += _mat[i + 4 * j] * rhs[i];
+            }
+        }
+
+        for (unsigned int i = 0; i < 3; ++i)
+        {
+            result[i] /= result[3];
+        }
+        result[3] = 1.0;
+
+        return result;
     }
 
     bool Transformation::GetInverse(Transformation &inverse) const
@@ -175,34 +354,59 @@ namespace cagd
         return true;
     }
 
-    DCoordinate3 Transformation::operator *(const DCoordinate3& rhs) const
-    {
-        double w = 0.0;
-
-        for (int j = 0; j < 3; ++j)
-        {
-            w += _mat[3 + 4 * j] * rhs[j];
-        }
-        w += _mat[15];
-
-        DCoordinate3 result;
-
-        for (int i = 0; i < 3; ++i)
-        {
-            for (int j = 0; j < 3; ++j)
-            {
-                result[i] += _mat[i + 4 * j] * rhs[i];
-            }
-            result[i] += _mat[i + 12];
-        }
-
-        result /= w;
-
-        return result;
-    }
-
     void Transformation::Apply() const
     {
         glMultMatrixd(_mat);
     }
+
+    Rotation::Rotation() : Transformation()
+    {
+
+    }
+
+     Rotation::Rotation(double degree, DCoordinate3& axis)
+     {
+         double radian = degree * PI / 180.0;
+         double cosine = cos(radian);
+         double sine = sin(radian);
+
+        _mat[0] = 1 + (axis[1] * axis[1]  + axis[2] * axis[2]) * (cosine - 1);
+        _mat[1] = axis[0] * axis[1] * (1 - cosine) - axis[2] * sine;
+        _mat[2] = axis[1] * sine + (1 - cosine) * axis[0] * axis[2];
+        _mat[3] = 0.0;
+
+        _mat[4] = axis[2] * sine - axis[0] * axis[1] * (1 - cosine);
+        _mat[5] = 1 + (axis[0] * axis[0] + axis[2] * axis[2]) * (cosine - 1);
+        _mat[6] = -axis[0] * sine - (1 - cosine) * axis[1] * axis[2];
+        _mat[7] = 0.0;
+
+        _mat[8] = -axis[1] * sine + (1 - cosine) * axis[0] * axis[2];
+        _mat[9] = axis[0] * sine + (1 - cosine) * axis[1] * axis[2];
+        _mat[10] = 1 + (axis[0] * axis[0] + axis[1] * axis[1]) * (cosine - 1);
+        _mat[11] = 0.0;
+
+        _mat[12] = 0.0;
+        _mat[13] = 0.0;
+        _mat[14] = 0.0;
+        _mat[15] = 1.0;
+    }
+
+     // output to stream
+     std::ostream& operator <<(std::ostream& lhs, const Transformation& rhs)
+     {
+         lhs << "Rotation" << std::endl;
+         for (unsigned int i = 0; i < 16; ++i)
+         {
+             lhs << rhs._mat[i];
+             if ((i + 1) % 4 == 0)
+             {
+                 lhs << std::endl;
+             }
+             else
+             {
+                lhs << ", ";
+             }
+         }
+         lhs << std::endl;
+     }
 }

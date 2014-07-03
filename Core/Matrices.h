@@ -603,35 +603,4 @@ namespace cagd
 
         return lhs;
     }
-
-    //--------------------------------------------------------
-    // implementation of class RotationMatrix
-    //--------------------------------------------------------
-
-    // constructor
-    //RotationMatrix::RotationMatrix(): Matrix<double>(3, 3)
-    //{
-    //}
-
-    //-----------------------------------------------------
-    // implementation of class RotationMatrix
-    //-----------------------------------------------------
-
-    // constructor
-//    XRotationMatrix::XRotationMatrix(int theta): RotationMatrix()
-//    {
-//        double rad_theta = 0;//theta * PI / 180;
-
-//        this->_data[0][0] = 1;
-//        this->_data[0][1] = 0;
-//        this->_data[0][2] = 0;
-
-//        this->_data[1][0] = 0;
-//        this->_data[1][1] = cos(rad_theta);
-//        this->_data[1][2] = -sin(rad_theta);
-
-//        this->_data[2][1] = 0;
-//        this->_data[2][2] = sin(rad_theta);
-//        this->_data[2][3] = cos(rad_theta);
-//    }
 }

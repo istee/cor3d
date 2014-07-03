@@ -93,6 +93,10 @@ namespace cagd
 
         // normalize
         DCoordinate3& normalize();
+
+        DCoordinate3& XNormal();
+        DCoordinate3& YNormal();
+        DCoordinate3& ZNormal();
     };
 
     //-------------------------------------
@@ -271,6 +275,33 @@ namespace cagd
 
         if (l && l != 1.0)
             *this /= l;
+
+        return *this;
+    }
+
+    inline DCoordinate3& DCoordinate3::XNormal()
+    {
+        _data[0] = 1.0;
+        _data[1] = 0.0;
+        _data[2] = 0.0;
+
+        return *this;
+    }
+
+    inline DCoordinate3& DCoordinate3::YNormal()
+    {
+        _data[0] = 0.0;
+        _data[1] = 1.0;
+        _data[2] = 0.0;
+
+        return *this;
+    }
+
+    inline DCoordinate3& DCoordinate3::ZNormal()
+    {
+        _data[0] = 0.0;
+        _data[1] = 0.0;
+        _data[2] = 1.0;
 
         return *this;
     }

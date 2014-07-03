@@ -14,7 +14,7 @@
 #include "../Model/Skeleton.h"
 #include "../Core/Lights.h"
 #include "../Core/DCoordinates3.h"
-#include "../Core/Matrices.h"
+#include "../Core/Transformations.h"
 
 class GLWidget: public QGLWidget
 {
@@ -46,9 +46,9 @@ private:
 
     double                  _reposition_unit;
 
-    cagd::XRotationMatrix x_rot_mat;
-    cagd::YRotationMatrix y_rot_mat;
-    cagd::ZRotationMatrix z_rot_mat;
+    cagd::Rotation          x_rot_mat;
+    cagd::Rotation          y_rot_mat;
+    cagd::Rotation          z_rot_mat;
 
     double                  mouse_pressed_x, mouse_pressed_y;
     double                  mouse_pressed_trans_x, mouse_pressed_trans_y, mouse_pressed_trans_z;
@@ -58,7 +58,7 @@ private:
     bool drag;
     unsigned int _drag_type;
     cagd::DCoordinate3 _drag_offset;
-    cagd::ColumnMatrix<double> _initial_normal;
+    cagd::DCoordinate3 _initial_normal;
 
     GLuint _dl_grid;
 
