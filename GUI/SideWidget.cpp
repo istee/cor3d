@@ -29,6 +29,13 @@ void SideWidget::set_trans_z(double value)
     trans_z_spin_box->setValue(value);
 }
 
+void SideWidget::selected_joint(double x, double y, double z)
+{
+    selected_x->setValue(x);
+    selected_y->setValue(y);
+    selected_z->setValue(z);
+}
+
 void SideWidget::on_checkBox_render_mesh_toggled(bool checked)
 {
     emit checkBox_render_mesh_toggled(-1, checked);

@@ -223,6 +223,83 @@ void Skeleton::Joint::Render() const
     glPopMatrix();
 }
 
+bool Skeleton::FirstPreviousBranch(int start_joint_id, int &previous_branch_joint_id, int &branch_link_index, int &chain_length) const
+{
+    const Joint *j = &_joints[start_joint_id];
+    bool branch = false;
+    int after_branch_joint_id;
+    chain_length = 0;
+
+    while (j->_prev_link >= 0 && !branch)
+    {
+        after_branch_joint_id = j->_id;
+        j = &_joints[_links[j->_prev_link]._start_index];
+        if (j->_next_links.size() > 1)
+        {
+            branch = true;
+            int i = 0;
+            while (i < j->_next_links.size() && _links[j->_next_links[i]]._end_index != after_branch_joint_id)
+            {
+                i++;
+            }
+            branch_link_index = i;
+        }
+        chain_length++;
+    }
+
+    previous_branch_joint_id = j->_id;
+
+    return j->_next_links.size() > 1 && j->_id != start_joint_id;
+}
+
+bool Skeleton::FirstNextBranch(int start_joint_id, int start_branch_link_index, int &next_branch_joint_id, int &chain_length) const
+{
+    if (start_branch_link_index >= _joints[start_joint_id]._next_links.size())
+    {
+        return false;
+    }
+
+    const Joint *j = &_joints[_links[_joints[start_joint_id]._next_links[start_branch_link_index]]._end_index];
+    chain_length = 1;
+    while (j->_next_links.size() == 1)
+    {
+        j = &_joints[_links[j->_next_links[0]]._end_index];
+        chain_length++;
+    }
+    next_branch_joint_id = j->_id;
+
+    return true;
+}
+
+void Skeleton::ForwardChain(unsigned int start_joint_id, unsigned int branch_link_index, unsigned int end_joint_id, Chain &chain) const
+{
+    const Joint *j = &_joints[start_joint_id];
+    chain._joints.push_back(*j);
+
+    j = &joints[_links[j->_next_links[branch_link_index]]._end_index];
+
+    while (j->_next_links.size() > 0 && j->_id != end_joint_id)
+    {
+        chain._joints.push_back(*j);
+        j = &joints[_links[j->_next_links[0]]._end_index];
+    }
+
+    chain._joints.push_back(*j);
+}
+
+void Skeleton::BackwardChain(unsigned int start_joint_id, unsigned int end_joint_id, Chain &chain)
+{
+    const Joint *j = &joints[start_joint_id];
+
+    while (j->_prev_link >= 0 && j->_id != end_joint_id)
+    {
+        chain._joints.push_back(*j);
+        j = &joints[_links[j->_prev_link]._start_index];
+    }
+
+    chain._joints.push_back(*j);
+}
+
 unsigned int Skeleton::Consruct_Chains(Joint *start, int index, int parent_index, int branch_link_index)
 {
     if (start->_next_links.size() > 0)
@@ -378,7 +455,7 @@ void Skeleton::SimpleForwardFABRIK(Chain *chain, DCoordinate3 target, double tol
     else
     {
         chain->_joints[chain->_joints.size() - 1]._position = new DCoordinate3(target);
-        for (int i = chain->_joints.size() - 2; i >= 0; i--)
+        for (int i = 0; i <= chain->_joints.size() - 2; i++)
         {
             double r = (*chain->_joints[i + 1]._position - *chain->_joints[i]._position).length();
             double lambda = lengths[i] / r;

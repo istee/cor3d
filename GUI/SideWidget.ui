@@ -436,7 +436,7 @@
       <cstring>trans_z_spin_box</cstring>
      </property>
     </widget>
-    <widget class="QDoubleSpinBox" name="doubleSpinBox">
+    <widget class="QDoubleSpinBox" name="selected_x">
      <property name="geometry">
       <rect>
        <x>70</x>
@@ -455,7 +455,7 @@
       <double>0.100000000000000</double>
      </property>
     </widget>
-    <widget class="QDoubleSpinBox" name="doubleSpinBox_2">
+    <widget class="QDoubleSpinBox" name="selected_y">
      <property name="geometry">
       <rect>
        <x>70</x>
@@ -474,7 +474,7 @@
       <double>0.100000000000000</double>
      </property>
     </widget>
-    <widget class="QDoubleSpinBox" name="doubleSpinBox_3">
+    <widget class="QDoubleSpinBox" name="selected_z">
      <property name="geometry">
       <rect>
        <x>70</x>

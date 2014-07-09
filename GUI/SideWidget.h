@@ -15,6 +15,7 @@ public slots:
     void set_trans_x(double value);
     void set_trans_y(double value);
     void set_trans_z(double value);
+    void selected_joint(double x, double y, double z);
 
 signals:
     void checkBox_render_mesh_toggled(int skeleton_id, bool value);

@@ -242,6 +242,9 @@ namespace cagd
         bool GetRenderJoints();
         void SetRenderJoints(bool value);
 
+        bool FirstPreviousBranch(int start_joint_id, int &previous_branch_joint_id, int &branch_link_index, int &chain_length) const;
+        bool FirstNextBranch(int start_joint_id, int start_branch_link_index, int &next_branch_joint_id, int &chain_length) const;
+
         void SetSelected(int selected_id);
         DCoordinate3* GetSelectedPosition() const;
         void MoveSelected(double x, double y, double z);
@@ -275,6 +278,26 @@ namespace cagd
             for (int i = 0; i < rhs._chains.size(); i++)
             {
                 lhs << rhs._chains[i] << std::endl;
+            }
+
+            int previous_branch_joint_id, branch_link_index, chain_length;
+            bool b;
+            lhs << "First previous branch: " << std::endl;
+            for (unsigned int i = 0; i < rhs._joints.size(); i++)
+            {
+                b = rhs.FirstPreviousBranch(i, previous_branch_joint_id, branch_link_index, chain_length);
+                lhs << "id:" << i << ", " << b <<  ", branch: " << previous_branch_joint_id << ", link:" << branch_link_index << ", length: " << chain_length << std::endl;
+            }
+
+            int next_branch_joint_id;
+            lhs << "First next: " << std::endl;
+            for (unsigned int i = 0; i < rhs._joints.size(); i++)
+            {
+                for (unsigned int j = 0; j < rhs._joints[i]._next_links.size(); j++)
+                {
+                    b = rhs.FirstNextBranch(11, 0, next_branch_joint_id, chain_length);
+                    lhs << "id:" << i << ", " << b <<  ", link index: " << j << ", next branch:" << next_branch_joint_id << ", length: " << chain_length << std::endl;
+                }
             }
 
             return lhs;

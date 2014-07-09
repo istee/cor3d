@@ -406,7 +406,7 @@ namespace cagd
     // output to stream
     std::ostream& operator <<(std::ostream& lhs, const Transformation& rhs)
     {
-        lhs << "Rotation" << std::endl;
+        lhs << "Transformation" << std::endl;
         for (unsigned int i = 0; i < 16; ++i)
         {
             lhs << rhs._mat[i];

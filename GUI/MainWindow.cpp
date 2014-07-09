@@ -88,6 +88,8 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     connect(_side_widget, SIGNAL(checkBox_render_mesh_toggled(int, bool)), _gl_widget, SLOT(set_render_mesh(int, bool)));
     connect(_side_widget, SIGNAL(checkBox_render_links_toggled(int, bool)), _gl_widget, SLOT(set_render_links(int, bool)));
     connect(_side_widget, SIGNAL(checkBox_render_joints_toggled(int, bool)), _gl_widget, SLOT(set_render_joints(int, bool)));
+
+    connect(_gl_widget, SIGNAL(selected_joint(double, double, double)), _side_widget, SLOT(selected_joint(double, double, double)));
 }
 
 //--------------------------------

@@ -139,6 +139,7 @@ void GLWidget::initializeGL()
     sk.AddLink(8, 0.9, -2.3, 0.7);
     sk.AddLink(0, 0.1, -1.9, -2.65);
     sk.AddLink(10, 0.1, -2.1, -3.8);
+    cout << sk;
     _skeletons.push_back(sk);
 
     drag = false;
@@ -334,6 +335,124 @@ void GLWidget::set_trans_z(double value)
     }
 }
 
+void GLWidget::Pick(double x, double y)
+{
+    GLint viewport[4];
+
+    glGetIntegerv(GL_VIEWPORT, viewport);
+
+    GLuint size = 4 * _skeletons[0].JointCount();
+    GLuint *pick_buffer = new GLuint[size];
+    if (pick_buffer)
+    {
+        glSelectBuffer(size, pick_buffer);
+
+        glRenderMode(GL_SELECT);
+
+        glInitNames();
+        glPushName(0);
+
+        GLfloat projection_matrix[16];
+        glGetFloatv(GL_PROJECTION_MATRIX, projection_matrix);
+
+        glMatrixMode(GL_PROJECTION);
+
+        glPushMatrix();
+
+        glLoadIdentity();
+        gluPickMatrix((GLdouble)x, (GLdouble)(viewport[3] - y), 5.0, 5.0, viewport);
+
+        glMultMatrixf(projection_matrix);
+
+        glMatrixMode(GL_MODELVIEW);
+
+        glPushMatrix();
+
+        // rotating around the coordinate axes
+        glRotatef(_angle_x, 1.0, 0.0, 0.0);
+        glRotatef(_angle_y, 0.0, 1.0, 0.0);
+        glRotatef(_angle_z, 0.0, 0.0, 1.0);
+
+        // translate
+        glTranslated(_trans_x, _trans_y, _trans_z);
+
+        // scaling
+        glScalef(_zoom, _zoom, _zoom);
+
+        DCoordinate3 *selected_position = _skeletons[0].GetSelectedPosition();
+        if (selected_position)
+        {
+            RenderMoveArrows(selected_position, true);
+        }
+
+        // a kiválasztáshoz elégséges csak a joint-okat kirajzolni
+        _skeletons[0].RenderJoints(true, 6); // ahol true a glLoadName() függvény alkalmazását aktíválja
+        // ahogy bejárod a skeleton joint-jait a glLoadName függvénynek az egyes joint-ok id-ját kell átadnod
+    }
+
+    glPopMatrix();
+
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+
+    glMatrixMode(GL_MODELVIEW);
+
+    int nhits = glRenderMode(GL_RENDER);
+
+    if (nhits)
+    {
+        GLuint closest_selected = pick_buffer[3];
+        GLuint closest_depth    = pick_buffer[1];
+
+        for (GLuint i = 1; i < nhits; ++i)
+        {
+            GLuint offset = i * 4;
+            if (pick_buffer[offset + 1] < closest_depth)
+
+            {
+                closest_selected = pick_buffer[offset + 3];
+                closest_depth    = pick_buffer[offset + 1];
+            }
+        }
+
+        if (closest_selected < 6)
+        {
+            drag = true;
+            _drag_type = closest_selected;
+        }
+        else
+        {
+            _skeletons[0].SetSelected(closest_selected - 6);
+            DCoordinate3 *selected = _skeletons[0].GetSelectedPosition();
+            emit selected_joint((*selected)[0], (*selected)[1], (*selected)[2]);
+        }
+    }
+    else
+    {
+        drag = false;
+        _skeletons[0].SetSelected(-1);
+    }
+
+    delete pick_buffer, pick_buffer = 0;
+    updateGL();
+}
+
+void GLWidget::Drag(double x, double y, double z)
+{
+    emit selected_joint(x, y, z);
+    if (_drag_button)
+    {
+        _skeletons[0].MoveSelected(x, y, z);
+    }
+    else
+    {
+        DCoordinate3 *new_coord = _skeletons[0].GetSelectedPosition();
+        (*new_coord)[0] = x;
+        (*new_coord)[1] = y;
+        (*new_coord)[2] = z;
+    }
+}
+
 void GLWidget::mousePressEvent(QMouseEvent *event)
 {
     event->accept();
@@ -343,135 +462,18 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
     mouse_pressed_trans_y = _trans_y;
     mouse_pressed_trans_z = _trans_z;
     translation = Translate(_trans_x, _trans_y, _trans_z);
-    if (event->button() == Qt::LeftButton)
+    Pick(mouse_pressed_x, mouse_pressed_y);
+    if (drag)
     {
-        GLint viewport[4];
-
-        glGetIntegerv(GL_VIEWPORT, viewport);
-
-        GLuint size = 4 * _skeletons[0].JointCount();
-        GLuint *pick_buffer = new GLuint[size];
-        if (pick_buffer)
+        if (event->button() == Qt::LeftButton)
         {
-            glSelectBuffer(size, pick_buffer);
-
-            glRenderMode(GL_SELECT);
-
-            glInitNames();
-            glPushName(0);
-
-            GLfloat projection_matrix[16];
-            glGetFloatv(GL_PROJECTION_MATRIX, projection_matrix);
-
-            glMatrixMode(GL_PROJECTION);
-
-            glPushMatrix();
-
-                glLoadIdentity();
-                gluPickMatrix((GLdouble)event->x(), (GLdouble)(viewport[3] - event->y()), 5.0, 5.0, viewport);
-
-                glMultMatrixf(projection_matrix);
-
-                glMatrixMode(GL_MODELVIEW);
-
-                glPushMatrix();
-
-                // rotating around the coordinate axes
-                glRotatef(_angle_x, 1.0, 0.0, 0.0);
-                glRotatef(_angle_y, 0.0, 1.0, 0.0);
-                glRotatef(_angle_z, 0.0, 0.0, 1.0);
-
-                // translate
-                glTranslated(_trans_x, _trans_y, _trans_z);
-
-                // scaling
-                glScalef(_zoom, _zoom, _zoom);
-
-                DCoordinate3 *selected_position = _skeletons[0].GetSelectedPosition();
-                if (selected_position)
-                {
-                    RenderMoveArrows(selected_position, true);
-                }
-
-                // a kiválasztáshoz elégséges csak a joint-okat kirajzolni
-                _skeletons[0].RenderJoints(true, 6); // ahol true a glLoadName() függvény alkalmazását aktíválja
-                    // ahogy bejárod a skeleton joint-jait a glLoadName függvénynek az egyes joint-ok id-ját kell átadnod
-                }
-
-            glPopMatrix();
-
-            glMatrixMode(GL_PROJECTION);
-            glPopMatrix();
-
-            glMatrixMode(GL_MODELVIEW);
-
-            int nhits = glRenderMode(GL_RENDER);
-
-            if (nhits)
-            {
-                GLuint closest_selected = pick_buffer[3];
-                GLuint closest_depth    = pick_buffer[1];
-
-                for (GLuint i = 1; i < nhits; ++i)
-                {
-                    GLuint offset = i * 4;
-                    if (pick_buffer[offset + 1] < closest_depth)
-
-                    {
-                        closest_selected = pick_buffer[offset + 3];
-                        closest_depth    = pick_buffer[offset + 1];
-                    }
-                }
-
-                if (closest_selected < 6)
-                {
-                    drag = true;
-                    _drag_type = closest_selected;
-                }
-                else
-                {
-                    _skeletons[0].SetSelected(closest_selected - 6);
-                }
-            }
-            else
-            {
-                drag = false;
-                _skeletons[0].SetSelected(-1);
-            }
-
-            delete pick_buffer, pick_buffer = 0;
-            updateGL();
+            _drag_button = 0;
         }
-
-    // mouse coordinates to world coordinates test code
-//    GLint viewport[4]; //var to hold the viewport info
-//    GLdouble modelview[16]; //var to hold the modelview info
-//    GLdouble projection[16]; //var to hold the projection matrix info
-//    GLfloat winX, winY, winZ; //variables to hold screen x,y,z coordinates
-//    GLdouble worldX, worldY, worldZ; //variables to hold world x,y,z coordinates
-
-//    glGetDoublev( GL_MODELVIEW_MATRIX, modelview ); //get the modelview info
-//    glGetDoublev( GL_PROJECTION_MATRIX, projection ); //get the projection matrix info
-//    glGetIntegerv( GL_VIEWPORT, viewport ); //get the viewport info
-
-//    winX = (float)event->x();
-//    winY = (float)viewport[3] - (float)event->y();
-//    winZ = 1.0;
-
-//    float modelViewMatrix[16];
-//    glGetFloatv(GL_MODELVIEW_MATRIX, modelViewMatrix);
-
-//    glMatrixMode(GL_MODELVIEW);
-//    glLoadIdentity();
-
-//    //get the world coordinates from the screen coordinates
-//    gluUnProject( winX, winY, winZ, modelview, projection, viewport, &worldX, &worldY, &worldZ);
-
-//    glMatrixMode(GL_MODELVIEW);
-//    glLoadIdentity();
-//    glMultMatrixf(modelViewMatrix);
-
-//    cout << worldX << " " << worldY << " " << worldZ << endl;
+        else if (event->button() == Qt::RightButton)
+        {
+            _drag_button = 1;
+        }
+    }
 }
 
 void GLWidget::mouseMoveEvent(QMouseEvent *event)
@@ -488,10 +490,22 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
         double matModelView[16], matProjection[16];
         int viewport[4];
 
-        // get matrix and viewport:
-        glGetDoublev( GL_MODELVIEW_MATRIX, matModelView );
-        glGetDoublev( GL_PROJECTION_MATRIX, matProjection );
-        glGetIntegerv( GL_VIEWPORT, viewport );
+        // stores/duplicates the original model view matrix
+        glPushMatrix();
+
+            // applying transformations
+            glRotatef(_angle_x, 1.0, 0.0, 0.0);
+            glRotatef(_angle_y, 0.0, 1.0, 0.0);
+            glRotatef(_angle_z, 0.0, 0.0, 1.0);
+
+            glTranslated(_trans_x, _trans_y, _trans_z);
+
+            glScaled(_zoom, _zoom, _zoom);
+
+            // get matrix and viewport:
+            glGetDoublev(GL_MODELVIEW_MATRIX, matModelView);
+            glGetDoublev(GL_PROJECTION_MATRIX, matProjection);
+            glGetIntegerv(GL_VIEWPORT, viewport);
 
         Transformation TMV(matModelView);
         Transformation TIMV;
@@ -499,8 +513,9 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
         if (TMV.GetInverse(TIMV))
         {
             Transformation TIMVT = TIMV.Transpose();
+            cout << TIMVT;
             DCoordinate3 n = TIMVT * _initial_normal;
-//            cout << "before normalizing: " << n << " , " << n.length() << endl;
+            //cout << "before normalizing: " << n << " , " << n.length() << endl;
             n.normalize();
 
             DCoordinate3 p0 = DCoordinate3(*(_skeletons[0].GetSelectedPosition()));
@@ -533,50 +548,63 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 
             double d = ((p0 - l1) * n) / ((l2 - l1) * n);
 
-            cout << "d: " << d << endl;
+            //cout << "d: " << d << endl;
 
             if (d >= 0.0 && d <= 1.0)
             {
                 DCoordinate3 result = l1 + ((l2 - l1) * d);
                 DCoordinate3 rotated_result = z_rot_mat * y_rot_mat * x_rot_mat * result;
-//                cout << "d: " << d << endl;
-//                cout << "normal: " << n << endl;
-//                cout << "p0: " << p0 << endl;
-//                cout << "point: " << result << endl;
-
+                //                cout << "d: " << d << endl;
+                //                cout << "normal: " << n << endl;
+                //                cout << "p0: " << p0 << endl;
+                //                cout << "point: " << result << endl;
 
                 DCoordinate3 *new_coord = _skeletons[0].GetSelectedPosition();
-                if (_drag_type == 0)
+
+                switch(_drag_type)
                 {
-                    (*new_coord)[0] = rotated_result[0] - 1;
-                    //_skeletons[0].MoveSelected(rotated_result[0] - 1, (*new_coord)[1], (*new_coord)[2]);
-                }
-                else if (_drag_type == 1)
-                {
-                    (*new_coord)[1] = rotated_result[1];
-                    //_skeletons[0].MoveSelected((*new_coord)[0], rotated_result[1] - 1, (*new_coord)[2]);
-                }
-                else if (_drag_type == 2)
-                {
-                    (*new_coord)[2] = rotated_result[2];
-                }
-                else if (_drag_type == 3)
-                {
-                    (*new_coord)[1] = rotated_result[1] - 0.5;
-                    (*new_coord)[2] = -rotated_result[2];
-                }
-                else if (_drag_type == 4)
-                {
-                    (*new_coord)[0] = rotated_result[0] - 0.5;
-                    (*new_coord)[2] = -rotated_result[2];
-                }
-                else if (_drag_type == 5)
-                {
-                    (*new_coord)[0] = rotated_result[0] - 0.5;
-                    (*new_coord)[1] = rotated_result[1] - 0.5;
+                case 0:
+                    {
+                        Drag(rotated_result[0] - 1, (*new_coord)[1], (*new_coord)[2]);
+                        break;
+                    }
+
+                case 1:
+                    {
+                        Drag((*new_coord)[0], rotated_result[1] - 1, (*new_coord)[2]);
+                        break;
+                    }
+
+                case 2:
+                    {
+                        Drag((*new_coord)[0], (*new_coord)[1], rotated_result[2] - 1);
+                        break;
+                    }
+
+                case 3:
+                    {
+
+                        Drag((*new_coord)[0], rotated_result[1] - 0.5, -rotated_result[2]);
+                        break;
+                    }
+
+                case 4:
+                    {
+
+                        Drag(rotated_result[0] - 0.5, (*new_coord)[1], -rotated_result[2]);
+                        break;
+                    }
+
+                case 5:
+                    {
+                        Drag(rotated_result[0] - 0.5, rotated_result[1] - 0.5, (*new_coord)[2]);
+                        break;
+                    }
                 }
             }
         }
+
+        glPopMatrix();
     }
     else
     {
@@ -585,47 +613,18 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 
         DCoordinate3 mouse = DCoordinate3(disp_x, disp_y);
         DCoordinate3 transform = z_rot_mat * y_rot_mat * x_rot_mat * translation * mouse;
-        //cout << transform;
 
         emit trans_xChanged(transform[0]);
         emit trans_yChanged(transform[1]);
         emit trans_zChanged(transform[2]);
     }
 
-
-//    if (event->button() == Qt::LeftButton)
-//    {
-//        if (event->modifiers() & Qt::ShiftModifier)
-//        {
-//            Qt::AltModifier, Qt::ControlModifier
-//        }
-//    }
     updateGL();
 }
 
 void GLWidget::wheelEvent(QWheelEvent *event)
 {
     event->accept();
-//    if (((event->modifiers() & Qt::ControlModifier) || (event->modifiers() & Qt::AltModifier) || (event->modifiers() & Qt::ShiftModifier)) && _joint_position)
-//    {
-//        if ((event->modifiers() & Qt::ControlModifier))
-
-//        {
-//            (*_joint_position)[0] += event->delta() / 120.0 * _reposition_unit;
-//        }
-
-//        if ((event->modifiers() & Qt::AltModifier))
-//        {
-//            (*_joint_position)[1] += event->delta() / 120.0 * _reposition_unit;
-
-//        }
-
-//        if ((event->modifiers() & Qt::ShiftModifier))
-//        {
-//            (*_joint_position)[2] += event->delta() / 120.0 * _reposition_unit;
-//        }
-//    }
-//    else
     {
         double new_zoom = _zoom + event->delta() / 1200.0;
         if (new_zoom < 0.01)
@@ -719,6 +718,7 @@ void GLWidget::RenderMoveArrows(DCoordinate3 *position, bool glLoad)
         }
         cube.Render();
     glPopMatrix();
+
     glPushMatrix();
         MatFBTurquoise.Apply();
         glMultMatrixf(matrix);
@@ -729,6 +729,7 @@ void GLWidget::RenderMoveArrows(DCoordinate3 *position, bool glLoad)
         }
         cube.Render();
     glPopMatrix();
+
     glPushMatrix();
         MatFBEmerald.Apply();
         glMultMatrixf(matrix);

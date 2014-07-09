@@ -57,13 +57,15 @@ private:
     std::vector<cagd::Skeleton>   _skeletons;
 
     bool drag;
-    unsigned int _drag_type;
+    unsigned int _drag_type, _drag_button;
     cagd::DCoordinate3 _drag_offset;
     cagd::DCoordinate3 _initial_normal;
 
     GLuint _dl_grid;
 
     void RenderMoveArrows(cagd::DCoordinate3 *position, bool glLoad = false);
+    void Pick(double x, double y);
+    void Drag(double x, double y, double z);
 
 public:
     // special and default constructor
@@ -106,4 +108,6 @@ signals:
     void trans_xChanged(double newValue);
     void trans_yChanged(double newValue);
     void trans_zChanged(double newValue);
+
+    void selected_joint(double x, double y, double z);
 };
