@@ -32,12 +32,19 @@ namespace cagd
 
         class Joint : public BaseEntity
         {
+            enum Type{ROTATIONAL, TRANSLATIONAL};
+
         public:
-            DCoordinate3        *_position;
+            DCoordinate3        *_position; // p_j = s_j
             DCoordinate3        _scale;
             TriangulatedMesh3   *_mesh;
             int                 _prev_link;
             std::vector<int>    _next_links;
+
+            DCoordinate3        *_unit_axis; // v_j
+            double              *_theta;     // theta_j
+            Type                 _type;      // page 5
+            std::vector<int>     _dependent_end_effector_list;
 
             Joint(unsigned int id, DCoordinate3 *position, TriangulatedMesh3 *mesh, int prev_link = -1): BaseEntity(id), _position(position), _mesh(mesh)
             {
@@ -189,12 +196,24 @@ namespace cagd
         public:
             int                     _id;
             int                     _parent_id;
+            bool                    _forward;
             std::vector<Joint>      _joints;
 
-            Chain(int id, int parent_id)
+            Chain(int id, int parent_id, bool forward)
             {
                 _id         = id;
                 _parent_id  = parent_id;
+                _forward    = forward;
+            }
+
+            DCoordinate3 GetChainStart()
+            {
+                return _forward ? *_joints[0]._position : *_joints[_joints.size() - 1]._position;
+            }
+
+            DCoordinate3 GetChainEnding()
+            {
+                return _forward ? *_joints[_joints.size() - 1]._position : *_joints[0]._position;
             }
 
             friend std::ostream& operator <<(std::ostream& lhs, const Chain& rhs)
@@ -223,9 +242,15 @@ namespace cagd
 
         bool                        _render_mesh, _render_links, _render_joints;
 
-        unsigned int Consruct_Chains(Joint *start, int index, int parent_index, int branch_link_index = -1);
-        void FABRIK(Chain *chain, DCoordinate3 target, double tolerance);
+        unsigned int ConstructChains(int joint_index, int chain_index, int chain_parent_index, int branch_link_index = -1);
+        void FABRIK(Chain *chain, DCoordinate3 target, double tolerance/**/);
         void SimpleForwardFABRIK(Chain *chain, DCoordinate3 target, double tolerance);
+
+        // calculates the Jacobian matrix based on formulas given in page 5 (you will have to decompose the resulted vectors to coordinates)
+        // store the Jacobian in a templated matrix with template parameter double
+        // implement the algorithm presented in Section 3
+
+        void JacobianTransposeAsInerse(Chain *chain, const DCoordinate3& target, double tolerance);
 
     public:
 
@@ -244,10 +269,13 @@ namespace cagd
 
         bool FirstPreviousBranch(int start_joint_id, int &previous_branch_joint_id, int &branch_link_index, int &chain_length) const;
         bool FirstNextBranch(int start_joint_id, int start_branch_link_index, int &next_branch_joint_id, int &chain_length) const;
+        void ForwardChain(unsigned int start_joint_id, unsigned int branch_link_index, unsigned int end_joint_id, Chain &chain) const;
+        void BackwardChain(unsigned int start_joint_id, unsigned int end_joint_id, Chain &chain) const;
 
         void SetSelected(int selected_id);
         DCoordinate3* GetSelectedPosition() const;
         void MoveSelected(double x, double y, double z);
+        void FinalizeMove();
 
         void Render(bool glLoad) const;
         void RenderLinks() const;
@@ -280,25 +308,25 @@ namespace cagd
                 lhs << rhs._chains[i] << std::endl;
             }
 
-            int previous_branch_joint_id, branch_link_index, chain_length;
-            bool b;
-            lhs << "First previous branch: " << std::endl;
-            for (unsigned int i = 0; i < rhs._joints.size(); i++)
-            {
-                b = rhs.FirstPreviousBranch(i, previous_branch_joint_id, branch_link_index, chain_length);
-                lhs << "id:" << i << ", " << b <<  ", branch: " << previous_branch_joint_id << ", link:" << branch_link_index << ", length: " << chain_length << std::endl;
-            }
+//            int previous_branch_joint_id, branch_link_index, chain_length;
+//            bool b;
+//            lhs << "First previous branch: " << std::endl;
+//            for (unsigned int i = 0; i < rhs._joints.size(); i++)
+//            {
+//                b = rhs.FirstPreviousBranch(i, previous_branch_joint_id, branch_link_index, chain_length);
+//                lhs << "id:" << i << ", " << b <<  ", branch: " << previous_branch_joint_id << ", link:" << branch_link_index << ", length: " << chain_length << std::endl;
+//            }
 
-            int next_branch_joint_id;
-            lhs << "First next: " << std::endl;
-            for (unsigned int i = 0; i < rhs._joints.size(); i++)
-            {
-                for (unsigned int j = 0; j < rhs._joints[i]._next_links.size(); j++)
-                {
-                    b = rhs.FirstNextBranch(11, 0, next_branch_joint_id, chain_length);
-                    lhs << "id:" << i << ", " << b <<  ", link index: " << j << ", next branch:" << next_branch_joint_id << ", length: " << chain_length << std::endl;
-                }
-            }
+//            int next_branch_joint_id;
+//            lhs << "First next: " << std::endl;
+//            for (unsigned int i = 0; i < rhs._joints.size(); i++)
+//            {
+//                for (unsigned int j = 0; j < rhs._joints[i]._next_links.size(); j++)
+//                {
+//                    b = rhs.FirstNextBranch(11, 0, next_branch_joint_id, chain_length);
+//                    lhs << "id:" << i << ", " << b <<  ", link index: " << j << ", next branch:" << next_branch_joint_id << ", length: " << chain_length << std::endl;
+//                }
+//            }
 
             return lhs;
         }

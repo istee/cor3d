@@ -64,7 +64,6 @@ void GLWidget::initializeGL()
     // initial values of transformation parameters
     _zoom = 1.0;
     _angle_x = _angle_y = _angle_z = 0.0;
-    _angle_x = -90;
     _trans_x = _trans_y = _trans_z = 0.0;
 
     _initial_normal.ZNormal();
@@ -139,6 +138,8 @@ void GLWidget::initializeGL()
     sk.AddLink(8, 0.9, -2.3, 0.7);
     sk.AddLink(0, 0.1, -1.9, -2.65);
     sk.AddLink(10, 0.1, -2.1, -3.8);
+    //sk.AddLink(11, 0.1, -2.1, -5.8);
+    //sk.AddLink(12, 0.1, -2.1, -7.8);
     cout << sk;
     _skeletons.push_back(sk);
 
@@ -513,9 +514,12 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
         if (TMV.GetInverse(TIMV))
         {
             Transformation TIMVT = TIMV.Transpose();
+            TIMVT(0,3) = 0;
+            TIMVT(1,3) = 0;
+            TIMVT(2,3) = 0;
             cout << TIMVT;
             DCoordinate3 n = TIMVT * _initial_normal;
-            //cout << "before normalizing: " << n << " , " << n.length() << endl;
+            cout << "before normalizing: " << n << " , " << n.length() << endl;
             n.normalize();
 
             DCoordinate3 p0 = DCoordinate3(*(_skeletons[0].GetSelectedPosition()));
@@ -542,18 +546,20 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
             gluUnProject(winX, winY, 1.0, matModelView, matProjection, viewport, &x, &y, &z);
             l2 = DCoordinate3(x, y, z);
 
+            cout << l1 << endl << l2 << endl;
+
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
             glMultMatrixd(matModelView);
 
             double d = ((p0 - l1) * n) / ((l2 - l1) * n);
 
-            //cout << "d: " << d << endl;
+            cout << "d: " << d << endl;
 
             if (d >= 0.0 && d <= 1.0)
             {
                 DCoordinate3 result = l1 + ((l2 - l1) * d);
-                DCoordinate3 rotated_result = z_rot_mat * y_rot_mat * x_rot_mat * result;
+                DCoordinate3 rotated_result = TIMVT * result;
                 //                cout << "d: " << d << endl;
                 //                cout << "normal: " << n << endl;
                 //                cout << "p0: " << p0 << endl;
@@ -602,23 +608,69 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
                     }
                 }
             }
+            else
+            {
+                cout << "d isn't between 0 and 1 : " << d << endl;
+            }
         }
 
         glPopMatrix();
     }
     else
     {
-        double disp_x = (event->x() - mouse_pressed_x) / 100.0;
-        double disp_y = (mouse_pressed_y - event->y()) / 100.0;
+        double matModelView[16], matProjection[16];
+        int viewport[4];
 
-        DCoordinate3 mouse = DCoordinate3(disp_x, disp_y);
-        DCoordinate3 transform = z_rot_mat * y_rot_mat * x_rot_mat * translation * mouse;
+        // stores/duplicates the original model view matrix
+        glPushMatrix();
 
-        emit trans_xChanged(transform[0]);
-        emit trans_yChanged(transform[1]);
-        emit trans_zChanged(transform[2]);
+        // applying transformations
+        glRotatef(_angle_x, 1.0, 0.0, 0.0);
+        glRotatef(_angle_y, 0.0, 1.0, 0.0);
+        glRotatef(_angle_z, 0.0, 0.0, 1.0);
+
+        glTranslated(_trans_x, _trans_y, _trans_z);
+
+        glScaled(_zoom, _zoom, _zoom);
+
+        // get matrix and viewport:
+        glGetDoublev(GL_MODELVIEW_MATRIX, matModelView);
+        glGetDoublev(GL_PROJECTION_MATRIX, matProjection);
+        glGetIntegerv(GL_VIEWPORT, viewport);
+
+        Transformation TMV(matModelView);
+        Transformation TIMV;
+
+        glPopMatrix();
+
+        if (TMV.GetInverse(TIMV))
+        {
+            double disp_x = (event->x() - mouse_pressed_x) / 100.0;
+            double disp_y = (mouse_pressed_y - event->y()) / 100.0;
+
+            HCoordinate3 mouse = HCoordinate3(disp_x, disp_y);
+
+            Transformation TIMVT = TIMV.Transpose();
+            TIMVT(0,3) = mouse_pressed_trans_x;
+            TIMVT(1,3) = mouse_pressed_trans_y;
+            TIMVT(2,3) = mouse_pressed_trans_z;
+            HCoordinate3 transform = TIMVT * mouse;
+
+            //DCoordinate3 transform = z_rot_mat * y_rot_mat * x_rot_mat * translation * mouse;
+
+            emit trans_xChanged(transform[0]);
+            emit trans_yChanged(transform[1]);
+            emit trans_zChanged(transform[2]);
+        }
     }
 
+    updateGL();
+}
+
+void GLWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+    event->accept();
+    _skeletons[0].FinalizeMove();
     updateGL();
 }
 

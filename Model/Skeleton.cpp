@@ -149,7 +149,14 @@ void Skeleton::RenderChains() const
         Link link = Link(-1, 0, 0, _link_mesh);
         for(std::vector<Joint>::const_iterator it = ++chain_it->_joints.begin(); it != chain_it->_joints.end(); ++it)
         {
-            link.Render((it - 1)->_position, it->_position);
+            if (chain_it->_forward)
+            {
+                link.Render((it - 1)->_position, it->_position);
+            }
+            else
+            {
+                link.Render(it->_position, (it - 1)->_position);
+            }
         }
     }
 }
@@ -276,102 +283,72 @@ void Skeleton::ForwardChain(unsigned int start_joint_id, unsigned int branch_lin
     const Joint *j = &_joints[start_joint_id];
     chain._joints.push_back(*j);
 
-    j = &joints[_links[j->_next_links[branch_link_index]]._end_index];
+    j = &_joints[_links[j->_next_links[branch_link_index]]._end_index];
 
     while (j->_next_links.size() > 0 && j->_id != end_joint_id)
     {
         chain._joints.push_back(*j);
-        j = &joints[_links[j->_next_links[0]]._end_index];
+        j = &_joints[_links[j->_next_links[0]]._end_index];
     }
 
     chain._joints.push_back(*j);
 }
 
-void Skeleton::BackwardChain(unsigned int start_joint_id, unsigned int end_joint_id, Chain &chain)
+void Skeleton::BackwardChain(unsigned int start_joint_id, unsigned int end_joint_id, Chain &chain) const
 {
-    const Joint *j = &joints[start_joint_id];
+    const Joint *j = &_joints[start_joint_id];
 
     while (j->_prev_link >= 0 && j->_id != end_joint_id)
     {
         chain._joints.push_back(*j);
-        j = &joints[_links[j->_prev_link]._start_index];
+        j = &_joints[_links[j->_prev_link]._start_index];
     }
 
     chain._joints.push_back(*j);
 }
 
-unsigned int Skeleton::Consruct_Chains(Joint *start, int index, int parent_index, int branch_link_index)
+unsigned int Skeleton::ConstructChains(int joint_index, int chain_index, int chain_parent_index, int branch_link_index)
 {
-    if (start->_next_links.size() > 0)
+    if (branch_link_index == -1)
     {
-        if (branch_link_index >= 0)
+        int chain_number = 0;
+        for (int i = 0; i < _joints[joint_index]._next_links.size(); i++)
         {
-            Chain chain = Chain(index, parent_index);
-            chain._joints.push_back(*start);
-            start = &_joints[_links[start->_next_links[branch_link_index]]._end_index];
-            while (start->_next_links.size() == 1)
-            {
-                chain._joints.push_back(*start);
-                start = &_joints[_links[start->_next_links[0]]._end_index];
-            }
-            chain._joints.push_back(*start);
-            _chains.push_back(chain);
-            return 1 + Consruct_Chains(start, index + 1, index);
+            chain_number += ConstructChains(joint_index, chain_index + chain_number, chain_parent_index, i);
         }
-        else
-        {
-            int index_increase = 0;
-            for (int i = 0; i < start->_next_links.size(); i++)
-            {
-                index_increase += Consruct_Chains(start, index + index_increase, parent_index, i);
-            }
-        }
+
+        return chain_number;
     }
-    return 0;
+    else
+    {
+        int next_branch_joint_id, chain_length;
+        FirstNextBranch(joint_index, branch_link_index, next_branch_joint_id, chain_length);
+        Chain chain = Chain(chain_index, chain_parent_index, false);
+        BackwardChain(next_branch_joint_id, joint_index, chain);
+        _chains.push_back(chain);
+        ConstructChains(next_branch_joint_id, chain_index + 1, chain_index);
+
+        return 1;
+    }
 }
 
 void Skeleton::SetSelected(int selected_id)
 {
     _chains_moved = false;
-    if (_selected != selected_id)
-    {
-        _chains.clear();
-    }
+    _chains.clear();
     _selected = selected_id;
+
     if (_selected >= 0)
     {
-        Joint *j = &_joints[_selected];
-        bool junction = false;
-        int branch_joint_id;
-        int branch_link_index;
-        while (j->_prev_link >= 0 && !junction)
-        {
-            branch_joint_id = j->_id;
-            j = &_joints[_links[j->_prev_link]._start_index];
-            if (j->_next_links.size() > 1)
-            {
-                junction = true;
-                int i = 0;
-                while (i < j->_next_links.size() && _links[j->_next_links[i]]._end_index != branch_joint_id)
-                {
-                    i++;
-                }
-                branch_link_index = i;
-            }
-        }
-
-        Chain chain = Chain(0, -1);
-        chain._joints.push_back(*j);
-        j = &_joints[_links[j->_next_links[branch_link_index]]._end_index];
-        while (j->_id != _selected)
-        {
-            chain._joints.push_back(*j);
-            j = &_joints[_links[j->_next_links[0]]._end_index];
-        }
-        chain._joints.push_back(*j);
+        Chain chain = Chain(0, -1, true);
+        int previous_branch_joint_id, branch_link_index, chain_length;
+        FirstPreviousBranch(_selected, previous_branch_joint_id, branch_link_index, chain_length);
+        ForwardChain(previous_branch_joint_id, branch_link_index, _selected, chain);
         _chains.push_back(chain);
 
-        Consruct_Chains(j, 1, 0);
+        int chain_index = 1;
+
+        ConstructChains(_selected, chain_index, 0);
     }
 }
 
@@ -379,11 +356,10 @@ void Skeleton::MoveSelected(double x, double y, double z)
 {
     _chains_moved = true;
     DCoordinate3 target(x, y, z);
-    FABRIK(&_chains[0], target, 0.1);
-    cout << *this << endl;
+    FABRIK(&_chains[0], target, 1e-10);
     for (unsigned int i = 1; i < _chains.size(); i++)
     {
-        SimpleForwardFABRIK(&_chains[i], *_chains[_chains[i]._parent_id]._joints[_chains[_chains[i]._parent_id]._joints.size() - 1]._position, 0.1);
+        SimpleForwardFABRIK(&_chains[i], _chains[_chains[i]._parent_id].GetChainEnding(), 1e-10);
     }
 }
 
@@ -436,32 +412,46 @@ void Skeleton::FABRIK(Chain *chain, DCoordinate3 target, double tolerance)
 void Skeleton::SimpleForwardFABRIK(Chain *chain, DCoordinate3 target, double tolerance)
 {
     double *lengths = new double[chain->_joints.size()];
-    double total_length = 0.0;
     for (int i = 0; i < chain->_joints.size() - 1; i++)
     {
         lengths[i] = (*chain->_joints[i]._position - *chain->_joints[i + 1]._position).length();
-        total_length += lengths[i];
     }
-    double distance = (target - *chain->_joints[chain->_joints.size() - 1]._position).length();
-    if (distance > total_length)
+
+    chain->_joints[chain->_joints.size() - 1]._position = new DCoordinate3(target);
+    for (int i = chain->_joints.size() - 2; i >= 0; i--)
     {
-        for (int i = 0; i < chain->_joints.size() - 1; i++)
+        double r = (*chain->_joints[i + 1]._position - *chain->_joints[i]._position).length();
+        double lambda = lengths[i] / r;
+        chain->_joints[i]._position = new DCoordinate3((1 - lambda) * *chain->_joints[i + 1]._position + lambda * *chain->_joints[i]._position);
+    }
+
+    DCoordinate3 offset = chain->GetChainStart() - target;
+    for (int i = 0; i < chain->_joints.size(); i++)
+    {
+        chain->_joints[i]._position = new DCoordinate3(*chain->_joints[i]._position - offset);
+    }
+}
+
+void Skeleton::FinalizeMove()
+{
+    for (std::vector<Chain>::const_iterator chain_it = _chains.begin(); chain_it != _chains.end(); chain_it++)
+    {
+        if (chain_it->_forward)
         {
-            double r = (target - *chain->_joints[i]._position).length();
-            double lambda = lengths[i] / r;
-            chain->_joints[i + 1]._position = new DCoordinate3((1 - lambda) * *chain->_joints[i]._position + lambda * target);
+            for(std::vector<Joint>::const_iterator it = ++chain_it->_joints.begin(); it != chain_it->_joints.end(); ++it)
+            {
+                _joints[it->_id]._position = it->_position;
+            }
+        }
+        else
+        {
+            for(std::vector<Joint>::const_iterator it = --chain_it->_joints.end(); it >= chain_it->_joints.begin(); --it)
+            {
+                _joints[it->_id]._position = it->_position;
+            }
         }
     }
-    else
-    {
-        chain->_joints[chain->_joints.size() - 1]._position = new DCoordinate3(target);
-        for (int i = 0; i <= chain->_joints.size() - 2; i++)
-        {
-            double r = (*chain->_joints[i + 1]._position - *chain->_joints[i]._position).length();
-            double lambda = lengths[i] / r;
-            chain->_joints[i]._position = new DCoordinate3((1 - lambda) * *chain->_joints[i + 1]._position + lambda * *chain->_joints[i]._position);
-        }
-    }
+    SetSelected(_selected);
 }
 
 DCoordinate3* Skeleton::GetSelectedPosition() const

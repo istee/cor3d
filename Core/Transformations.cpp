@@ -78,9 +78,6 @@ namespace cagd
 
     Transformation& Transformation::operator *=(const Transformation& rhs)
     {
-        std::cout << *this;
-        std::cout << rhs;
-
         double result[16];
         for (unsigned int i = 0; i < 16; ++i)
         {
@@ -181,7 +178,7 @@ namespace cagd
             w += _mat[3 + 4 * j] * rhs[j];
         }
         w += _mat[15];
-        std::cout << "w: " << w << std::endl;
+        //std::cout << "w: " << w << std::endl;
 
         DCoordinate3 result;
 
@@ -208,7 +205,7 @@ namespace cagd
         {
             for (int j = 0; j < 4; ++j)
             {
-                result[i] += _mat[i + 4 * j] * rhs[i];
+                result[i] += _mat[i * 4 + j] * rhs[j];
             }
         }
 
