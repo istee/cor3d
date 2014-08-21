@@ -54,7 +54,7 @@ private:
     double                  mouse_pressed_x, mouse_pressed_y;
     double                  mouse_pressed_trans_x, mouse_pressed_trans_y, mouse_pressed_trans_z;
 
-    std::vector<cagd::Skeleton>   _skeletons;
+    //std::vector<cagd::Skeleton>   _skeletons;
 
     bool drag;
     unsigned int _drag_type, _drag_button;

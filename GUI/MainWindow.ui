@@ -11,16 +11,43 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>QtFramework – CAGD, 2013</string>
+   <string>cor3d - 3D Choreography Editor</string>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>2</number>
+      </property>
+      <widget class="QWidget" name="scene_editor">
+       <attribute name="title">
+        <string>Scene Editor</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout"/>
+      </widget>
+      <widget class="QWidget" name="posture_editor">
+       <attribute name="title">
+        <string>Pose Editor</string>
+       </attribute>
+      </widget>
+      <widget class="QWidget" name="skeleton_editor">
+       <attribute name="title">
+        <string>Skeleton Editor</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout"/>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -29,7 +56,19 @@
     </property>
     <addaction name="action_Quit"/>
    </widget>
+   <widget class="QMenu" name="menuWindow">
+    <property name="title">
+     <string>Window</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Help</string>
+    </property>
+   </widget>
    <addaction name="menu_File"/>
+   <addaction name="menuWindow"/>
+   <addaction name="menuTools"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action_Quit">
