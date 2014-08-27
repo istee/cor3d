@@ -1,12 +1,17 @@
 #include "EditJoint.h"
+<<<<<<< HEAD
 
 #include "Cor3dApplication.h"
+=======
+#include <iostream>
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
 
 using namespace std;
 
 EditJoint::EditJoint(QWidget *parent): QWidget(parent)
 {
     setupUi(this);
+<<<<<<< HEAD
     type_comboBox->addItem(QString::fromStdString("ROTATIONAL"), QVariant(0));
     type_comboBox->addItem(QString::fromStdString("TRANSLATIONAL"), QVariant(1));
 }
@@ -155,4 +160,6 @@ void EditJoint::on_parent_comboBox_activated(QString )
 void EditJoint::on_type_comboBox_activated(QString )
 {
     data_changed();
+=======
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
 }

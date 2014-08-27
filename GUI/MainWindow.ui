@@ -56,22 +56,35 @@
     </property>
     <addaction name="action_Quit"/>
    </widget>
+<<<<<<< HEAD
    <widget class="QMenu" name="menu_Window">
     <property name="contextMenuPolicy">
      <enum>Qt::DefaultContextMenu</enum>
     </property>
+=======
+   <widget class="QMenu" name="menuWindow">
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
     <property name="title">
      <string>Window</string>
     </property>
    </widget>
+<<<<<<< HEAD
    <widget class="QMenu" name="menu_Tools">
+=======
+   <widget class="QMenu" name="menuTools">
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
     <property name="title">
      <string>Help</string>
     </property>
    </widget>
    <addaction name="menu_File"/>
+<<<<<<< HEAD
    <addaction name="menu_Window"/>
    <addaction name="menu_Tools"/>
+=======
+   <addaction name="menuWindow"/>
+   <addaction name="menuTools"/>
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action_Quit">

@@ -1,7 +1,11 @@
 #include "AddNewSkeleton.h"
+<<<<<<< HEAD
 
 #include "Cor3dApplication.h"
 #include "StdExtension.h"
+=======
+#include <iostream>
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
 
 using namespace std;
 
@@ -10,6 +14,7 @@ AddNewSkeleton::AddNewSkeleton(QWidget *parent): QWidget(parent)
     setupUi(this);
 }
 
+<<<<<<< HEAD
 void AddNewSkeleton::update_content()
 {
     Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
@@ -32,3 +37,5 @@ void AddNewSkeleton::on_add_new_skeleton_button_released()
 {
     emit skeleton_added(new_skeleton_name->text().toStdString());
 }
+=======
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa

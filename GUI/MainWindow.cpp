@@ -1,7 +1,10 @@
 #include "MainWindow.h"
 
 #include <QListWidgetItem>
+<<<<<<< HEAD
 #include <QFileDialog>
+=======
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
 
 #include "SceneView.h"
 #include "PostureGLWidget.h"
@@ -9,7 +12,10 @@
 #include "Render.h"
 #include "EditJoint.h"
 
+<<<<<<< HEAD
 #include "Cor3dApplication.h"
+=======
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
 #include "Model/Cor3d.h"
 
 using namespace std;
@@ -66,6 +72,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     skeleton_editor->layout()->addWidget(_skeleton_side_widget);
 
     //Skeleton Editor: connecting signals and slots
+<<<<<<< HEAD
     connect(_skeleton_side_widget->add_new_skeleton, SIGNAL(skeleton_added(const string&)), this, SLOT(skeleton_added(const string&)));
     connect(_skeleton_side_widget->skeleton_list, SIGNAL(skeleton_selected(const string&)), this, SLOT(skeleton_selected(const string&)));
     connect(_skeleton_side_widget->skeleton_list, SIGNAL(skeleton_deleted()), this, SLOT(skeleton_deleted()));
@@ -89,6 +96,10 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     _skeleton_side_widget->add_new_joint->update_content();
     _skeleton_side_widget->edit_joint->update_content();
 
+=======
+    connect(_skeleton_side_widget->add_new_skeleton->add_new_skeleton_button, SIGNAL(released()), this, SLOT(add_new_skeleton_handle()));
+    connect(_skeleton_side_widget->skeleton_list->skeleton_listview, SIGNAL(clicked(QModelIndex)), this, SLOT(skeleton_selection_changed_handle(QModelIndex)));
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
 }
 
 //--------------------------------
@@ -99,6 +110,7 @@ void MainWindow::on_action_Quit_triggered()
     qApp->exit(0);
 }
 
+<<<<<<< HEAD
 void MainWindow::skeleton_added(const string& name)
 {
     Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
@@ -229,4 +241,20 @@ void MainWindow::menu_window_update_content()
             menu_Window->addAction(qAction);
         }
     }
+=======
+void MainWindow::add_new_skeleton_handle()
+{
+    string name = _skeleton_side_widget->add_new_skeleton->name_input->displayText().toStdString();
+    Cor3d::getInstance().create_skeleton(name);
+    _skeleton_side_widget->skeleton_list->update_list();
+    _skeleton_side_widget->add_new_skeleton->name_input->clear();
+}
+
+void MainWindow::skeleton_selection_changed_handle(QModelIndex qmind)
+{
+    string name = qmind.data().toString().toStdString();
+    int id = Cor3d::getInstance().get_skeleton_id_by_name(name);
+    Cor3d::getInstance().select_skeleton(id);
+    _skeleton_side_widget->edit_skeleton->update();
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
 }

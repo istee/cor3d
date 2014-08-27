@@ -21,9 +21,13 @@ SOURCES += \
     GUI/AddNewSkeleton.cpp \
     GUI/EditSkeleton.cpp \
     GUI/SkeletonSideWidget.cpp \
+<<<<<<< HEAD
     Model/Cor3d.cpp \
     GUI/AddNewJoint.cpp \
     Model/Joint.cpp
+=======
+    Model/Cor3d.cpp
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
 
 HEADERS += \
     GUI/MainWindow.h \
@@ -59,11 +63,15 @@ HEADERS += \
     GUI/SkeletonSideWidget.h \
     Model/Posture.h \
     Model/Joint.h \
+<<<<<<< HEAD
     Model/Cor3d.h \
     GUI/AddNewJoint.h \
     Cor3dApplication.h \
     StdExtension.h \
     GUI/RenderingOptions.h
+=======
+    Model/Cor3d.h
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
 
 FORMS += \
     GUI/MainWindow.ui \
@@ -75,8 +83,12 @@ FORMS += \
     GUI/AddNewSkeleton.ui \
     GUI/EditSkeleton.ui \
     GUI/EditSkeleton.ui \
+<<<<<<< HEAD
     GUI/SkeletonSideWidget.ui \
     GUI/AddNewJoint.ui
+=======
+    GUI/SkeletonSideWidget.ui
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
 
 QT += opengl
 

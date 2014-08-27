@@ -4,6 +4,7 @@
 #include "Skeleton.h"
 
 namespace cor3d {
+<<<<<<< HEAD
     Cor3d::Cor3d()
     {
         _selected_skeleton = -1;
@@ -43,11 +44,32 @@ namespace cor3d {
     }
 
     int Cor3d::get_skeleton_id_by_name(const string& name) const
+=======
+    const vector<BaseEntity> Cor3d::get_skeleton_list()
+    {
+        vector<BaseEntity> skeletonList = vector<BaseEntity>();
+        for (std::vector<Skeleton>::iterator it = _skeletons.begin(); it != _skeletons.end(); it++)
+        {
+            skeletonList.push_back((BaseEntity) *it);
+        }
+
+        return skeletonList;
+    }
+
+    unsigned int Cor3d::create_skeleton(string name)
+    {
+        Skeleton skeleton = Skeleton(_skeletons.size() + 1, name);
+        _skeletons.push_back(skeleton);
+    }
+
+    int Cor3d::get_skeleton_id_by_name(string name) const
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
     {
         for (std::vector<Skeleton>::const_iterator it = _skeletons.begin(); it != _skeletons.end(); it++)
         {
             if (it->get_name() == name)
             {
+<<<<<<< HEAD
                 return ((BaseEntity) *it).get_id();
             }
         }
@@ -56,11 +78,21 @@ namespace cor3d {
     }
 
     Skeleton Cor3d::get_skeleton_by_id(int id) const
+=======
+                return it->get_id();
+            }
+        }
+        return -1;
+    }
+
+    string Cor3d::get_skeleton_name_by_id(int id)
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
     {
         for (std::vector<Skeleton>::const_iterator it = _skeletons.begin(); it != _skeletons.end(); it++)
         {
             if (it->get_id() == id)
             {
+<<<<<<< HEAD
                 return (Skeleton) *it;
             }
         }
@@ -102,11 +134,41 @@ namespace cor3d {
 //            ((BaseEntity) *it).decrease_id();
 //        }
         _selected_skeleton = -1;
+=======
+                return it->get_name();
+            }
+        }
+        return "";
+    }
+
+    string Cor3d::get_skeleton_model_file(unsigned int skeleton_id)
+    {
+        return _skeletons[skeleton_id].get_model_file();
+    }
+
+    double Cor3d::get_skeleton_model_x(unsigned int skeleton_id)
+    {
+        return _skeletons[skeleton_id].get_model_x();
+    }
+
+    double Cor3d::get_skeleton_model_y(unsigned int skeleton_id)
+    {
+        return _skeletons[skeleton_id].get_model_y();
+    }
+
+    double Cor3d::get_skeleton_model_z(unsigned int skeleton_id)
+    {
+        return _skeletons[skeleton_id].get_model_z();
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
     }
 
     void Cor3d::select_skeleton(int id)
     {
+<<<<<<< HEAD
         if (id > _skeletons.size() + 1)
+=======
+        if (id > _skeletons.size())
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
         {
             _selected_skeleton = -1;
         }
@@ -117,6 +179,7 @@ namespace cor3d {
         }
     }
 
+<<<<<<< HEAD
     bool Cor3d::check_skeleton_id_boundaries(int skeleton_id)
     {
         if (skeleton_id < 0)
@@ -128,5 +191,10 @@ namespace cor3d {
             return false;
         }
         return true;
+=======
+    int Cor3d::get_selected_skeleton()
+    {
+        return _selected_skeleton;
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
     }
 }

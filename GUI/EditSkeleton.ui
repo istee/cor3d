@@ -23,7 +23,11 @@
    </size>
   </property>
   <property name="windowTitle">
+<<<<<<< HEAD
    <string>Edit skeleton</string>
+=======
+   <string>Form</string>
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -45,6 +49,12 @@
         </property>
        </widget>
       </item>
+<<<<<<< HEAD
+=======
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="name_lineEdit"/>
+      </item>
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
       <item row="1" column="0">
        <widget class="QLabel" name="model_label">
         <property name="text">
@@ -52,10 +62,20 @@
         </property>
        </widget>
       </item>
+<<<<<<< HEAD
       <item row="2" column="0" colspan="3">
        <widget class="QGroupBox" name="groupBox_2">
         <property name="title">
          <string>Model scale</string>
+=======
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="model_lineEdit"/>
+      </item>
+      <item row="2" column="0" colspan="2">
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="title">
+         <string>Base coordinates</string>
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
         </property>
         <layout class="QGridLayout" name="gridLayout_3">
          <item row="0" column="0">
@@ -65,6 +85,12 @@
            </property>
           </widget>
          </item>
+<<<<<<< HEAD
+=======
+         <item row="0" column="1">
+          <widget class="QSpinBox" name="spinBox"/>
+         </item>
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
          <item row="0" column="2">
           <widget class="QLabel" name="label_4">
            <property name="text">
@@ -72,6 +98,12 @@
            </property>
           </widget>
          </item>
+<<<<<<< HEAD
+=======
+         <item row="0" column="3">
+          <widget class="QSpinBox" name="spinBox_2"/>
+         </item>
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
          <item row="0" column="4">
           <widget class="QLabel" name="label_5">
            <property name="text">
@@ -79,6 +111,7 @@
            </property>
           </widget>
          </item>
+<<<<<<< HEAD
          <item row="0" column="1">
           <widget class="QDoubleSpinBox" name="model_scale_x_doubleSpinbox"/>
          </item>
@@ -87,11 +120,19 @@
          </item>
          <item row="0" column="5">
           <widget class="QDoubleSpinBox" name="model_scale_z_doubleSpinbox"/>
+=======
+         <item row="0" column="5">
+          <widget class="QSpinBox" name="spinBox_3"/>
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
          </item>
         </layout>
        </widget>
       </item>
+<<<<<<< HEAD
       <item row="3" column="0" colspan="3">
+=======
+      <item row="3" column="0" colspan="2">
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
        <widget class="QGroupBox" name="groupBox_3">
         <property name="title">
          <string>Model offset</string>
@@ -104,6 +145,12 @@
            </property>
           </widget>
          </item>
+<<<<<<< HEAD
+=======
+         <item row="0" column="1">
+          <widget class="QSpinBox" name="model_x_spinBox"/>
+         </item>
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
          <item row="0" column="2">
           <widget class="QLabel" name="model_y_label">
            <property name="text">
@@ -111,6 +158,12 @@
            </property>
           </widget>
          </item>
+<<<<<<< HEAD
+=======
+         <item row="0" column="3">
+          <widget class="QSpinBox" name="model_y_spinBox"/>
+         </item>
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
          <item row="0" column="4">
           <widget class="QLabel" name="model_z_label">
            <property name="text">
@@ -118,6 +171,7 @@
            </property>
           </widget>
          </item>
+<<<<<<< HEAD
          <item row="0" column="1">
           <widget class="QDoubleSpinBox" name="model_x_doubleSpinBox"/>
          </item>
@@ -126,10 +180,15 @@
          </item>
          <item row="0" column="5">
           <widget class="QDoubleSpinBox" name="model_z_doubleSpinBox"/>
+=======
+         <item row="0" column="5">
+          <widget class="QSpinBox" name="model_z_spinBox"/>
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
          </item>
         </layout>
        </widget>
       </item>
+<<<<<<< HEAD
       <item row="1" column="2">
        <widget class="QPushButton" name="model_button">
         <property name="sizePolicy">
@@ -165,6 +224,8 @@
       <item row="0" column="1" colspan="2">
        <widget class="QLineEdit" name="name_lineEdit"/>
       </item>
+=======
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
      </layout>
     </widget>
    </item>

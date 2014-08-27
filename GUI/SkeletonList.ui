@@ -7,7 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>250</width>
+<<<<<<< HEAD
     <height>124</height>
+=======
+    <height>200</height>
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
    </rect>
   </property>
   <property name="minimumSize">
@@ -16,6 +20,7 @@
     <height>124</height>
    </size>
   </property>
+<<<<<<< HEAD
   <property name="maximumSize">
    <size>
     <width>16777215</width>
@@ -24,6 +29,10 @@
   </property>
   <property name="windowTitle">
    <string>Available skeletons</string>
+=======
+  <property name="windowTitle">
+   <string>Form</string>
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -32,6 +41,7 @@
       <string>Available skeletons</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
+<<<<<<< HEAD
       <item row="0" column="0" colspan="2">
        <widget class="QListView" name="skeleton_listview"/>
       </item>
@@ -49,6 +59,11 @@
         </property>
        </widget>
       </item>
+=======
+      <item row="0" column="0">
+       <widget class="QListView" name="skeleton_listview"/>
+      </item>
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
      </layout>
     </widget>
    </item>

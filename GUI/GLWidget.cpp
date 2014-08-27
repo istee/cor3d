@@ -81,6 +81,41 @@ void GLWidget::initializeGL()
 
     _reposition_unit = 0.1;
 
+<<<<<<< HEAD
+=======
+    // reading off files
+    TriangulatedMesh3 mesh;
+    mesh.LoadFromOFF("Models/mouse.off");
+    mesh.UpdateVertexBufferObjects();
+
+    cone.LoadFromOFF("Models/cone.off");
+    cone.UpdateVertexBufferObjects();
+
+    sphere.LoadFromOFF("Models/sphere.off");
+    sphere.UpdateVertexBufferObjects();
+
+    cube.LoadFromOFF("Models/cube.off");
+    cube.UpdateVertexBufferObjects();
+
+    // constructing test skeleton
+//    cagd::Skeleton sk = cagd::Skeleton(0, 0.1, -1.7, -1.5, mesh, &cone, &sphere);
+//    sk.AddLink(0, 0.1, 0.5, -0.7);
+//    sk.AddLink(1, 0.8, 0.4, -0.6);
+//    sk.AddLink(2, 1.9, 0.3, -0.55);
+//    sk.AddLink(3, 2.4, 0.3, -0.7);
+//    sk.AddLink(3, 2.5, 0.3, -0.55);
+//    sk.AddLink(3, 2.45, 0.3, -0.4);
+//    sk.AddLink(3, 2.1, 0.3, -0.2);
+//    sk.AddLink(0, 0.9, -2.3, -0.85);
+//    sk.AddLink(8, 0.9, -2.3, 0.7);
+//    sk.AddLink(0, 0.1, -1.9, -2.65);
+//    sk.AddLink(10, 0.1, -2.1, -3.8);
+//    //sk.AddLink(11, 0.1, -2.1, -5.8);
+//    //sk.AddLink(12, 0.1, -2.1, -7.8);
+//    cout << sk;
+//    _skeletons.push_back(sk);
+
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
     drag = false;
 }
 
@@ -123,7 +158,12 @@ void GLWidget::paintGL()
 
         glDisable(GL_LIGHTING);
 
+<<<<<<< HEAD
 
+=======
+//        // gird test code
+//        //glCallList(_dl_grid);
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
 
 
 //        glEnable(GL_LIGHTING);
@@ -131,6 +171,20 @@ void GLWidget::paintGL()
 //            it->Render(false);
 //        }
 
+<<<<<<< HEAD
+=======
+//        // test drawign without lights
+////        glDisable(GL_LIGHTING);
+////        glBegin(GL_TRIANGLES);
+////        glColor3f(1.0, 0.0, 0.0);
+////        glVertex3f(1.0, 0.0, 0.0);
+////        glColor3f(0.0, 1.0, 0.0);
+////        glVertex3f(0.0, 1.0, 0.0);
+////        glColor3f(0.0, 0.0, 1.0);
+////        glVertex3f(0.0, 0.0, 1.0);
+////        glEnd();
+
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
 //        DCoordinate3 *selected_position = _skeletons[0].GetSelectedPosition();
 //        if (selected_position)
 //        {

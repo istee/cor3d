@@ -56,6 +56,7 @@ public:
 private slots:
     // private event handling methods/slots
     void on_action_Quit_triggered();
+<<<<<<< HEAD
     void skeleton_added(const string& name);
     void skeleton_selected(const string& name);
     void skeleton_deleted();
@@ -70,4 +71,8 @@ private slots:
 //    void skeleton_model_z_edit(double value);
 
     void menu_window_update_content();
+=======
+    void add_new_skeleton_handle();
+    void skeleton_selection_changed_handle(QModelIndex a);
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
 };

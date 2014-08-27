@@ -1,4 +1,5 @@
 #include "Skeleton.h"
+<<<<<<< HEAD
 #include "Core/Materials.h"
 
 namespace cor3d { 
@@ -137,6 +138,55 @@ namespace cor3d {
             glPopMatrix();
             glDepthMask(GL_TRUE);
             glDisable(GL_BLEND);
+=======
+//#include "../Core/Constants.h"
+//#include "../Core/Materials.h"
+
+//#include <cstdlib>
+
+namespace cor3d {
+    int Skeleton::set_model(string file)
+    {
+        _model.LoadFromOFF(file);
+        _model.UpdateVertexBufferObjects();
+        return 0;
+    }
+
+    void Skeleton::set_model_offset(double x, double y, double z)
+    {
+        _model_offset = DCoordinate3(x, y, z);
+    }
+
+    string Skeleton::get_model_file()
+    {
+        return _model_file;
+    }
+
+    double Skeleton::get_model_x()
+    {
+        return _model_offset.x();
+    }
+
+    double Skeleton::get_model_y()
+    {
+        return _model_offset.y();
+    }
+
+    double Skeleton::get_model_z()
+    {
+        return _model_offset.z();
+    }
+
+    void Skeleton::select_joint(int id)
+    {
+        if (id > _joints.size())
+        {
+            _selected_joint = -1;
+        }
+        else
+        {
+            _selected_joint = id;
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
         }
     }
 }
@@ -207,6 +257,41 @@ namespace cor3d {
 //    return inserted;
 //}
 
+<<<<<<< HEAD
+=======
+//void Skeleton::Render(bool glLoad) const
+//{
+
+//    if (_render_links)
+//    {
+//        MatFBGold.Apply();
+//        RenderLinks();
+//    }
+//    if (_render_joints)
+//    {
+//        MatFBSilver.Apply();
+//        RenderJoints(glLoad);
+//    }
+
+//    if (_chains_moved)
+//    {
+//        MatFBRuby.Apply();
+//        RenderChains();
+//    }
+
+//    if (_render_mesh)
+//    {
+//        glEnable(GL_BLEND);
+//        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+//        glDepthMask(GL_FALSE);
+//        MatFBPearl.Apply();
+//        _mesh.Render();
+//        glDepthMask(GL_TRUE);
+//        glDisable(GL_BLEND);
+//    }
+//}
+
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
 //void Skeleton::RenderLinks() const
 //{
 //    for(std::vector<Link>::const_iterator it = _links.begin(); it != _links.end(); ++it)

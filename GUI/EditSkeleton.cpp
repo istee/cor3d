@@ -1,9 +1,15 @@
 #include "EditSkeleton.h"
 
+<<<<<<< HEAD
 #include <QFileDialog>
 
 #include "Model/Cor3d.h"
 #include "Cor3dApplication.h"
+=======
+#include <iostream>
+
+#include "Model/Cor3d.h"
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
 
 using namespace std;
 using namespace cor3d;
@@ -16,6 +22,7 @@ EditSkeleton::EditSkeleton(QWidget *parent): QWidget(parent)
 void EditSkeleton::enable_edits()
 {
     name_lineEdit->setEnabled(true);
+<<<<<<< HEAD
     model_button->setEnabled(true);
     model_scale_x_doubleSpinbox->setEnabled(true);
     model_scale_y_doubleSpinbox->setEnabled(true);
@@ -23,11 +30,18 @@ void EditSkeleton::enable_edits()
     model_x_doubleSpinBox->setEnabled(true);
     model_y_doubleSpinBox->setEnabled(true);
     model_z_doubleSpinBox->setEnabled(true);
+=======
+    model_lineEdit->setEnabled(true);
+    model_x_spinBox->setEnabled(true);
+    model_y_spinBox->setEnabled(true);
+    model_z_spinBox->setEnabled(true);
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
 }
 
 void EditSkeleton::disable_edits()
 {
     name_lineEdit->setEnabled(false);
+<<<<<<< HEAD
     model_button->setEnabled(false);
     model_scale_x_doubleSpinbox->setEnabled(false);
     model_scale_y_doubleSpinbox->setEnabled(false);
@@ -63,12 +77,32 @@ void EditSkeleton::update_content()
         model_x_doubleSpinBox->setValue(model_offset.x());
         model_y_doubleSpinBox->setValue(model_offset.y());
         model_z_doubleSpinBox->setValue(model_offset.z());
+=======
+    model_lineEdit->setEnabled(false);
+    model_x_spinBox->setEnabled(false);
+    model_y_spinBox->setEnabled(false);
+    model_z_spinBox->setEnabled(false);
+}
+
+void EditSkeleton::update()
+{
+    int selected = Cor3d::getInstance().get_selected_skeleton();
+    if (selected >= 0)
+    {
+        enable_edits();
+        name_lineEdit->setText(QString::fromStdString(Cor3d::getInstance().get_skeleton_name_by_id(selected)));
+        model_lineEdit->setText(QString::fromStdString(Cor3d::getInstance().get_skeleton_model_file(selected)));
+        model_x_spinBox->setValue(Cor3d::getInstance().get_skeleton_model_x(selected));
+        model_y_spinBox->setValue(Cor3d::getInstance().get_skeleton_model_y(selected));
+        model_z_spinBox->setValue(Cor3d::getInstance().get_skeleton_model_z(selected));
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
     }
     else
     {
         disable_edits();
     }
 }
+<<<<<<< HEAD
 
 void EditSkeleton::data_changed()
 {
@@ -126,3 +160,5 @@ void EditSkeleton::on_model_button_released()
     skeleton.set_model_file(file_name);
     emit skeleton_edited(skeleton);
 }
+=======
+>>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
