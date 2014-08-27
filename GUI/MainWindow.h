@@ -15,6 +15,10 @@
 #include "Model/ISkeleton.h"
 #include <QScrollArea>
 
+#include "Model/Skeleton.h"
+
+using namespace cor3d;
+
 class MainWindow: public QMainWindow, public Ui::MainWindow
 {
     Q_OBJECT
@@ -52,11 +56,18 @@ public:
 private slots:
     // private event handling methods/slots
     void on_action_Quit_triggered();
-    void add_new_skeleton_handle();
-    void skeleton_selection_changed_handle(QModelIndex a);
-    void skeleton_name_edit();
-    void skeleton_model_edit();
-    void skeleton_model_x_edit(double value);
-    void skeleton_model_y_edit(double value);
-    void skeleton_model_z_edit(double value);
+    void skeleton_added(const string& name);
+    void skeleton_selected(const string& name);
+    void skeleton_deleted();
+    void skeleton_edited(const Skeleton& skeleton);
+    void joint_added(const string& name, int parent_id);
+    void joint_selected(int id);
+    void joint_edited(const Joint& joint);
+//    void skeleton_name_edit();
+//    void skeleton_model_edit();
+//    void skeleton_model_x_edit(double value);
+//    void skeleton_model_y_edit(double value);
+//    void skeleton_model_z_edit(double value);
+
+    void menu_window_update_content();
 };

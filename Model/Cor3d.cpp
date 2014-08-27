@@ -4,128 +4,104 @@
 #include "Skeleton.h"
 
 namespace cor3d {
-    const vector<BaseEntity> Cor3d::get_skeleton_list()
+    Cor3d::Cor3d()
     {
-        vector<BaseEntity> skeletonList = vector<BaseEntity>();
-        for (std::vector<Skeleton>::iterator it = _skeletons.begin(); it != _skeletons.end(); it++)
-        {
-            skeletonList.push_back((BaseEntity) *it);
-        }
-
-        return skeletonList;
+        _selected_skeleton = -1;
+        //_joint_model.LoadFromOFF("Models/sphere.off");
+        //_joint_model.UpdateVertexBufferObjects();
+        //_link_model.LoadFromOFF("Models/cone.off");
+        //_link_model.UpdateVertexBufferObjects();
     }
 
-    unsigned int Cor3d::create_skeleton(string name)
+    vector<BaseEntity> Cor3d::get_skeleton_list() const
+    {
+        vector<BaseEntity> skeleton_list = vector<BaseEntity>();
+        for (std::vector<Skeleton>::const_iterator it = _skeletons.begin(); it != _skeletons.end(); it++)
+        {
+            skeleton_list.push_back((BaseEntity) *it);
+        }
+
+        return skeleton_list;
+    }
+
+    unsigned int Cor3d::create_skeleton(const string& name)
     {
         Skeleton skeleton = Skeleton(_skeletons.size(), name);
         _skeletons.push_back(skeleton);
         return skeleton.get_id();
     }
 
-    int Cor3d::get_skeleton_id_by_name(string name) const
+    Skeleton Cor3d::get_skeleton_by_name(const string& name) const
     {
         for (std::vector<Skeleton>::const_iterator it = _skeletons.begin(); it != _skeletons.end(); it++)
         {
             if (it->get_name() == name)
             {
-                return it->get_id();
+                return (Skeleton) *it;
             }
         }
+    }
+
+    int Cor3d::get_skeleton_id_by_name(const string& name) const
+    {
+        for (std::vector<Skeleton>::const_iterator it = _skeletons.begin(); it != _skeletons.end(); it++)
+        {
+            if (it->get_name() == name)
+            {
+                return ((BaseEntity) *it).get_id();
+            }
+        }
+
         return -1;
     }
 
-    string Cor3d::get_skeleton_name_by_id(int id)
+    Skeleton Cor3d::get_skeleton_by_id(int id) const
     {
         for (std::vector<Skeleton>::const_iterator it = _skeletons.begin(); it != _skeletons.end(); it++)
         {
             if (it->get_id() == id)
             {
-                return it->get_name();
+                return (Skeleton) *it;
             }
         }
-        return "";
     }
 
-    string Cor3d::get_skeleton_model_file(unsigned int skeleton_id)
+    Skeleton Cor3d::get_selected_skeleton() const
     {
-        return _skeletons[skeleton_id].get_model_file();
-    }
-
-    double Cor3d::get_skeleton_model_x(unsigned int skeleton_id)
-    {
-        return _skeletons[skeleton_id].get_model_x();
-    }
-
-    double Cor3d::get_skeleton_model_y(unsigned int skeleton_id)
-    {
-        return _skeletons[skeleton_id].get_model_y();
-    }
-
-    double Cor3d::get_skeleton_model_z(unsigned int skeleton_id)
-    {
-        return _skeletons[skeleton_id].get_model_z();
-    }
-
-    int Cor3d::set_skeleton_name(int skeleton_id, string name)
-    {
-        bool ok = check_skeleton_id_boundaries(skeleton_id);
-        for (vector<Skeleton>::iterator it = _skeletons.begin(); it != _skeletons.end() && ok; it++)
+        if (_selected_skeleton >= 0)
         {
-            if (it->get_name() == name && it->get_id() != skeleton_id)
+            return _skeletons[_selected_skeleton];
+        }
+        throw _selected_skeleton;
+    }
+
+    bool Cor3d::is_skeleton_name_reserved(const string& name) const
+    {
+        for (std::vector<Skeleton>::const_iterator it = _skeletons.begin(); it != _skeletons.end(); it++)
+        {
+            if (it->get_name() == name)
             {
-                ok = false;
+                return true;
             }
         }
-        if (ok)
-        {
-            _skeletons[skeleton_id].set_name(name);
-            return 0;
-        }
-
-        return -1;
+        return false;
     }
 
-    int Cor3d::set_skeleton_model_file(int skeleton_id, string file_name)
+    void Cor3d::set_skeleton(const Skeleton& skeleton)
     {
-        if(check_skeleton_id_boundaries(skeleton_id))
-        {
-            return _skeletons[skeleton_id].set_model_file(file_name);
-        }
-
-        return -1;
+        _skeletons[skeleton.get_id()] = skeleton;
     }
 
-    int Cor3d::set_skeleton_model_x(int skeleton_id, double x)
+    void Cor3d::remove_selected_skeleton()
     {
-        if(check_skeleton_id_boundaries(skeleton_id))
-        {
-            _skeletons[skeleton_id].set_model_x(x);
-            return 0;
-        }
-
-        return -1;
-    }
-
-    int Cor3d::set_skeleton_model_y(int skeleton_id, double y)
-    {
-        if(check_skeleton_id_boundaries(skeleton_id))
-        {
-            _skeletons[skeleton_id].set_model_y(y);
-            return 0;
-        }
-
-        return -1;
-    }
-
-    int Cor3d::set_skeleton_model_z(int skeleton_id, double z)
-    {
-        if(check_skeleton_id_boundaries(skeleton_id))
-        {
-            _skeletons[skeleton_id].set_model_z(z);
-            return 0;
-        }
-
-        return -1;
+        // TODO remove
+//        cout << _selected_skeleton << endl;
+//        _skeletons.erase(&_skeletons[_selected_skeleton]);
+//        for (vector<Skeleton>::iterator it = _skeletons.begin() + _selected_skeleton; it != _skeletons.end(); it++)
+//        {
+//            ((BaseEntity) *it).decrease_id();
+//        }
+        _selected_skeleton = -1;
     }
 
     void Cor3d::select_skeleton(int id)
@@ -139,11 +115,6 @@ namespace cor3d {
             _selected_skeleton = id;
             _skeletons[_selected_skeleton].select_joint(-1);
         }
-    }
-
-    int Cor3d::get_selected_skeleton()
-    {
-        return _selected_skeleton;
     }
 
     bool Cor3d::check_skeleton_id_boundaries(int skeleton_id)

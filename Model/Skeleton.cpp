@@ -1,62 +1,54 @@
 #include "Skeleton.h"
-//#include "../Core/Constants.h"
-//#include "../Core/Materials.h"
+#include "Core/Materials.h"
 
-//#include <cstdlib>
+namespace cor3d { 
+    vector<BaseEntity> Skeleton::get_joint_list() const
+    {
+        vector<BaseEntity> joint_list = vector<BaseEntity>();
+        for (std::vector<Joint>::const_iterator it = _joints.begin(); it != _joints.end(); it++)
+        {
+            joint_list.push_back((BaseEntity) *it);
+        }
 
-namespace cor3d {
-    int Skeleton::set_model(string file)
+        return joint_list;
+    }
+
+    vector<BaseEntity> Skeleton::get_possible_parents(unsigned int id) const
+    {
+        vector<BaseEntity> possible_parents;
+        if (_joints.size() > 0 && id != _joints[0].get_id())
+        {
+            vector<unsigned int> possible_parent_ids;
+            possible_parents.push_back((_joints[0]));
+            possible_parent_ids.push_back(_joints[0].get_id());
+            while (possible_parent_ids.size() > 0)
+            {
+                vector<unsigned int> new_possible_parent_ids;
+                for (vector<unsigned int>::iterator it = possible_parent_ids.begin(); it != possible_parent_ids.end(); it++)
+                {
+                    vector<unsigned int> children_ids = _joints[*it].get_children();
+                    for (vector<unsigned int>::iterator jt = children_ids.begin(); jt != children_ids.end(); jt++)
+                    {
+                        if (id != *jt)
+                        {
+                            possible_parents.push_back(_joints[*jt]);
+                            new_possible_parent_ids.push_back(*jt);
+                        }
+                    }
+                }
+                possible_parent_ids = new_possible_parent_ids;
+            }
+        }
+        return possible_parents;
+    }
+
+
+    int Skeleton::set_model_file(const string& file)
     {
         _model.LoadFromOFF(file);
         _model.UpdateVertexBufferObjects();
+        _model_file = file;
         return 0;
-    }
-
-    void Skeleton::set_model_offset(double x, double y, double z)
-    {
-        _model_offset = DCoordinate3(x, y, z);
-    }
-
-    string Skeleton::get_model_file()
-    {
-        return _model_file;
-    }
-
-    double Skeleton::get_model_x()
-    {
-        return _model_offset.x();
-    }
-
-    double Skeleton::get_model_y()
-    {
-        return _model_offset.y();
-    }
-
-    double Skeleton::get_model_z()
-    {
-        return _model_offset.z();
-    }
-
-    int Skeleton::set_model_file(string file_name)
-    {
-        _model.LoadFromOFF(file_name);
-        _model_file = file_name;
-        return 0;
-    }
-
-    void Skeleton::set_model_x(double x)
-    {
-        _model_offset[0] = x;
-    }
-
-    void Skeleton::set_model_y(double y)
-    {
-        _model_offset[1] = y;
-    }
-
-    void Skeleton::set_model_z(double z)
-    {
-        _model_offset[2] = z;
     }
 
     void Skeleton::select_joint(int id)
@@ -68,6 +60,83 @@ namespace cor3d {
         else
         {
             _selected_joint = id;
+        }
+    }
+
+    Joint Skeleton::get_selected_joint() const
+    {
+        if (_selected_joint >= 0)
+        {
+            return _joints[_selected_joint];
+        }
+        throw _selected_joint;
+    }
+
+    bool Skeleton::is_joint_name_reserved(const string& name) const
+    {
+        for (std::vector<Joint>::const_iterator it = _joints.begin(); it != _joints.end(); it++)
+        {
+            if (it->get_name() == name)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void Skeleton::set_joint(const Joint& joint)
+    {
+        _joints[joint.get_id()] = joint;
+    }
+
+    int Skeleton::add_joint(const string &name, int parent_id)
+    {
+        Joint joint = Joint(_joints.size(), name, parent_id);
+        _joints.push_back(joint);
+        if (parent_id >= 0)
+        {
+            _joints[parent_id].add_child(joint.get_id());
+        }
+    }
+
+    int Skeleton::remove_joint(unsigned int joint_id)
+    {
+
+    }
+
+
+
+    void Skeleton::render(RenderingOptions rendering_options, bool glLoad) const
+    {
+    //    if (_render_links)
+    //    {
+    //        MatFBGold.Apply();
+    //        RenderLinks();
+    //    }
+//            if (rendering_options.get_render_joints())
+//            {
+//                MatFBSilver.Apply();
+//                render_joints(glLoad);
+//            }
+
+    //    if (_chains_moved)
+    //    {
+    //        MatFBRuby.Apply();
+    //        RenderChains();
+    //    }
+
+        if (rendering_options.get_render_model() && !_model_file.empty())
+        {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+            glDepthMask(GL_FALSE);
+            MatFBPearl.Apply();
+            glPushMatrix();
+                //glScaled(_model_scale.x(), _model_scale.y(), _model_scale.z());
+                _model.Render();
+            glPopMatrix();
+            glDepthMask(GL_TRUE);
+            glDisable(GL_BLEND);
         }
     }
 }
@@ -136,38 +205,6 @@ namespace cor3d {
 //    }
 
 //    return inserted;
-//}
-
-//void Skeleton::Render(bool glLoad) const
-//{
-
-//    if (_render_links)
-//    {
-//        MatFBGold.Apply();
-//        RenderLinks();
-//    }
-//    if (_render_joints)
-//    {
-//        MatFBSilver.Apply();
-//        RenderJoints(glLoad);
-//    }
-
-//    if (_chains_moved)
-//    {
-//        MatFBRuby.Apply();
-//        RenderChains();
-//    }
-
-//    if (_render_mesh)
-//    {
-//        glEnable(GL_BLEND);
-//        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-//        glDepthMask(GL_FALSE);
-//        MatFBPearl.Apply();
-//        _mesh.Render();
-//        glDepthMask(GL_TRUE);
-//        glDisable(GL_BLEND);
-//    }
 //}
 
 //void Skeleton::RenderLinks() const

@@ -18,6 +18,7 @@ namespace cor3d {
             _name   = name;
         }
 
+        // getter methods
         unsigned int get_id() const
         {
             return _id;
@@ -28,9 +29,15 @@ namespace cor3d {
             return _name;
         }
 
+        // setter methods
         void set_name(string name)
         {
             _name = name;
+        }
+
+        void decrease_id()
+        {
+            _id--;
         }
     };
 }

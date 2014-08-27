@@ -1,10 +1,11 @@
-#include <QApplication>
+#include <Cor3dApplication.h>
+
 #include "GUI/MainWindow.h"
 
 int main(int argc, char** argv)
 {
     // creating an application object and setting its style
-    QApplication app(argc, argv);
+    Cor3dApplication app(argc, argv);
     //app.setStyle("cleanlooks");
 
     // creating a main window object

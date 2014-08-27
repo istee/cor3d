@@ -22,7 +22,8 @@ SOURCES += \
     GUI/EditSkeleton.cpp \
     GUI/SkeletonSideWidget.cpp \
     Model/Cor3d.cpp \
-    GUI/AddNewJoint.cpp
+    GUI/AddNewJoint.cpp \
+    Model/Joint.cpp
 
 HEADERS += \
     GUI/MainWindow.h \
@@ -59,7 +60,10 @@ HEADERS += \
     Model/Posture.h \
     Model/Joint.h \
     Model/Cor3d.h \
-    GUI/AddNewJoint.h
+    GUI/AddNewJoint.h \
+    Cor3dApplication.h \
+    StdExtension.h \
+    GUI/RenderingOptions.h
 
 FORMS += \
     GUI/MainWindow.ui \

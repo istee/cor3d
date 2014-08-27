@@ -6,6 +6,7 @@
 #include "../Core/HCoordinates3.h"
 #include "../Core/Constants.h"
 #include "../Core/Transformations.h"
+#include "Cor3dApplication.h"
 
 using namespace cagd;
 using namespace std;
@@ -20,10 +21,6 @@ GLWidget::GLWidget(QWidget *parent, const QGLFormat &format): QGLWidget(format, 
 
 GLWidget::~GLWidget()
 {
-    if (_dl)
-    {
-        glDeleteLists(_dl, 1);
-    }
 }
 
 //--------------------------------------------------------------------------------------
@@ -68,33 +65,6 @@ void GLWidget::initializeGL()
 
     _initial_normal.ZNormal();
 
-
-    // cube test code
-    _point_count = 500000;
-
-    for ( int i = 0; i < _point_count; ++i)
-    {
-        _x.push_back(-1.0 + 2.0 * (float)rand() / (float)RAND_MAX);
-        _y.push_back(-1.0 + 2.0 * (float)rand() / (float)RAND_MAX);
-        _z.push_back(-1.0 + 2.0 * (float)rand() / (float)RAND_MAX);
-    }
-
-    _dl = 0;
-    _dl = glGenLists(1);
-
-    if (_dl)
-    {
-        glNewList(_dl, GL_COMPILE);
-            glBegin(GL_LINES);
-            for (int i = 0; i < _point_count; ++i)
-            {
-                glColor3f(_x[i], _y[i], _z[i]);
-                glVertex3f(_x[i], _y[i], _z[i]);
-            }
-            glEnd();
-        glEndList();
-    }
-
     // light settings
     glEnable(GL_LIGHTING);
     glEnable(GL_NORMALIZE);
@@ -111,84 +81,7 @@ void GLWidget::initializeGL()
 
     _reposition_unit = 0.1;
 
-    // reading off files
-    TriangulatedMesh3 mesh;
-    mesh.LoadFromOFF("Models/mouse.off");
-    mesh.UpdateVertexBufferObjects();
-
-    cone.LoadFromOFF("Models/cone.off");
-    cone.UpdateVertexBufferObjects();
-
-    sphere.LoadFromOFF("Models/sphere.off");
-    sphere.UpdateVertexBufferObjects();
-
-    cube.LoadFromOFF("Models/cube.off");
-    cube.UpdateVertexBufferObjects();
-
-    // constructing test skeleton
-//    cagd::Skeleton sk = cagd::Skeleton(0, 0.1, -1.7, -1.5, mesh, &cone, &sphere);
-//    sk.AddLink(0, 0.1, 0.5, -0.7);
-//    sk.AddLink(1, 0.8, 0.4, -0.6);
-//    sk.AddLink(2, 1.9, 0.3, -0.55);
-//    sk.AddLink(3, 2.4, 0.3, -0.7);
-//    sk.AddLink(3, 2.5, 0.3, -0.55);
-//    sk.AddLink(3, 2.45, 0.3, -0.4);
-//    sk.AddLink(3, 2.1, 0.3, -0.2);
-//    sk.AddLink(0, 0.9, -2.3, -0.85);
-//    sk.AddLink(8, 0.9, -2.3, 0.7);
-//    sk.AddLink(0, 0.1, -1.9, -2.65);
-//    sk.AddLink(10, 0.1, -2.1, -3.8);
-//    //sk.AddLink(11, 0.1, -2.1, -5.8);
-//    //sk.AddLink(12, 0.1, -2.1, -7.8);
-//    cout << sk;
-//    _skeletons.push_back(sk);
-
     drag = false;
-
-    // grid test code
-    GLdouble x_min = -3.0, x_max = 3.0;
-    GLdouble y_min = -3.0, y_max = 3.0;
-    GLdouble z_min = -3.0, z_max = 3.0;
-
-    GLuint div = 10;
-
-    GLdouble dx = (x_max - x_min) / (div - 1);
-    GLdouble dy = (y_max - y_min) / (div - 1);
-    GLdouble dz = (z_max - z_min) / (div - 1);
-
-    _dl_grid = 0;
-    _dl_grid = glGenLists(1);
-
-    glNewList(_dl_grid, GL_COMPILE);
-
-        glPointSize(5.0);
-        glBegin(GL_POINTS);
-
-            for (GLuint i = 0; i < div; ++i)
-            {
-                GLdouble x = x_min + i * dx;
-
-                for (GLuint j = 0; j < div; ++j)
-                {
-                    GLdouble y = y_min + j * dy;
-
-                    for (GLuint k = 0; k < div; ++k)
-                    {
-                        GLdouble z = z_min + k * dz;
-
-                        glColor3d(x, y, z);
-                        glVertex3d(x, y, z);
-                    }
-                }
-
-            }
-
-        glEnd();
-
-        glPointSize(1.0);
-
-    glEndList();
-
 }
 
 //-----------------------
@@ -213,27 +106,30 @@ void GLWidget::paintGL()
 
         glScaled(_zoom, _zoom, _zoom);
 
+        glEnable(GL_LIGHTING);
+
+        Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
+        if (cor3dApp->cor3d.is_skeleton_selected())
+        {
+            try {
+                Skeleton skeleton = cor3dApp->cor3d.get_selected_skeleton();
+                skeleton.render(renderingOptions);
+            }
+            catch (int)
+            {
+
+            }
+        }
+
         glDisable(GL_LIGHTING);
 
-//        // gird test code
-//        //glCallList(_dl_grid);
+
 
 
 //        glEnable(GL_LIGHTING);
 //        for(std::vector<cagd::Skeleton>::iterator it = _skeletons.begin(); it != _skeletons.end(); ++it) {
 //            it->Render(false);
 //        }
-
-//        // test drawign without lights
-////        glDisable(GL_LIGHTING);
-////        glBegin(GL_TRIANGLES);
-////        glColor3f(1.0, 0.0, 0.0);
-////        glVertex3f(1.0, 0.0, 0.0);
-////        glColor3f(0.0, 1.0, 0.0);
-////        glVertex3f(0.0, 1.0, 0.0);
-////        glColor3f(0.0, 0.0, 1.0);
-////        glVertex3f(0.0, 0.0, 1.0);
-////        glEnd();
 
 //        DCoordinate3 *selected_position = _skeletons[0].GetSelectedPosition();
 //        if (selected_position)

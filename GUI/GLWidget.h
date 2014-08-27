@@ -16,6 +16,8 @@
 #include "../Core/DCoordinates3.h"
 #include "../Core/Transformations.h"
 
+#include "RenderingOptions.h"
+
 class GLWidget: public QGLWidget
 {
     Q_OBJECT
@@ -66,6 +68,8 @@ private:
     void RenderMoveArrows(cagd::DCoordinate3 *position, bool glLoad = false);
     void Pick(double x, double y);
     void Drag(double x, double y, double z);
+
+    RenderingOptions renderingOptions;
 
 public:
     // special and default constructor
