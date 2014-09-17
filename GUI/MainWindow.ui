@@ -15,27 +15,28 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_2">
+    <property name="bottomMargin">
+     <number>3</number>
+    </property>
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
        <number>2</number>
       </property>
-      <widget class="QWidget" name="scene_editor">
+      <widget class="SceneEditorTab" name="scene_editor">
        <attribute name="title">
         <string>Scene Editor</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout"/>
       </widget>
-      <widget class="QWidget" name="posture_editor">
+      <widget class="PostureEditorTab" name="posture_editor">
        <attribute name="title">
         <string>Pose Editor</string>
        </attribute>
       </widget>
-      <widget class="QWidget" name="skeleton_editor">
+      <widget class="SkeletonEditorTab" name="skeleton_editor">
        <attribute name="title">
         <string>Skeleton Editor</string>
        </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout"/>
       </widget>
      </widget>
     </item>
@@ -56,35 +57,22 @@
     </property>
     <addaction name="action_Quit"/>
    </widget>
-<<<<<<< HEAD
    <widget class="QMenu" name="menu_Window">
     <property name="contextMenuPolicy">
      <enum>Qt::DefaultContextMenu</enum>
     </property>
-=======
-   <widget class="QMenu" name="menuWindow">
->>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
     <property name="title">
      <string>Window</string>
     </property>
    </widget>
-<<<<<<< HEAD
    <widget class="QMenu" name="menu_Tools">
-=======
-   <widget class="QMenu" name="menuTools">
->>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
     <property name="title">
      <string>Help</string>
     </property>
    </widget>
    <addaction name="menu_File"/>
-<<<<<<< HEAD
    <addaction name="menu_Window"/>
    <addaction name="menu_Tools"/>
-=======
-   <addaction name="menuWindow"/>
-   <addaction name="menuTools"/>
->>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action_Quit">
@@ -96,6 +84,26 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SkeletonEditorTab</class>
+   <extends>QWidget</extends>
+   <header>GUI/MainWindowTabWidgetIncludes.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PostureEditorTab</class>
+   <extends>QWidget</extends>
+   <header>GUI/PostureEditorTab.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SceneEditorTab</class>
+   <extends>QWidget</extends>
+   <header>GUI/SceneEditorTab.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

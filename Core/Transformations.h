@@ -70,5 +70,6 @@ namespace cagd
     public:
         Translate();
         Translate(double t_x, double t_y, double t_z);
+        Translate(const DCoordinate3& t);
     };
 }

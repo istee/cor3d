@@ -1,200 +1,195 @@
+#include <sstream>
+#include <fstream>
+#include <string>
+
 #include "Cor3d.h"
 #include "BaseEntity.h"
-#include "ISkeleton.h"
 #include "Skeleton.h"
 
 namespace cor3d {
-<<<<<<< HEAD
-    Cor3d::Cor3d()
+    Cor3d::Cor3d(): QObject()
     {
-        _selected_skeleton = -1;
-        //_joint_model.LoadFromOFF("Models/sphere.off");
-        //_joint_model.UpdateVertexBufferObjects();
-        //_link_model.LoadFromOFF("Models/cone.off");
-        //_link_model.UpdateVertexBufferObjects();
+        _selected_skeleton_id = -1;
+        _rendering_options = new RenderingOptions();
     }
 
-    vector<BaseEntity> Cor3d::get_skeleton_list() const
+    string Cor3d::next_name() const
     {
-        vector<BaseEntity> skeleton_list = vector<BaseEntity>();
-        for (std::vector<Skeleton>::const_iterator it = _skeletons.begin(); it != _skeletons.end(); it++)
-        {
-            skeleton_list.push_back((BaseEntity) *it);
-        }
-
-        return skeleton_list;
-    }
-
-    unsigned int Cor3d::create_skeleton(const string& name)
-    {
-        Skeleton skeleton = Skeleton(_skeletons.size(), name);
-        _skeletons.push_back(skeleton);
-        return skeleton.get_id();
-    }
-
-    Skeleton Cor3d::get_skeleton_by_name(const string& name) const
-    {
-        for (std::vector<Skeleton>::const_iterator it = _skeletons.begin(); it != _skeletons.end(); it++)
-        {
-            if (it->get_name() == name)
-            {
-                return (Skeleton) *it;
-            }
-        }
+        return cor3d::next_name<Skeleton>("Skeleton ", _skeletons);
     }
 
     int Cor3d::get_skeleton_id_by_name(const string& name) const
-=======
-    const vector<BaseEntity> Cor3d::get_skeleton_list()
     {
-        vector<BaseEntity> skeletonList = vector<BaseEntity>();
-        for (std::vector<Skeleton>::iterator it = _skeletons.begin(); it != _skeletons.end(); it++)
+        return get_id_by_name<Skeleton>(name, _skeletons);
+    }
+
+    Skeleton* Cor3d::get_skeleton()
+    {
+        if (is_skeleton_selected())
         {
-            skeletonList.push_back((BaseEntity) *it);
+            return _skeletons[_selected_skeleton_id];
         }
-
-        return skeletonList;
+        return 0;
     }
 
-    unsigned int Cor3d::create_skeleton(string name)
+    vector<BaseEntity*> Cor3d::get_skeleton_list()
     {
-        Skeleton skeleton = Skeleton(_skeletons.size() + 1, name);
-        _skeletons.push_back(skeleton);
+        return get_base_entities<Skeleton>(_skeletons);
     }
 
-    int Cor3d::get_skeleton_id_by_name(string name) const
->>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
+    RenderingOptions* Cor3d::get_rendering_options()
     {
-        for (std::vector<Skeleton>::const_iterator it = _skeletons.begin(); it != _skeletons.end(); it++)
-        {
-            if (it->get_name() == name)
-            {
-<<<<<<< HEAD
-                return ((BaseEntity) *it).get_id();
-            }
-        }
-
-        return -1;
+        return _rendering_options;
     }
 
-    Skeleton Cor3d::get_skeleton_by_id(int id) const
-=======
-                return it->get_id();
-            }
-        }
-        return -1;
-    }
-
-    string Cor3d::get_skeleton_name_by_id(int id)
->>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
-    {
-        for (std::vector<Skeleton>::const_iterator it = _skeletons.begin(); it != _skeletons.end(); it++)
-        {
-            if (it->get_id() == id)
-            {
-<<<<<<< HEAD
-                return (Skeleton) *it;
-            }
-        }
-    }
-
-    Skeleton Cor3d::get_selected_skeleton() const
-    {
-        if (_selected_skeleton >= 0)
-        {
-            return _skeletons[_selected_skeleton];
-        }
-        throw _selected_skeleton;
-    }
-
-    bool Cor3d::is_skeleton_name_reserved(const string& name) const
-    {
-        for (std::vector<Skeleton>::const_iterator it = _skeletons.begin(); it != _skeletons.end(); it++)
-        {
-            if (it->get_name() == name)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    void Cor3d::set_skeleton(const Skeleton& skeleton)
-    {
-        _skeletons[skeleton.get_id()] = skeleton;
-    }
-
-    void Cor3d::remove_selected_skeleton()
-    {
-        // TODO remove
-//        cout << _selected_skeleton << endl;
-//        _skeletons.erase(&_skeletons[_selected_skeleton]);
-//        for (vector<Skeleton>::iterator it = _skeletons.begin() + _selected_skeleton; it != _skeletons.end(); it++)
-//        {
-//            ((BaseEntity) *it).decrease_id();
-//        }
-        _selected_skeleton = -1;
-=======
-                return it->get_name();
-            }
-        }
-        return "";
-    }
-
-    string Cor3d::get_skeleton_model_file(unsigned int skeleton_id)
-    {
-        return _skeletons[skeleton_id].get_model_file();
-    }
-
-    double Cor3d::get_skeleton_model_x(unsigned int skeleton_id)
-    {
-        return _skeletons[skeleton_id].get_model_x();
-    }
-
-    double Cor3d::get_skeleton_model_y(unsigned int skeleton_id)
-    {
-        return _skeletons[skeleton_id].get_model_y();
-    }
-
-    double Cor3d::get_skeleton_model_z(unsigned int skeleton_id)
-    {
-        return _skeletons[skeleton_id].get_model_z();
->>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
-    }
-
-    void Cor3d::select_skeleton(int id)
-    {
-<<<<<<< HEAD
-        if (id > _skeletons.size() + 1)
-=======
-        if (id > _skeletons.size())
->>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
-        {
-            _selected_skeleton = -1;
-        }
-        else
-        {
-            _selected_skeleton = id;
-            _skeletons[_selected_skeleton].select_joint(-1);
-        }
-    }
-
-<<<<<<< HEAD
-    bool Cor3d::check_skeleton_id_boundaries(int skeleton_id)
+    bool Cor3d::is_skeleton_id_valid(int skeleton_id)
     {
         if (skeleton_id < 0)
         {
             return false;
         }
-        if (skeleton_id >= _skeletons.size())
+        if ((unsigned int)skeleton_id >= _skeletons.size())
         {
             return false;
         }
         return true;
-=======
-    int Cor3d::get_selected_skeleton()
-    {
-        return _selected_skeleton;
->>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
     }
+
+    bool Cor3d::is_skeleton_selected()
+    {
+        return is_skeleton_id_valid(_selected_skeleton_id);
+    }
+
+    // implementation of public slots
+
+    void Cor3d::handle_view_skeleton_added(string name)
+    {
+        _skeletons.push_back(new Skeleton(_skeletons.size(), append_sequence_number<Skeleton>(name, _skeletons)));
+        emit model_skeleton_list_changed();
+    }
+
+    void Cor3d::handle_view_skeleton_imported(const string& file_name)
+    {
+        ifstream file;
+        Skeleton* sk = new Skeleton(_skeletons.size(), "");
+        file.open(file_name.c_str());
+        file >> *sk;
+        _skeletons.push_back(sk);
+        file.close();
+        emit model_skeleton_list_changed();
+    }
+
+    void Cor3d::handle_view_skeleton_selected(int id)
+    {
+        if (!is_skeleton_id_valid(id))
+        {
+            _selected_skeleton_id = -1;
+        }
+        else
+        {
+            _selected_skeleton_id = id;
+        }
+
+        emit model_skeleton_selection_changed();
+    }
+
+    void Cor3d::handle_view_skeleton_deleted()
+    {
+        delete _skeletons[_selected_skeleton_id];
+        _skeletons.erase(_skeletons.begin() + _selected_skeleton_id);
+        for (vector<Skeleton*>::iterator it = _skeletons.begin() + _selected_skeleton_id; it != _skeletons.end(); it++)
+        {
+            ((BaseEntity*) *it)->decrease_id();
+        }
+
+        _selected_skeleton_id--;
+        emit model_skeleton_list_changed();
+    }
+
+    void Cor3d::handle_view_skeleton_exported(const string& file_name)
+    {
+        ofstream file;
+        file.open(file_name.c_str());
+        file << *get_skeleton();
+        file.close();
+    }
+
+    void Cor3d::handle_view_skeleton_name_changed(const string& name)
+    {
+        get_skeleton()->set_name(append_sequence_number<Skeleton>(name, _skeletons));
+        emit model_skeleton_data_changed();
+    }
+
+    void Cor3d::handle_view_skeleton_model_changed(const string& file_name)
+    {
+        get_skeleton()->set_model_file(file_name);
+        emit model_skeleton_data_changed();
+    }
+
+    void Cor3d::handle_view_skeleton_model_scale_changed(const DCoordinate3& model_scale)
+    {
+        get_skeleton()->set_model_scale(model_scale);
+        emit model_skeleton_data_changed();
+    }
+
+    void Cor3d::handle_view_skeleton_model_offset_changed(const DCoordinate3& model_offset)
+    {
+        get_skeleton()->set_model_offset(model_offset);
+        emit model_skeleton_data_changed();
+    }
+
+    void Cor3d::handle_view_skeleton_render_toggled(bool on)
+    {
+        _rendering_options->set_render_model(on);
+        emit model_rendering_options_changed();
+    }
+
+    void Cor3d::handle_view_skeleton_material_changed(int material_id)
+    {
+        _rendering_options->set_model_material(material_id);
+        emit model_rendering_options_changed();
+    }
+
+    void Cor3d::handle_view_joint_render_toggled(bool on)
+    {
+        _rendering_options->set_render_joints(on);
+        emit model_rendering_options_changed();
+    }
+
+    void Cor3d::handle_view_joint_model_file_changed(const string& file)
+    {
+        _rendering_options->set_joint_model_file(file);
+        emit model_rendering_options_changed();
+    }
+
+    void Cor3d::handle_view_joint_material_changed(int material_id)
+    {
+        _rendering_options->set_joint_material(material_id);
+        emit model_rendering_options_changed();
+    }
+
+    void Cor3d::handle_view_selected_joint_material_changed(int material_id)
+    {
+        _rendering_options->set_selected_joint_material(material_id);
+        emit model_rendering_options_changed();
+    }
+
+    void Cor3d::handle_view_link_render_toggled(bool on)
+    {
+        _rendering_options->set_render_links(on);
+        emit model_rendering_options_changed();
+    }
+
+    void Cor3d::handle_view_link_model_file_changed(const string& file)
+    {
+        _rendering_options->set_link_model_file(file);
+        emit model_rendering_options_changed();
+    }
+
+    void Cor3d::handle_view_link_material_changed(int material_id)
+    {
+        _rendering_options->set_link_material(material_id);
+        emit model_rendering_options_changed();
+    }
+
 }

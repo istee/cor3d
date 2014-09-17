@@ -2,41 +2,31 @@
 
 #include <string>
 #include <vector>
-<<<<<<< HEAD
 #include <algorithm>
-=======
->>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
 
 #include "BaseEntity.h"
 
 #include "../Core/DCoordinates3.h"
+#include "Core/Transformations.h"
 
 using namespace std;
 using namespace cagd;
 
 namespace cor3d {
-<<<<<<< HEAD
 
     enum Type{ROTATIONAL = 0, TRANSLATIONAL = 1};
 
     class Joint: public BaseEntity {
-        friend std::ostream& operator <<(std::ostream& lhs, const Joint& rhs);
+        friend ostream& operator <<(ostream& lhs, const Joint& rhs);
+        friend istream& operator >>(istream& lhs, Joint& rhs);
 
-=======
-    enum Type{ROTATIONAL, TRANSLATIONAL};
-
-    class Joint: public BaseEntity {
->>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
         int                     _parent_id;
         vector<unsigned int>    _children_ids;
         Type                    _type;
         DCoordinate3            _axis;
-        double                  _length;
-<<<<<<< HEAD
+        DCoordinate3            _orientation;
         DCoordinate3            _coordinate;
-        double                  _lower_limit;
-        double                  _upper_limit;
-        double                  _initial_value;
+        DCoordinate3            _configuration;
 
     public:
         Joint(unsigned int id, string name, int parent_id/*, DCoordinate3 parent_coordinate*/): BaseEntity(id, name)
@@ -45,6 +35,8 @@ namespace cor3d {
             _type       = ROTATIONAL;
             //_coordinate = parent_coordinate;
         }
+
+        void update_coordinates(const DCoordinate3& parent_coordinates);
 
         ///////////////////////////
         // getter methods        //
@@ -64,49 +56,37 @@ namespace cor3d {
             return _type;
         }
 
-        double get_axis_x() const
-        {
-            return _axis.x();
-        }
-
-        double get_axis_y() const
-        {
-            return _axis.y();
-        }
-
-        double get_axis_z() const
-        {
-            return _axis.z();
-        }
-
-        DCoordinate3 get_axis() const
+        const DCoordinate3& get_axis() const
         {
             return _axis;
         }
 
-        double get_length() const
+        const DCoordinate3& get_orientation() const
         {
-            return _length;
+            return _orientation;
         }
 
-        DCoordinate3 get_coordinate() const
+        double get_length() const
+        {
+            return 0;
+        }
+
+        const DCoordinate3& get_configuration() const
+        {
+            return _configuration;
+        }
+
+        const DCoordinate3& get_coordinates() const
         {
             return _coordinate;
         }
 
-        double get_lower_limit() const
+        static vector<BaseEntity> get_joint_types()
         {
-            return _lower_limit;
-        }
-
-        double get_upper_limit() const
-        {
-            return _upper_limit;
-        }
-
-        double get_initial_value() const
-        {
-            return _initial_value;
+            vector<BaseEntity> joint_types;
+            joint_types.push_back(BaseEntity(ROTATIONAL, "ROTATIONAL"));
+            joint_types.push_back(BaseEntity(TRANSLATIONAL, "TRANSLATIONAL"));
+            return joint_types;
         }
 
         ///////////////////////////
@@ -129,12 +109,11 @@ namespace cor3d {
 
         void set_type(Type type)
         {
-            _type = type;
-        }
-
-        void set_axis(double x, double y, double z)
-        {
-            _axis = DCoordinate3(x, y, z);
+            if (_type != type)
+            {
+                _type = type;
+                _configuration = DCoordinate3(0, 0, 0);
+            }
         }
 
         void set_axis(const DCoordinate3& axis)
@@ -142,121 +121,14 @@ namespace cor3d {
             _axis = axis;
         }
 
-        void set_length(double length)
+        void set_orientation(const DCoordinate3& orientation)
         {
-            _length = length;
+            _orientation = orientation;
         }
 
-        void set_lower_limit(double limit)
+        void set_configuration(const DCoordinate3& configuration)
         {
-            _lower_limit = limit;
-        }
-
-        void set_upper_limit(double limit)
-        {
-            _upper_limit = limit;
-        }
-
-        void set_initial_value(double value)
-        {
-            _initial_value = value;
-=======
-        double                  _lower_limit;
-        double                  _upper_limit;
-        double                  _initial_joint_value;
-
-    public:
-        Joint(unsigned int id, string name, int parent_id): BaseEntity(id, name) { _parent_id = parent_id; }
-
-        void set_parent(int parent_id)
-        {
-            _parent_id = parent_id;
-        }
-
-        int get_parent()
-        {
-            return _parent_id;
-        }
-
-        void add_children(int children_id)
-        {
-            _children_ids.push_back(children_id);
-        }
-
-        vector<unsigned int>& get_childrens()
-        {
-            return _children_ids;
-        }
-
-        void set_type(Type type)
-        {
-            _type = type;
-        }
-
-        Type get_type()
-        {
-            return _type;
-        }
-
-        void set_axis(double x, double y, double z)
-        {
-            _axis = DCoordinate3(x, y, z);
-        }
-
-        double get_axis_x()
-        {
-            return _axis.x();
-        }
-
-        double get_axis_y()
-        {
-            return _axis.y();
-        }
-
-        double get_axis_z()
-        {
-            return _axis.z();
-        }
-
-        void set_length(double length)
-        {
-            _length = length;
-        }
-
-        double get_length()
-        {
-            return _length;
-        }
-
-        void set_lower_limit(double limit)
-        {
-            _lower_limit = limit;
-        }
-
-        double get_lower_limit()
-        {
-            return _lower_limit;
-        }
-
-        void set_upper_limit(double limit)
-        {
-            _upper_limit = limit;
-        }
-
-        double get_upper_limit()
-        {
-            return _upper_limit;
-        }
-
-        void set_initial_joint_value(double value)
-        {
-            _initial_joint_value = value;
-        }
-
-        double get_initial_joint_value()
-        {
-            return _initial_joint_value;
->>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
+            _configuration = configuration;
         }
     };
 }

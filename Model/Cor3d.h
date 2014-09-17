@@ -2,75 +2,73 @@
 
 #include <string>
 #include <vector>
-<<<<<<< HEAD
+#include <map>
 #include <QObject>
-=======
->>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
 
 #include "Skeleton.h"
+#include "BaseEntityCollection.h"
 
 using namespace std;
 
 namespace cor3d {
-    class Cor3d {
-        vector<Skeleton>    _skeletons;
-        int                 _selected_skeleton;
-<<<<<<< HEAD
-        TriangulatedMesh3   _joint_model;
-        TriangulatedMesh3   _link_model;
+    class Cor3d: public QObject, public BaseEntityCollection {
+        Q_OBJECT
 
-        bool check_skeleton_id_boundaries(int skeleton_id);
+        vector<Skeleton*>   _skeletons;
+        int                 _selected_skeleton_id;
+
+        RenderingOptions*   _rendering_options;
+
+
+
+
+
+    protected:
+        vector<Skeleton*> get_data()
+        {
+            return _skeletons;
+        }
+
     public:
         Cor3d();
-        vector<BaseEntity> get_skeleton_list() const;
-        unsigned int create_skeleton(const string& name);
 
-        Skeleton get_skeleton_by_name(const string& name) const;
         int get_skeleton_id_by_name(const string& name) const;
-        Skeleton get_skeleton_by_id(int id) const;
-        Skeleton get_selected_skeleton() const;
+        string next_name() const;
+        vector<BaseEntity*> get_skeleton_list();
+        Skeleton* get_skeleton();
+        RenderingOptions* get_rendering_options();
 
-        unsigned int get_skeleton_count() const
-        {
-            return _skeletons.size();
-        }
+    private:
+        bool is_skeleton_id_valid(int skeleton_id);
+        bool is_skeleton_selected();
 
-        bool is_skeleton_selected() const
-        {
-            return _selected_skeleton >= 0;
-        }
+    signals:
+        void model_skeleton_list_changed();
+        void model_skeleton_selection_changed();
+        void model_skeleton_name_changed();
+        void model_skeleton_data_changed();
+        void model_rendering_options_changed();
 
-        bool is_skeleton_name_reserved(const string& name) const;
+    public slots:
+        void handle_view_skeleton_added(string);
+        void handle_view_skeleton_imported(const string&);
+        void handle_view_skeleton_selected(int);
+        void handle_view_skeleton_deleted();
+        void handle_view_skeleton_exported(const string&);
+        void handle_view_skeleton_name_changed(const string&);
+        void handle_view_skeleton_model_changed(const string&);
+        void handle_view_skeleton_model_scale_changed(const DCoordinate3&);
+        void handle_view_skeleton_model_offset_changed(const DCoordinate3&);
 
-        void set_skeleton(const Skeleton& skeleton);
+        void handle_view_skeleton_render_toggled(bool);
+        void handle_view_skeleton_material_changed(int);
+        void handle_view_joint_render_toggled(bool);
+        void handle_view_joint_model_file_changed(const string&);
+        void handle_view_joint_material_changed(int);
+        void handle_view_selected_joint_material_changed(int);
+        void handle_view_link_render_toggled(bool);
+        void handle_view_link_model_file_changed(const string&);
+        void handle_view_link_material_changed(int);
 
-        void remove_selected_skeleton();
-
-        void select_skeleton(int id);
-=======
-
-        Cor3d() {}
-        Cor3d(Cor3d const&);
-        void operator=(Cor3d const&);
-    public:
-        static Cor3d& getInstance()
-        {
-            static Cor3d instance;
-            return instance;
-        }
-
-        const vector<BaseEntity> get_skeleton_list();
-        unsigned int create_skeleton(string name);
-        int get_skeleton_id_by_name(string name) const;
-        string get_skeleton_name_by_id(int id);
-        string get_skeleton_model_file(unsigned int skeleton_id);
-        double get_skeleton_model_x(unsigned int skeleton_id);
-        double get_skeleton_model_y(unsigned int skeleton_id);
-        double get_skeleton_model_z(unsigned int skeleton_id);
-        void select_skeleton(int id);
-        int get_selected_skeleton();
-
-
->>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
     };
 }

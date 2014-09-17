@@ -400,6 +400,13 @@ namespace cagd
         _mat[14] = t_z;
     }
 
+    Translate::Translate(const DCoordinate3& t): Transformation()
+    {
+        _mat[12] = t.x();
+        _mat[13] = t.y();
+        _mat[14] = t.z();
+    }
+
     // output to stream
     std::ostream& operator <<(std::ostream& lhs, const Transformation& rhs)
     {
@@ -417,5 +424,6 @@ namespace cagd
             }
         }
         lhs << std::endl;
+        return lhs;
      }
 }

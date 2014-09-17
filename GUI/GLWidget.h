@@ -11,10 +11,11 @@
 #include <QMouseEvent>
 #include <QPoint>
 
+#include "Cor3dApplication.h"
 #include "../Model/Skeleton.h"
 #include "../Core/Lights.h"
 #include "../Core/DCoordinates3.h"
-#include "../Core/Transformations.h"
+#include "Core/Transformations.h"
 
 #include "RenderingOptions.h"
 
@@ -58,18 +59,28 @@ private:
 
     //std::vector<cagd::Skeleton>   _skeletons;
 
-    bool drag;
-    unsigned int _drag_type, _drag_button;
+    bool is_drag;
+    unsigned int _drag_type;
     cagd::DCoordinate3 _drag_offset;
     cagd::DCoordinate3 _initial_normal;
 
+
+
     GLuint _dl_grid;
 
-    void RenderMoveArrows(cagd::DCoordinate3 *position, bool glLoad = false);
-    void Pick(double x, double y);
-    void Drag(double x, double y, double z);
 
-    RenderingOptions renderingOptions;
+
+protected:
+    virtual void specificPaintGL() = 0;
+
+    void render_move_arrows(RenderingOptions* rendering_options, const DCoordinate3 *position, int id = 0, bool glLoad = false);
+    virtual void drag_starting() {  }
+    virtual void drag_finished() {  }
+
+    void pick(double x, double y);
+    virtual void drag(double x, double y, double z);
+
+    Cor3dApplication *cor3dApp;
 
 public:
     // special and default constructor
@@ -93,26 +104,23 @@ public:
 
     ~GLWidget();
 
+    DCoordinate3 get_translation() const;
+    DCoordinate3 get_rotation() const;
+    double get_zoom_factor() const;
+
 public slots:
     // public event handling methods/slots
-    void set_angle_x(int value);
-    void set_angle_y(int value);
-    void set_angle_z(int value);
-
+    void set_translation(const DCoordinate3& translation);
+    void set_rotation(const DCoordinate3& angles);
     void set_zoom_factor(double value);
 
-    void set_trans_x(double value);
-    void set_trans_y(double value);
-    void set_trans_z(double value);
     void set_render_mesh(int skeleton_id, bool value);
     void set_render_links(int skeleton_id, bool value);
     void set_render_joints(int skeleton_id, bool value);
 
 signals:
-    void zoomChanged(double newValue);
-    void trans_xChanged(double newValue);
-    void trans_yChanged(double newValue);
-    void trans_zChanged(double newValue);
-
+    void transformations_changed();
     void selected_joint(double x, double y, double z);
+    void view_joint_selection_changed(int);
+    void view_joint_absolute_position_changed(DCoordinate3);
 };

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>EditSkeleton</class>
+ <widget class="QWidget" name="EditSkeleton">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>250</width>
+    <height>250</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>250</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Edit skeleton</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="SideWidgetGroupBox" name="groupBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title">
+      <string>Edit skeleton</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="NameLineEdit" name="name" native="true"/>
+      </item>
+      <item>
+       <widget class="FileDisplayAndChooser" name="model_file" native="true"/>
+      </item>
+      <item>
+       <widget class="DCoordinate3GroupBox" name="model_scale" native="true"/>
+      </item>
+      <item>
+       <widget class="DCoordinate3GroupBox" name="model_offset" native="true"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DCoordinate3GroupBox</class>
+   <extends>QWidget</extends>
+   <header location="global">GUI/BasicWidgets/DCoordinate3GroupBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>NameLineEdit</class>
+   <extends>QWidget</extends>
+   <header>GUI/BasicWidgets/NameLineEdit.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>FileDisplayAndChooser</class>
+   <extends>QWidget</extends>
+   <header>GUI/BasicWidgets/FileDisplayAndChooser.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SideWidgetGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>GUI/SideWidgetComponents/SideWidgetGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

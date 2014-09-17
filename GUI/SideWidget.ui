@@ -31,7 +31,7 @@
      <x>0</x>
      <y>10</y>
      <width>281</width>
-     <height>161</height>
+     <height>321</height>
     </rect>
    </property>
    <property name="title">
@@ -210,19 +210,6 @@
       <double>0.100000000000000</double>
      </property>
     </widget>
-    <widget class="QLabel" name="label_15">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>60</y>
-       <width>21</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>x</string>
-     </property>
-    </widget>
     <widget class="QComboBox" name="comboBox_4">
      <property name="geometry">
       <rect>
@@ -298,6 +285,19 @@
      </property>
     </widget>
    </widget>
+  </widget>
+  <widget class="QLabel" name="label_15">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>200</y>
+     <width>21</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>x</string>
+   </property>
   </widget>
  </widget>
  <resources/>

@@ -1,8 +1,142 @@
 #include "Skeleton.h"
-<<<<<<< HEAD
-#include "Core/Materials.h"
 
-namespace cor3d { 
+#include <sstream>
+
+#include "Core/Materials.h"
+#include "Model/Joint.h"
+
+namespace cor3d {
+
+    Skeleton::Skeleton(unsigned int id, const string& name): QObject(), BaseEntity(id, name)
+    {
+        _model_scale = DCoordinate3(1.0, 1.0, 1.0);
+        _selected_joint = -1;
+        _coordinates_need_update = false;
+    }
+
+
+
+    int Skeleton::construct_chains_(int joint_id, int chain_index, int parent_chain_index)
+    {
+
+        Chain chain = Chain(chain_index, parent_chain_index, false);
+        chain.add_joint_to_front(_joints[_joints[joint_id].get_parent()].get_coordinates());
+        while(_joints[joint_id].get_children().size() == 1)
+        {
+            chain.add_joint_to_front(_joints[joint_id].get_coordinates());
+            joint_id = _joints[joint_id].get_children()[0];
+        }
+        chain.add_joint_to_front(_joints[joint_id].get_coordinates());
+        _chains.push_back(chain);
+        vector<unsigned int> children = _joints[joint_id].get_children();
+        int chain_number = 1;
+        for (vector<unsigned int>::iterator it = children.begin(); it != children.end(); it++)
+        {
+            chain_number += construct_chains_(*it, chain_index + chain_number, chain_index);
+        }
+        return chain_number;
+    }
+
+    void Skeleton::construct_chains()
+    {
+        update_joint_coordinates();
+        if (_selected_joint >= 0)
+        {
+            Chain chain = Chain(0, -1, true);
+            forward_chain(chain, _selected_joint);
+            _chains.push_back(chain);
+            vector<unsigned int> children = _joints[_selected_joint].get_children();
+            int chain_number = 1;
+            for (vector<unsigned int>::iterator it = children.begin(); it != children.end(); it++)
+            {
+                chain_number += construct_chains_(*it, chain_number, 0);
+            }
+        }
+    }
+
+    void Skeleton::forward_chain(Chain& chain, int joint_id)
+    {
+        int index = joint_id;
+        while( _joints[index].get_parent() != -1 && _joints[_joints[index].get_parent()].get_children().size() == 1)
+        {
+            index = _joints[index].get_parent();
+        }
+        if (_joints[index].get_parent() != -1)
+        {
+            chain.add_joint(_joints[_joints[index].get_parent()].get_coordinates());
+        }
+        while (index != joint_id)
+        {
+            chain.add_joint(_joints[index].get_coordinates());
+            index = _joints[index].get_children()[0];
+        }
+        chain.add_joint(_joints[joint_id].get_coordinates());
+    }
+
+    void Skeleton::MoveSelected(double x, double y, double z)
+    {
+        DCoordinate3 target(x, y, z);
+        FABRIK(_chains[0], target, 1e-10);
+//        for (unsigned int i = 1; i < _chains.size(); i++)
+//        {
+//            SimpleForwardFABRIK(&_chains[i], _chains[_chains[i]._parent_id].GetChainEnding(), 1e-10);
+//        }
+//        for (vector<Chain>::iterator it = _chains.begin(); it != _chains.end(); it++)
+//            for(int i = 0; i )
+    }
+    void Skeleton::FABRIK(Chain& chain, DCoordinate3 target, double tolerance)
+        {
+            double *lengths = new double[chain.get_chain_size()];
+            double total_length = 0.0;
+            for (int i = 0; i < chain.get_chain_size() - 1; i++)
+            {
+                lengths[i] = (chain.get_joint_coordinates(i) - chain.get_joint_coordinates(i + 1)).length();
+                total_length += lengths[i];
+            }
+            double distance = (target - chain.get_joint_coordinates(chain.get_chain_size() - 1)).length();
+            if (distance > total_length)
+            {
+                for (int i = 0; i < chain.get_chain_size() - 1; i++)
+                {
+                    double r = (target - chain.get_joint_coordinates(i)).length();
+                    double lambda = lengths[i] / r;
+
+                    // innen folytatni
+                    chain.set_joint_coodinates(DCoordinate3((1 - lambda) * chain.get_joint_coordinates(i) + lambda * target), i + 1);
+                }
+            }
+            else
+            {
+                DCoordinate3 b = DCoordinate3(chain.get_joint_coordinates(0));
+                double dif_A = (target - chain.get_joint_coordinates(chain.get_chain_size() - 1)).length();
+                unsigned int iteration_count = 0, max_iteration = 10;
+                while (dif_A > tolerance && iteration_count < max_iteration)
+                {
+                    iteration_count++;
+                    chain.set_joint_coodinates(DCoordinate3(target), chain.get_chain_size() - 1);
+                    for (int i = chain.get_chain_size() - 2; i >= 0; i--)
+                    {
+                        double r = (chain.get_joint_coordinates(i + 1) - chain.get_joint_coordinates(i)).length();
+                        double lambda = lengths[i] / r;
+                        chain.set_joint_coodinates((1 - lambda) * chain.get_joint_coordinates(i + 1) + lambda * chain.get_joint_coordinates(i), i);
+                    }
+                    chain.set_joint_coodinates(b, 0);
+                    for (int i = 0; i < chain.get_chain_size() - 1; i++)
+                    {
+                        double r = (chain.get_joint_coordinates(i + 1) - chain.get_joint_coordinates(i)).length();
+                        double lambda = lengths[i] / r;
+                        chain.set_joint_coodinates( DCoordinate3((1 - lambda) * chain.get_joint_coordinates(i) + lambda * chain.get_joint_coordinates(i + 1)), i + 1);
+                    }
+                    dif_A = (target - chain.get_joint_coordinates(chain.get_chain_size() - 1)).length();
+                }
+            }
+        }
+
+    void Skeleton::clear_chains()
+    {
+        _chains.clear();
+    }
+
     vector<BaseEntity> Skeleton::get_joint_list() const
     {
         vector<BaseEntity> joint_list = vector<BaseEntity>();
@@ -16,61 +150,61 @@ namespace cor3d {
 
     vector<BaseEntity> Skeleton::get_possible_parents(unsigned int id) const
     {
+
         vector<BaseEntity> possible_parents;
         if (_joints.size() > 0 && id != _joints[0].get_id())
         {
             vector<unsigned int> possible_parent_ids;
-            possible_parents.push_back((_joints[0]));
             possible_parent_ids.push_back(_joints[0].get_id());
-            while (possible_parent_ids.size() > 0)
+            int limit = 0;
+            while (possible_parent_ids.size() > 0 && limit < 8)
             {
+                limit++;
                 vector<unsigned int> new_possible_parent_ids;
                 for (vector<unsigned int>::iterator it = possible_parent_ids.begin(); it != possible_parent_ids.end(); it++)
                 {
-                    vector<unsigned int> children_ids = _joints[*it].get_children();
-                    for (vector<unsigned int>::iterator jt = children_ids.begin(); jt != children_ids.end(); jt++)
+                    if (id != *it)
                     {
-                        if (id != *jt)
+                        possible_parents.push_back((_joints[*it]));
+                        vector<unsigned int> children_ids = _joints[*it].get_children();
+                        for (vector<unsigned int>::iterator jt = children_ids.begin(); jt != children_ids.end(); jt++)
                         {
                             possible_parents.push_back(_joints[*jt]);
                             new_possible_parent_ids.push_back(*jt);
                         }
                     }
+
                 }
                 possible_parent_ids = new_possible_parent_ids;
+                new_possible_parent_ids.clear();
             }
         }
         return possible_parents;
     }
 
 
-    int Skeleton::set_model_file(const string& file)
+    void Skeleton::set_model_file(const string& file)
     {
-        _model.LoadFromOFF(file);
-        _model.UpdateVertexBufferObjects();
-        _model_file = file;
-        return 0;
-    }
-
-    void Skeleton::select_joint(int id)
-    {
-        if (id > _joints.size())
+        if (_model.LoadFromOFF(file))
         {
-            _selected_joint = -1;
+            _model.UpdateVertexBufferObjects();
+            _model_file = file;
+            //emit data_changed(get_id());
         }
         else
         {
-            _selected_joint = id;
+            _model.LoadFromOFF(_model_file);
+            _model.UpdateVertexBufferObjects();
         }
     }
 
-    Joint Skeleton::get_selected_joint() const
+    string Skeleton::next_joint_name() const
     {
-        if (_selected_joint >= 0)
-        {
-            return _joints[_selected_joint];
-        }
-        throw _selected_joint;
+        stringstream ss;
+        ss << "Joint " << (_joints.size() + 1);
+        string name = ss.str();
+        name = append_sequence_number(name);
+        return name;
     }
 
     bool Skeleton::is_joint_name_reserved(const string& name) const
@@ -85,12 +219,292 @@ namespace cor3d {
         return false;
     }
 
-    void Skeleton::set_joint(const Joint& joint)
+    string Skeleton::append_sequence_number(const string& name) const
     {
-        _joints[joint.get_id()] = joint;
+        unsigned int nr = 2;
+        string new_name = name;
+        while(is_joint_name_reserved(new_name))
+        {
+            stringstream ss;
+            ss << name << "_" << nr++;
+            new_name = ss.str();
+        }
+        return new_name;
     }
 
-    int Skeleton::add_joint(const string &name, int parent_id)
+    void Skeleton::remove_joint(unsigned int joint_id)
+    {
+
+    }
+
+    void Skeleton::update_joint_coordinates_(unsigned int joint_id, const DCoordinate3& parent_coordinates)
+    {
+        _joints[joint_id].update_coordinates(parent_coordinates);
+        vector<unsigned int> children_ids = _joints[joint_id].get_children();
+        const DCoordinate3& joint_coordinates = _joints[joint_id].get_coordinates();
+        for(vector<unsigned int>::iterator it = children_ids.begin(); it != children_ids.end(); it++)
+        {
+            update_joint_coordinates_(*it, joint_coordinates);
+        }
+
+        _joints[0].get_parent();
+    }
+
+
+    void Skeleton::update_joint_coordinates()
+    {
+        if (_coordinates_need_update)
+        {
+            update_joint_coordinates_(0, DCoordinate3());
+            _coordinates_need_update = false;
+        }
+    }
+
+    bool Skeleton::validate_joint_index_(int joint_id) const
+    {
+        if (joint_id < 0)
+        {
+            return false;
+        }
+        if ((unsigned int) joint_id >= _joints.size())
+        {
+            return false;
+        }
+        return true;
+    }
+
+    void Skeleton::render(RenderingOptions* rendering_options, bool glLoad)
+    {
+        update_joint_coordinates();
+
+        render_joints(rendering_options, glLoad);
+
+        render_links(rendering_options);
+
+        render_axis(rendering_options);
+
+        //    if (_chains_moved)
+        //    {
+        //        MatFBRuby.Apply();
+        //        RenderChains();
+        //    }
+
+        if (rendering_options->get_render_model() && !_model_file.empty())
+        {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+            glDepthMask(GL_FALSE);
+            rendering_options->get_material(rendering_options->get_model_material())->Apply();
+            glPushMatrix();
+            //glScaled(_model_scale.x(), _model_scale.y(), _model_scale.z());
+            _model.Render();
+            glPopMatrix();
+            glDepthMask(GL_TRUE);
+            glDisable(GL_BLEND);
+        }
+    }
+
+    void Skeleton::render_joints(RenderingOptions* rendering_options, bool glLoad) const
+    {
+        const TriangulatedMesh3* joint_model = rendering_options->get_joint_model();
+
+        if (rendering_options->get_render_joints() && joint_model)
+        {
+            rendering_options->get_material(rendering_options->get_joint_material())->Apply();
+
+            for(vector<Joint>::const_iterator it = _joints.begin(); it != _joints.end(); it++)
+            {
+                const DCoordinate3& position = (*it).get_coordinates();
+                glPointSize(1.0);
+                glPushMatrix();
+                glTranslated(position.x(), position.y(), position.z());
+                //glScalef(_scale.x(), _scale.y(), _scale.z());
+                glScalef(0.1, 0.1, 0.1);
+                if (glLoad)
+                {
+                    glLoadName((*it).get_id() + 6);
+                }
+                joint_model->Render();
+                glPopMatrix();
+            }
+        }
+    }
+
+    void Skeleton::render_chains(RenderingOptions* rendering_options, bool glLoad) const
+    {
+        const TriangulatedMesh3* link_model = rendering_options->get_link_model();
+        for(vector<Chain>::const_iterator it = _chains.begin(); it != _chains.end(); it++)
+        {
+            for (int i = 1; i < (*it).get_chain_size(); i++)
+            {
+                    DCoordinate3 start =  (*it).get_joint_coordinates(i - 1);
+                    DCoordinate3 end = (*it).get_joint_coordinates(i);
+                    DCoordinate3 k_prime = end - start;
+
+                    float length = k_prime.length();
+
+                    k_prime /= length;
+
+                    DCoordinate3 j_prime;
+
+                    while (j_prime.length() < EPS)
+                    {
+                        j_prime =  k_prime;
+                        j_prime ^= DCoordinate3((double)rand() / (double)RAND_MAX , (double)rand() / (double)RAND_MAX, (double)rand() / (double)RAND_MAX);
+                    }
+
+                    DCoordinate3 i_prime = j_prime;
+                    i_prime ^= k_prime;
+
+                    float matrix[16];
+
+                    k_prime.normalize();
+                    j_prime.normalize();
+                    i_prime.normalize();
+
+                    matrix[0] = i_prime[0];
+                    matrix[1] = i_prime[1];
+                    matrix[2] = i_prime[2];
+                    matrix[3] = 0.0;
+
+                    matrix[4] = j_prime[0];
+                    matrix[5] = j_prime[1];
+                    matrix[6] = j_prime[2];
+                    matrix[7] = 0.0;
+
+                    matrix[ 8] = k_prime[0];
+                    matrix[ 9] = k_prime[1];
+                    matrix[10] = k_prime[2];
+                    matrix[11] = 0.0;
+
+                    matrix[12] = start[0];
+                    matrix[13] = start[1];
+                    matrix[14] = start[2];
+                    matrix[15] = 1.0;
+
+                    glPushMatrix();
+                        glMultMatrixf(matrix);
+                        glScalef(0.1, 0.1, length);
+                        link_model->Render();
+                    glPopMatrix();
+                }
+        }
+
+    }
+
+    void Skeleton::render_axis(RenderingOptions* rendering_options, bool glLoad) const
+    {
+        if (is_joint_selected())
+        {
+            int joint_id = get_selected_joint_id();
+            if (rendering_options->get_render_axis())
+            {
+                DCoordinate3 axis = get_joint_axis(joint_id);
+                if (axis.length() > 0)
+                {
+                    DCoordinate3 parent_position = get_joint_parent_coordinates(joint_id);
+                    DCoordinate3 p1 = parent_position + 1000 * axis;
+                    DCoordinate3 p2 = parent_position - 1000 * axis;
+
+                    glDisable(GL_LIGHTING);
+                    glLineWidth(2.5);
+                    glColor3f(1.0, 0.0, 0.0);
+                    glBegin(GL_LINES);
+                        glVertex3f(p1.x(), p1.y(), p1.z());
+                        glVertex3f(p2.x(), p2.y(), p2.z());
+                    glEnd();
+                    glEnable(GL_LIGHTING);
+                }
+            }
+        }
+
+//        glPushMatrix();
+//        glColor3f(1.0, 1.0, 0.0);
+//        glDisable(GL_LIGHTING);
+
+//        glBegin(GL_TRIANGLE_FAN);
+//        glVertex3f(0.0, 0.0, 0.0);
+//        float radius = 2;
+
+//        for (float angle=1.0f;angle<361.0f;angle+=0.2)
+//        {
+//            float x2 = sin(angle)*radius;
+//            float y2 = cos(angle)*radius;
+//            glVertex3f(x2, y2, 0.0);
+//        }
+
+//        glEnd();
+
+//        glEnable(GL_LIGHTING);
+//        glPopMatrix();
+    }
+
+    void Skeleton::render_links(RenderingOptions* rendering_options, bool glLoad) const
+    {
+        const TriangulatedMesh3* link_model = rendering_options->get_link_model();
+
+        if (rendering_options->get_render_links() && link_model &&_joints.size() > 1)
+        {
+            rendering_options->get_material(rendering_options->get_link_material())->Apply();
+
+            for(vector<Joint>::const_iterator it = ++_joints.begin(); it != _joints.end(); it++)
+            {
+                DCoordinate3 start = _joints[(*it).get_parent()].get_coordinates();
+                DCoordinate3 end = (*it).get_coordinates();
+                DCoordinate3 k_prime = end - start;
+
+                float length = k_prime.length();
+
+                k_prime /= length;
+
+                DCoordinate3 j_prime;
+
+                while (j_prime.length() < EPS)
+                {
+                    j_prime =  k_prime;
+                    j_prime ^= DCoordinate3((double)rand() / (double)RAND_MAX , (double)rand() / (double)RAND_MAX, (double)rand() / (double)RAND_MAX);
+                }
+
+                DCoordinate3 i_prime = j_prime;
+                i_prime ^= k_prime;
+
+                float matrix[16];
+
+                k_prime.normalize();
+                j_prime.normalize();
+                i_prime.normalize();
+
+                matrix[0] = i_prime[0];
+                matrix[1] = i_prime[1];
+                matrix[2] = i_prime[2];
+                matrix[3] = 0.0;
+
+                matrix[4] = j_prime[0];
+                matrix[5] = j_prime[1];
+                matrix[6] = j_prime[2];
+                matrix[7] = 0.0;
+
+                matrix[ 8] = k_prime[0];
+                matrix[ 9] = k_prime[1];
+                matrix[10] = k_prime[2];
+                matrix[11] = 0.0;
+
+                matrix[12] = start[0];
+                matrix[13] = start[1];
+                matrix[14] = start[2];
+                matrix[15] = 1.0;
+
+                glPushMatrix();
+                    glMultMatrixf(matrix);
+                    glScalef(0.1, 0.1, length);
+                    link_model->Render();
+                glPopMatrix();
+            }
+        }
+    }
+
+    // implementation of public slots
+    void Skeleton::handle_view_joint_added(const string& name, int parent_id)
     {
         Joint joint = Joint(_joints.size(), name, parent_id);
         _joints.push_back(joint);
@@ -98,98 +512,73 @@ namespace cor3d {
         {
             _joints[parent_id].add_child(joint.get_id());
         }
+        emit model_joint_list_changed();
     }
 
-    int Skeleton::remove_joint(unsigned int joint_id)
+    void Skeleton::handle_view_joint_selection_changed(int joint_id)
     {
-
-    }
-
-
-
-    void Skeleton::render(RenderingOptions rendering_options, bool glLoad) const
-    {
-    //    if (_render_links)
-    //    {
-    //        MatFBGold.Apply();
-    //        RenderLinks();
-    //    }
-//            if (rendering_options.get_render_joints())
-//            {
-//                MatFBSilver.Apply();
-//                render_joints(glLoad);
-//            }
-
-    //    if (_chains_moved)
-    //    {
-    //        MatFBRuby.Apply();
-    //        RenderChains();
-    //    }
-
-        if (rendering_options.get_render_model() && !_model_file.empty())
-        {
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-            glDepthMask(GL_FALSE);
-            MatFBPearl.Apply();
-            glPushMatrix();
-                //glScaled(_model_scale.x(), _model_scale.y(), _model_scale.z());
-                _model.Render();
-            glPopMatrix();
-            glDepthMask(GL_TRUE);
-            glDisable(GL_BLEND);
-=======
-//#include "../Core/Constants.h"
-//#include "../Core/Materials.h"
-
-//#include <cstdlib>
-
-namespace cor3d {
-    int Skeleton::set_model(string file)
-    {
-        _model.LoadFromOFF(file);
-        _model.UpdateVertexBufferObjects();
-        return 0;
-    }
-
-    void Skeleton::set_model_offset(double x, double y, double z)
-    {
-        _model_offset = DCoordinate3(x, y, z);
-    }
-
-    string Skeleton::get_model_file()
-    {
-        return _model_file;
-    }
-
-    double Skeleton::get_model_x()
-    {
-        return _model_offset.x();
-    }
-
-    double Skeleton::get_model_y()
-    {
-        return _model_offset.y();
-    }
-
-    double Skeleton::get_model_z()
-    {
-        return _model_offset.z();
-    }
-
-    void Skeleton::select_joint(int id)
-    {
-        if (id > _joints.size())
+        if ((unsigned int) joint_id > _joints.size())
         {
             _selected_joint = -1;
         }
         else
         {
-            _selected_joint = id;
->>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
+            _selected_joint = joint_id;
         }
+        emit model_joint_selection_changed();
+    }
+
+    void Skeleton::handle_view_joint_parent_changed(int parent_id)
+    {
+        _joints[_joints[_selected_joint].get_parent()].remove_child(_selected_joint);
+        _joints[_selected_joint].set_parent(parent_id);
+        _joints[parent_id].add_child(_selected_joint);
+        _coordinates_need_update = true;
+        emit model_joint_data_changed();
+    }
+
+    void Skeleton::handle_view_joint_type_changed(int type)
+    {
+        _joints[_selected_joint].set_type((Type) type);
+        _coordinates_need_update = true;
+        emit model_joint_data_changed();
+    }
+
+    void Skeleton::handle_view_joint_orientation_changed(const DCoordinate3& orientation)
+    {
+        _joints[_selected_joint].set_orientation(orientation);
+        _coordinates_need_update = true;
+        emit model_joint_data_changed();
+    }
+
+    void Skeleton::handle_view_joint_axis_changed(const DCoordinate3& axis)
+    {
+        _joints[_selected_joint].set_axis(axis);
+        _coordinates_need_update = true;
+        emit model_joint_data_changed();
+    }
+
+    void Skeleton::handle_view_joint_configuration_changed(const DCoordinate3& configuration)
+    {
+        _joints[_selected_joint].set_configuration(configuration);
+        _coordinates_need_update = true;
+        emit model_joint_data_changed();
+    }
+
+    void Skeleton::handle_view_joint_absolute_position_changed(const DCoordinate3& coordinates)
+    {
+        _joints[_selected_joint].set_orientation(coordinates - _joints[_joints[_selected_joint].get_parent()].get_coordinates());
+        _coordinates_need_update = true;
+        emit model_joint_data_changed();
+    }
+
+    void Skeleton::handle_view_joint_fabrik_moved(const DCoordinate3& target)
+    {
+        MoveSelected(target.x(), target.y(), target.z());
     }
 }
+
+
 
 //using namespace cagd;
 //using namespace std;
@@ -257,41 +646,6 @@ namespace cor3d {
 //    return inserted;
 //}
 
-<<<<<<< HEAD
-=======
-//void Skeleton::Render(bool glLoad) const
-//{
-
-//    if (_render_links)
-//    {
-//        MatFBGold.Apply();
-//        RenderLinks();
-//    }
-//    if (_render_joints)
-//    {
-//        MatFBSilver.Apply();
-//        RenderJoints(glLoad);
-//    }
-
-//    if (_chains_moved)
-//    {
-//        MatFBRuby.Apply();
-//        RenderChains();
-//    }
-
-//    if (_render_mesh)
-//    {
-//        glEnable(GL_BLEND);
-//        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-//        glDepthMask(GL_FALSE);
-//        MatFBPearl.Apply();
-//        _mesh.Render();
-//        glDepthMask(GL_TRUE);
-//        glDisable(GL_BLEND);
-//    }
-//}
-
->>>>>>> 02c1ac8644f385b7fac8a4d9a287600b2a0f14aa
 //void Skeleton::RenderLinks() const
 //{
 //    for(std::vector<Link>::const_iterator it = _links.begin(); it != _links.end(); ++it)

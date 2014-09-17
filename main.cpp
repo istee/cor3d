@@ -1,6 +1,7 @@
 #include <Cor3dApplication.h>
 
 #include "GUI/MainWindow.h"
+#include <GL/glew.h>
 
 int main(int argc, char** argv)
 {
@@ -10,7 +11,9 @@ int main(int argc, char** argv)
 
     // creating a main window object
     MainWindow mwnd;
+    mwnd.setWindowIcon(QIcon("Resources/icon.png"));
     mwnd.showMaximized();
+    mwnd.initialize();
 
     // running the application
     return app.exec();
