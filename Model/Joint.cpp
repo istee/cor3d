@@ -10,19 +10,19 @@ namespace cor3d {
 
     ostream& operator <<(ostream& lhs, const Joint& rhs)
     {
-        lhs << "name: " << rhs.get_name() << endl;
-        lhs << "id: " << rhs.get_id() << endl;
-        lhs << "parent: " << rhs.get_parent() << endl;
-        lhs << "type: " << rhs.get_type() << endl;
-        lhs << "children_count: " << rhs.get_children().size() << endl;
-        lhs << "children: ";
+        lhs << "joint_name: " << rhs.get_name() << endl;
+        lhs << "joint_id: " << rhs.get_id() << endl;
+        lhs << "joint_parent: " << rhs.get_parent() << endl;
+        lhs << "joint_type: " << rhs.get_type() << endl;
+        lhs << "joint_children_count: " << rhs.get_children().size() << endl;
+        lhs << "joint_childrens: ";
         for (vector<unsigned int>::const_iterator it = rhs._children_ids.begin(); it != rhs._children_ids.end(); it++)
         {
             lhs << *it << " ";
         }
-        lhs << endl << "axis: " << rhs.get_axis() << endl;
-        lhs << "orientaion: " << rhs.get_orientation() << endl;
-        lhs << "configuration: " << rhs.get_configuration() << endl;
+        lhs << endl << "joint_axis: " << rhs.get_axis() << endl;
+        lhs << "joint_orientaion: " << rhs.get_orientation() << endl;
+        lhs << "joint_configuration: " << rhs.get_configuration() << endl;
         return lhs;
     }
 

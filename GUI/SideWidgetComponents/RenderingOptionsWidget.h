@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QWidget>
+#include <QDialog>
 #include "ui_RenderingOptionsWidget.h"
 #include "BaseSideWidget.h"
 #include "GUI/RenderingOptions.h"
@@ -8,7 +9,7 @@
 
 using namespace std;
 
-class RenderingOptionsWidget: public BaseSideWidget, public Ui::RenderingOptionsWidget
+class RenderingOptionsWidget: public QFrame, public Ui::RenderingOptionsWidget
 {
     Q_OBJECT
     Cor3dApplication *cor3dApp;
@@ -28,4 +29,7 @@ signals:
     void view_link_render_toggled(bool on);
     void view_link_model_file_changed(const string& file);
     void view_link_material_changed(int material_id);
+
+private slots:
+    void on_pushButton_3_clicked();
 };

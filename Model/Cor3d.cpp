@@ -32,6 +32,15 @@ namespace cor3d {
         return 0;
     }
 
+    Skeleton* Cor3d::getSkeletonById(unsigned int skeletonId)
+    {
+        if (skeletonId >= 0 && skeletonId < _skeletons.size())
+        {
+            return _skeletons[skeletonId];
+        }
+        return 0;
+    }
+
     vector<BaseEntity*> Cor3d::get_skeleton_list()
     {
         return get_base_entities<Skeleton>(_skeletons);

@@ -34,7 +34,9 @@ SOURCES += \
     GUI/SideWidgetComponents/ManagePoses.cpp \
     GUI/SideWidgetComponents/ConfigurePose.cpp \
     GUI/SideWidgetComponents/ManageScene.cpp \
-    GUI/SideWidgetComponents/ManageSceneTimePoints.cpp
+    GUI/SideWidgetComponents/ManageSceneTimePoints.cpp \
+    GUI/PopupWindows/Export.cpp \
+    GUI/PopupWindows/Import.cpp
 
 
 HEADERS += \
@@ -90,7 +92,9 @@ HEADERS += \
     GUI/SideWidgetComponents/ManageScene.h \
     GUI/SideWidgetComponents/ManageSceneTimePoints.h \
     GUI/MainWindowTabWidgetIncludes.h \
-    Model/Chain.h
+    Model/Chain.h \
+    GUI/PopupWindows/Export.h \
+    GUI/PopupWindows/Import.h
 
 FORMS += \
     GUI/BasicWidgets/DCoordinate3GroupBox.ui \
@@ -114,12 +118,15 @@ FORMS += \
     GUI/SideWidgetComponents/SetScenePose.ui \
     GUI/SideWidgetComponents/ManageSceneTimePoints.ui \
     GUI/SideWidgetComponents/DeleteTimePoint.ui \
-    GUI/SideWidgetComponents/ManageAnimationTransitions.ui
+    GUI/SideWidgetComponents/ManageAnimationTransitions.ui \
+    GUI/PopupWindows/Export.ui \
+    GUI/PopupWindows/Import.ui
 
 
 QT += opengl
 
-INCLUDEPATH += ./Dependencies/Include
+INCLUDEPATH += ./Dependencies/Include \
+    C:/boost_1_58_0/boost
 
 LIBS += ./Dependencies/LIB/GL/glew32.lib ./Dependencies/LIB/GL/glew32.dll
 

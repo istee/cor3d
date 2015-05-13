@@ -8,9 +8,10 @@ unsigned int int_to_unsigned(int integer)
     return (unsigned int) integer;
 }
 
-RenderingOptionsWidget::RenderingOptionsWidget(QWidget *parent): BaseSideWidget(parent)
+RenderingOptionsWidget::RenderingOptionsWidget(QWidget *parent): QFrame(parent)
 {
     setupUi(this);
+
 
     cor3dApp = (Cor3dApplication*) qApp;
 
@@ -36,10 +37,12 @@ RenderingOptionsWidget::RenderingOptionsWidget(QWidget *parent): BaseSideWidget(
     connect(link_render, SIGNAL(toggled(bool)), this, SIGNAL(view_link_render_toggled(bool)));
     connect(link_model_file, SIGNAL(file_changed(string)), this, SIGNAL(view_link_model_file_changed(string)));
     connect(link_color, SIGNAL(selection_changed(int)), this, SIGNAL(view_link_material_changed(int)));
+
 }
 
 void RenderingOptionsWidget::update_content()
 {
+    /*
     RenderingOptions *rendering_options = cor3dApp->cor3d->get_rendering_options();
     if (rendering_options)
     {
@@ -59,5 +62,11 @@ void RenderingOptionsWidget::update_content()
         link_model_file->setValue(rendering_options->get_link_model_file());
         blockSignals(false);
     }
+    */
 }
 
+
+void RenderingOptionsWidget::on_pushButton_3_clicked()
+{
+    this->close();
+}

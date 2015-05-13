@@ -32,6 +32,7 @@ SkeletonEditorTab::SkeletonEditorTab(QWidget *parent): IMainWindowTab(parent)
     connect(edit_skeleton, SIGNAL(view_skeleton_model_scale_changed(DCoordinate3)), cor3dApp->cor3d, SLOT(handle_view_skeleton_model_scale_changed(DCoordinate3)));
     connect(edit_skeleton, SIGNAL(view_skeleton_model_offset_changed(DCoordinate3)), cor3dApp->cor3d, SLOT(handle_view_skeleton_model_offset_changed(DCoordinate3)));
 
+    /*
     connect(rendering_options_widget, SIGNAL(view_skeleton_render_toggled(bool)), cor3dApp->cor3d, SLOT(handle_view_skeleton_render_toggled(bool)));
     connect(rendering_options_widget, SIGNAL(view_skeleton_material_changed(int)), cor3dApp->cor3d, SLOT(handle_view_skeleton_material_changed(int)));
     connect(rendering_options_widget, SIGNAL(view_joint_render_toggled(bool)), cor3dApp->cor3d, SLOT(handle_view_joint_render_toggled(bool)));
@@ -41,7 +42,7 @@ SkeletonEditorTab::SkeletonEditorTab(QWidget *parent): IMainWindowTab(parent)
     connect(rendering_options_widget, SIGNAL(view_link_render_toggled(bool)), cor3dApp->cor3d, SLOT(handle_view_link_render_toggled(bool)));
     connect(rendering_options_widget, SIGNAL(view_link_model_file_changed(string)), cor3dApp->cor3d, SLOT(handle_view_link_model_file_changed(const string&)));
     connect(rendering_options_widget, SIGNAL(view_link_material_changed(int)), cor3dApp->cor3d, SLOT(handle_view_link_material_changed(int)));
-
+    */
 
     //connect(rendering_options_widget, SIGNAL(view_rendering_options_changed(RenderingOptions*)), cor3dApp->cor3d, SLOT(rendering_options_edited(RenderingOptions*)));
 
@@ -138,6 +139,6 @@ void SkeletonEditorTab::handle_model_joint_data_changed()
 
 void SkeletonEditorTab::handle_model_rendering_options_changed()
 {
-    rendering_options_widget->update_content();
-    glwidget->updateGL();
+    //rendering_options_widget->update_content();
+    //glwidget->updateGL();
 }

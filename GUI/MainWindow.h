@@ -14,6 +14,9 @@ public:
 
 private slots:
     // private event handling methods/slots
+    void on_actionImport_triggered();
+    void on_actionExport_triggered();
+    void on_actionRendering_options_activated();
     void on_action_Quit_triggered();
 
 };

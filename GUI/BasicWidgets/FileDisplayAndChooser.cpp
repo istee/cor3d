@@ -2,6 +2,8 @@
 
 #include <QFileDialog>
 
+#include<iostream>
+
 using namespace std;
 
 FileDisplayAndChooser::FileDisplayAndChooser(QWidget *parent): QWidget(parent)
@@ -11,14 +13,14 @@ FileDisplayAndChooser::FileDisplayAndChooser(QWidget *parent): QWidget(parent)
 
 string FileDisplayAndChooser::value() const
 {
-    return file->text().toStdString();
+    return fileLabel->text().toStdString();
 }
 
 void FileDisplayAndChooser::setValue(const string& value)
 {
     unsigned found = value.find_last_of("/\\");
-    file->setText(QString::fromStdString(value.substr(found+1)));
-    file->setToolTip(QString::fromStdString(value));
+    fileLabel->setText(QString::fromStdString(value.substr(found+1)));
+    fileLabel->setToolTip(QString::fromStdString(value));
 }
 
 void FileDisplayAndChooser::setLabel(const string& label_string)
@@ -36,8 +38,34 @@ void FileDisplayAndChooser::setFilter(const string& filter)
     _filter = filter;
 }
 
+void FileDisplayAndChooser::setButtonText(const string& buttonText)
+{
+    pushButton->setText(QString::fromStdString(buttonText));
+}
+
+void FileDisplayAndChooser::setFilePath(const string& filePath)
+{
+    fileLabel->setText(QString::fromStdString(filePath));
+}
+
+void FileDisplayAndChooser::setAcceptMode(const QFileDialog::AcceptMode acceptMode)
+{
+    _acceptMode = acceptMode;
+}
+
 void FileDisplayAndChooser::on_pushButton_released()
 {
-    string file_name = QFileDialog::getOpenFileName(this,tr("Open OFF model file"), "Models", tr("OFF Files (*.off)")).toStdString();
-    emit file_changed(file_name);
+    QFileDialog fileDialog(this, QString::fromStdString(_caption), QString::fromStdString(_folder), QString::fromStdString(_filter));
+    fileDialog.setAcceptMode(QFileDialog::AcceptSave);
+    string filename = "";
+    if (QFileDialog::AcceptSave == _acceptMode)
+    {
+        filename = fileDialog.getSaveFileName(this, QString::fromStdString(_caption), QString::fromStdString(_folder), QString::fromStdString(_filter)).toStdString();
+    }
+    else
+    {
+        filename = fileDialog.getOpenFileName(this, QString::fromStdString(_caption), QString::fromStdString(_folder), QString::fromStdString(_filter)).toStdString();
+    }
+    cout << "file name" << filename << endl;
+    emit file_changed(filename);
 }

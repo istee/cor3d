@@ -1,20 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>FileDisplayAndChooser</class>
- <widget class="QWidget" name="FileDisplayAndChooser">
+ <class>BaseEntityComboBox</class>
+ <widget class="QWidget" name="BaseEntityComboBox">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>250</width>
-    <height>42</height>
+    <height>40</height>
    </rect>
-  </property>
-  <property name="minimumSize">
-   <size>
-    <width>250</width>
-    <height>42</height>
-   </size>
   </property>
   <property name="font">
    <font>
@@ -28,27 +22,17 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Name</string>
+      <string>label</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="fileLabel">
+    <widget class="QComboBox" name="comboBox">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QPushButton" name="pushButton">
-     <property name="text">
-      <string>Change</string>
      </property>
     </widget>
    </item>

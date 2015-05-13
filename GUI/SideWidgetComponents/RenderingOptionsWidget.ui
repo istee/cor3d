@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>RenderingOptionsWidget</class>
  <widget class="QWidget" name="RenderingOptionsWidget">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -20,107 +23,123 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="SideWidgetGroupBox" name="groupBox">
-     <property name="title">
-      <string>Rendering options</string>
+    <widget class="QGroupBox" name="skeleton_rendering_options">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_5">
+     <property name="title">
+      <string>Skeleton</string>
+     </property>
+     <property name="checkable">
+      <bool>false</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QGroupBox" name="skeleton_rendering_options">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
+       <widget class="QCheckBox" name="skeleton_render">
+        <property name="text">
+         <string>Render skeleton</string>
         </property>
-        <property name="title">
-         <string>Skeleton</string>
-        </property>
-        <property name="checkable">
-         <bool>false</bool>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
-         <item>
-          <widget class="QCheckBox" name="skeleton_render">
-           <property name="text">
-            <string>Render skeleton</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="BaseEntityComboBox" name="skeleton_color" native="true"/>
-         </item>
-         <item>
-          <widget class="QWidget" name="widget" native="true">
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <item>
-             <widget class="QLabel" name="opacity_label">
-              <property name="text">
-               <string>Opacity</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSlider" name="opacity_horizontalSlider">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-        </layout>
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="joint_rendering_options">
-        <property name="title">
-         <string>Joints</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
-         <item>
-          <widget class="QCheckBox" name="joint_render">
-           <property name="text">
-            <string>Render joints</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="FileDisplayAndChooser" name="joint_model_file" native="true"/>
-         </item>
-         <item>
-          <widget class="BaseEntityComboBox" name="joint_color" native="true"/>
-         </item>
-         <item>
-          <widget class="BaseEntityComboBox" name="joint_selected_color" native="true"/>
-         </item>
-        </layout>
-       </widget>
+       <widget class="BaseEntityComboBox" name="skeleton_color" native="true"/>
       </item>
       <item>
-       <widget class="QGroupBox" name="link_rendering_options">
-        <property name="title">
-         <string>Links</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_4">
+       <widget class="QWidget" name="widget" native="true">
+        <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QCheckBox" name="link_render">
+          <widget class="QLabel" name="opacity_label">
            <property name="text">
-            <string>Render links</string>
+            <string>Opacity</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="FileDisplayAndChooser" name="link_model_file" native="true"/>
-         </item>
-         <item>
-          <widget class="BaseEntityComboBox" name="link_color" native="true"/>
+          <widget class="QSlider" name="opacity_horizontalSlider">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
       </item>
      </layout>
     </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="joint_rendering_options">
+     <property name="title">
+      <string>Joints</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="QCheckBox" name="joint_render">
+        <property name="text">
+         <string>Render joints</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="FileDisplayAndChooser" name="joint_model_file" native="true"/>
+      </item>
+      <item>
+       <widget class="BaseEntityComboBox" name="joint_color" native="true"/>
+      </item>
+      <item>
+       <widget class="BaseEntityComboBox" name="joint_selected_color" native="true"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="link_rendering_options">
+     <property name="title">
+      <string>Links</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <widget class="QCheckBox" name="link_render">
+        <property name="text">
+         <string>Render links</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="FileDisplayAndChooser" name="link_model_file" native="true"/>
+      </item>
+      <item>
+       <widget class="BaseEntityComboBox" name="link_color" native="true"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="buttons">
+     <item>
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>Default</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_2">
+       <property name="text">
+        <string>Save</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_3">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
@@ -135,12 +154,6 @@
    <class>BaseEntityComboBox</class>
    <extends>QWidget</extends>
    <header location="global">GUI/BasicWidgets/BaseEntityComboBox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>SideWidgetGroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>GUI/SideWidgetComponents/SideWidgetGroupBox.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

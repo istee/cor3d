@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>403</width>
+    <width>450</width>
     <height>320</height>
    </rect>
   </property>
@@ -117,9 +117,6 @@
            <widget class="TransformationsWidget" name="widget_4" native="true"/>
           </item>
           <item>
-           <widget class="RenderingOptionsWidget" name="widget" native="true"/>
-          </item>
-          <item>
            <spacer name="verticalSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
@@ -159,12 +156,6 @@
    <class>TransformationsWidget</class>
    <extends>QWidget</extends>
    <header location="global">GUI/SideWidgetComponents/TransformationsWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>RenderingOptionsWidget</class>
-   <extends>QWidget</extends>
-   <header>GUI/SideWidgetComponents/RenderingOptionsWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

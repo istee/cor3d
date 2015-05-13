@@ -17,13 +17,14 @@ public:
     {
         cor3d = new Cor3d();
 
-        QFile styleSheet("Resources/stylesheet.qss");  //path where the file is stored
+        /*QFile styleSheet("Resources/stylesheet.qss");  //path where the file is stored
         if (!styleSheet.open(QIODevice::ReadOnly))
         {
             qWarning("Unable to open ../Resources/stylesheet.qss");
             return;
         }
-        qApp->setStyleSheet(styleSheet.readAll());
+        qApp->setStyleSheet(styleSheet.readAll());*/
+
 
     }
 };

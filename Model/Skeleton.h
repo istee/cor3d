@@ -124,13 +124,16 @@ namespace cor3d
     private:
         friend std::ostream& operator <<(std::ostream& lhs, const Skeleton& rhs)
         {
-            lhs << "Skeleton" << endl;
-            lhs << "name: " << rhs.get_name() << endl;
-            lhs << "model_file: " << rhs.get_model_file() << endl;
-            lhs << "model_offset: " << rhs.get_model_offset() << endl;
-            lhs << "model_scale: " <<rhs.get_model_scale() << endl;
-            lhs << "joint_count: " << rhs.get_joint_count() << endl;
-            lhs << "joints: " << endl;
+            lhs << "skeleton_name: " << rhs.get_name() << endl;
+            bool hasModelFile = "" != rhs.get_model_file();
+            lhs << "skeleton_has_model_file: " << hasModelFile << endl;
+            if (hasModelFile)
+            {
+                lhs << "skeleton_model_file: " << rhs.get_model_file() << endl;
+                lhs << "skeleton_model_offset: " << rhs.get_model_offset() << endl;
+                lhs << "skeleton_model_scale: " <<rhs.get_model_scale() << endl;
+            }
+            lhs << "skeleton_joint_count: " << rhs.get_joint_count() << endl;
             for (vector<Joint>::const_iterator it = rhs._joints.begin(); it != rhs._joints.end(); it++)
             {
                 lhs << *it;

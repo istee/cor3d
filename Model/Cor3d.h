@@ -36,6 +36,7 @@ namespace cor3d {
         string next_name() const;
         vector<BaseEntity*> get_skeleton_list();
         Skeleton* get_skeleton();
+        Skeleton* getSkeletonById(unsigned int skeletonId);
         RenderingOptions* get_rendering_options();
 
     private:

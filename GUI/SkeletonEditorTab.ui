@@ -124,16 +124,6 @@
         </widget>
        </item>
        <item>
-        <widget class="RenderingOptionsWidget" name="rendering_options_widget" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-       <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -167,6 +157,12 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>TransformationsWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">GUI/SideWidgetComponents/TransformationsWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>AddNewSkeleton</class>
    <extends>QWidget</extends>
    <header>GUI/SideWidgetComponents/AddNewSkeleton.h</header>
@@ -194,18 +190,6 @@
    <class>AddNewJoint</class>
    <extends>QWidget</extends>
    <header>GUI/SideWidgetComponents/AddNewJoint.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>TransformationsWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">GUI/SideWidgetComponents/TransformationsWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>RenderingOptionsWidget</class>
-   <extends>QWidget</extends>
-   <header>GUI/SideWidgetComponents/RenderingOptionsWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
