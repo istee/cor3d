@@ -39,6 +39,7 @@ namespace cor3d
 
 
     public:
+        Skeleton();
         Skeleton(unsigned int id, const string& name);
 
 
@@ -143,6 +144,7 @@ namespace cor3d
 
         friend std::istream& operator >>(std::istream& lhs, Skeleton& rhs)
         {
+            cout << "skeleton beolvasas" << endl;
             string text;
             char name[256];
             int number;

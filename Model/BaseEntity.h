@@ -17,6 +17,12 @@ namespace cor3d {
         string          _name;
 
     public:
+        BaseEntity()
+        {
+            _id = -1;
+            _name = "";
+        }
+
         BaseEntity(unsigned int id, string name)
         {
             _id     = id;

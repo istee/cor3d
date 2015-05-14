@@ -7,6 +7,13 @@
 
 namespace cor3d {
 
+    Skeleton::Skeleton(): QObject(), BaseEntity()
+    {
+        _model_scale = DCoordinate3(1.0, 1.0, 1.0);
+        _selected_joint = -1;
+        _coordinates_need_update = false;
+    }
+
     Skeleton::Skeleton(unsigned int id, const string& name): QObject(), BaseEntity(id, name)
     {
         _model_scale = DCoordinate3(1.0, 1.0, 1.0);

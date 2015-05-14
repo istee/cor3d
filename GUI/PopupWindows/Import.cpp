@@ -47,9 +47,15 @@ void Import::on_importButton_clicked()
     cout << importFile->fileLabel->text().toStdString() << endl;
     if (file.is_open())
     {
-        string value;
-        file >> value;
-        cout << value << endl;
+        string text;
+        unsigned int skeletonCount;
+        file >> text >> skeletonCount;
+            cout << "skeletonCount: " << skeletonCount << endl;
+        for (unsigned int i = 0; i < skeletonCount; i++)
+        {
+            Skeleton* skeleton = new Skeleton();
+            file >> *skeleton;
+        }
     }
     else
     {

@@ -69,6 +69,11 @@ namespace cor3d {
         return is_skeleton_id_valid(_selected_skeleton_id);
     }
 
+    void Cor3d::addSkeleton(Skeleton& skeleton)
+    {
+
+    }
+
     // implementation of public slots
 
     void Cor3d::handle_view_skeleton_added(string name)
