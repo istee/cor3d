@@ -13,6 +13,7 @@ namespace cor3d {
     class BaseEntity;
 
     class BaseEntity {
+    protected:
         unsigned int    _id;
         string          _name;
 

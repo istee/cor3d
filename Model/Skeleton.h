@@ -144,18 +144,24 @@ namespace cor3d
 
         friend std::istream& operator >>(std::istream& lhs, Skeleton& rhs)
         {
-            cout << "skeleton beolvasas" << endl;
             string text;
             char name[256];
             int number;
-            lhs >> text >> text;
+            bool boolean;
+
+            lhs >> text;
             lhs.getline(name, 256);
             rhs.set_name(string(name));
-            lhs >> text >> text;
-            rhs.set_model_file(text);
+            lhs >> text >> boolean;
+            if (boolean)
+            {
+                lhs >> text >> text;
+                rhs.set_model_file(text);
+            }
             lhs >> text >> rhs._model_offset;
             lhs >> text >> rhs._model_scale;
-            lhs >> text >> number >> text;
+            lhs >> text >> number;
+            cout << "joint_number: " << number << endl;
             for (int i = 0; i < number; i++)
             {
                 Joint joint(i, "", 0);

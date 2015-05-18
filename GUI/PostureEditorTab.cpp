@@ -62,6 +62,11 @@ void PostureEditorTab::initialize()
     }
 }
 
+PostureGLWidget* PostureEditorTab::getGLWidget()
+{
+    return glwidget;
+}
+
 // inherited slots - accessed by the model
 
 void PostureEditorTab::handle_model_skeleton_selection_changed()

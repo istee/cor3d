@@ -3,6 +3,7 @@
 #include <QWidget>
 
 #include "Cor3dApplication.h"
+#include "GLWidget.h"
 
 class IMainWindowTab: public QWidget
 {
@@ -16,6 +17,8 @@ public:
     {
         cor3dApp = (Cor3dApplication*) qApp;
     }
+
+    virtual GLWidget* getGLWidget() = 0;
 
 public slots:
     virtual void skeleton_list_changed() { }

@@ -2,10 +2,15 @@
 
 #include <QMainWindow>
 #include "ui_MainWindow.h"
+#include "GUI/Toolbars/TransformationsToolbar.h"
 
 class MainWindow: public QMainWindow, public Ui::MainWindow
 {
     Q_OBJECT
+
+private:
+    TransformationsToolbar* _transformationToolbar;
+    QAction* _transformationAction;
 
 public:
     // special and default constructor
@@ -14,6 +19,7 @@ public:
 
 private slots:
     // private event handling methods/slots
+    void on_actionTransformations_triggered(bool checked);
     void on_actionImport_triggered();
     void on_actionExport_triggered();
     void on_actionRendering_options_activated();

@@ -32,9 +32,11 @@ namespace cor3d {
         char name[256];
         int number, child;
         lhs >> text;
+        cout << "text: " << text << endl;
         lhs.getline(name, 256);
         rhs.set_name(name);
-        lhs >> text >> text;
+        cout << "joint name: " << name << endl;
+        lhs >> text >> rhs._id;
         lhs >> text >> rhs._parent_id;
         lhs >> text >> number;
         rhs._type = (Type) number;
@@ -45,8 +47,10 @@ namespace cor3d {
             rhs._children_ids.push_back(child);
         }
         lhs >> text >> rhs._axis;
+        cout << text << " axis: " << rhs._axis << endl;
         lhs >> text >> rhs._orientation;
         lhs >> text >> rhs._configuration;
+        cout << text << "orientation: " << rhs._orientation << endl;
         return lhs;
     }
 }

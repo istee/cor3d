@@ -50,11 +50,9 @@ void Import::on_importButton_clicked()
         string text;
         unsigned int skeletonCount;
         file >> text >> skeletonCount;
-            cout << "skeletonCount: " << skeletonCount << endl;
         for (unsigned int i = 0; i < skeletonCount; i++)
         {
-            Skeleton* skeleton = new Skeleton();
-            file >> *skeleton;
+            cor3dApp->cor3d->importSkeleton(file);
         }
     }
     else

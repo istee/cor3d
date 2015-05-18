@@ -5,19 +5,19 @@ using namespace std;
 TransformationsWidget::TransformationsWidget(QWidget *parent): BaseSideWidget(parent)
 {
     setupUi(this);
-//    translate->setTitle("Translation");
-//    rotate->setTitle("Rotation");
-//    scale_label->setText("Scale");
+    translate->setTitle("Translation");
+    rotate->setTitle("Rotation");
+    scale_label->setText("Scale");
 
-//    translate->setSettings(DCoordinate3(-100, 0.1, 100));
-//    rotate->setSettings(DCoordinate3(-180, 1, 180));
-//    scale_doubleSpinBox->setMinimum(0.1);
-//    scale_doubleSpinBox->setMaximum(10);
-//    scale_doubleSpinBox->setSingleStep(0.1);
+    translate->setSettings(DCoordinate3(-100, 0.1, 100));
+    rotate->setSettings(DCoordinate3(-180, 1, 180));
+    scale_doubleSpinBox->setMinimum(0.1);
+    scale_doubleSpinBox->setMaximum(10);
+    scale_doubleSpinBox->setSingleStep(0.1);
 
-//    connect(rotate, SIGNAL(coordinates_changed(DCoordinate3)), this, SLOT(rotation_changed(DCoordinate3)));
-//    connect(translate, SIGNAL(coordinates_changed(DCoordinate3)), this, SLOT(translation_changed(DCoordinate3)));
-//    connect(scale_doubleSpinBox, SIGNAL(valueChanged(double)), this, SLOT(zoom_factor_changed(double)));
+    connect(rotate, SIGNAL(coordinates_changed(DCoordinate3)), this, SLOT(rotation_changed(DCoordinate3)));
+    connect(translate, SIGNAL(coordinates_changed(DCoordinate3)), this, SLOT(translation_changed(DCoordinate3)));
+    connect(scale_doubleSpinBox, SIGNAL(valueChanged(double)), this, SLOT(zoom_factor_changed(double)));
 }
 
 void TransformationsWidget::setGLWidget(GLWidget* glwidget)

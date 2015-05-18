@@ -68,6 +68,11 @@ void SkeletonEditorTab::initialize()
     }
 }
 
+GLWidget* SkeletonEditorTab::getGLWidget()
+{
+    return glwidget;
+}
+
 void SkeletonEditorTab::handle_model_skeleton_list_changed()
 {
     skeleton_list->update_content();

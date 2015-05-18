@@ -69,9 +69,12 @@ namespace cor3d {
         return is_skeleton_id_valid(_selected_skeleton_id);
     }
 
-    void Cor3d::addSkeleton(Skeleton& skeleton)
+    void Cor3d::importSkeleton(ifstream& stream)
     {
-
+        Skeleton* sk = new Skeleton(_skeletons.size(), "");
+        stream >> *sk;
+        _skeletons.push_back(sk);
+        emit model_skeleton_list_changed();
     }
 
     // implementation of public slots

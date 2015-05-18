@@ -38,7 +38,7 @@ namespace cor3d {
         Skeleton* get_skeleton();
         Skeleton* getSkeletonById(unsigned int skeletonId);
         RenderingOptions* get_rendering_options();
-        void addSkeleton(Skeleton& skeleton);
+        void importSkeleton(ifstream& stream);
 
     private:
         bool is_skeleton_id_valid(int skeleton_id);

@@ -29,6 +29,11 @@ void SceneEditorTab::initialize()
     }
 }
 
+GLWidget* SceneEditorTab::getGLWidget()
+{
+    return glwidget;
+}
+
 // inherited slots - accessed by the model
 
 void SceneEditorTab::skeleton_list_changed()

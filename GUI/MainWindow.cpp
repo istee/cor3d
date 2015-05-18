@@ -11,6 +11,7 @@
 #include "GUI/PopupWindows/Export.h"
 #include "GUI/PopupWindows/Import.h"
 #include "GUI/SideWidgetComponents/RenderingOptionsWidget.h"
+#include "GUI/Toolbars/TransformationsToolbar.h"
 
 using namespace std;
 using namespace cor3d;
@@ -18,6 +19,8 @@ using namespace cor3d;
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
 {
     setupUi(this);
+    _transformationToolbar = new TransformationsToolbar(this);
+    _transformationAction = toolBar->addWidget(_transformationToolbar);
 }
 
 void MainWindow::initialize()
@@ -82,4 +85,9 @@ void MainWindow::on_actionImport_triggered()
     importWindow->setWindowTitle("Import");
     importWindow->setWindowFlags(Qt::Window);
     importWindow->show();
+}
+
+void MainWindow::on_actionTransformations_triggered(bool checked)
+{
+    _transformationAction->setVisible(checked);
 }

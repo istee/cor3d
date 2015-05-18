@@ -36,7 +36,8 @@ SOURCES += \
     GUI/SideWidgetComponents/ManageScene.cpp \
     GUI/SideWidgetComponents/ManageSceneTimePoints.cpp \
     GUI/PopupWindows/Export.cpp \
-    GUI/PopupWindows/Import.cpp
+    GUI/PopupWindows/Import.cpp \
+    GUI/Toolbars/TransformationsToolbar.cpp
 
 
 HEADERS += \
@@ -94,7 +95,8 @@ HEADERS += \
     GUI/MainWindowTabWidgetIncludes.h \
     Model/Chain.h \
     GUI/PopupWindows/Export.h \
-    GUI/PopupWindows/Import.h
+    GUI/PopupWindows/Import.h \
+    GUI/Toolbars/TransformationsToolbar.h
 
 FORMS += \
     GUI/BasicWidgets/DCoordinate3GroupBox.ui \
@@ -120,7 +122,8 @@ FORMS += \
     GUI/SideWidgetComponents/DeleteTimePoint.ui \
     GUI/SideWidgetComponents/ManageAnimationTransitions.ui \
     GUI/PopupWindows/Export.ui \
-    GUI/PopupWindows/Import.ui
+    GUI/PopupWindows/Import.ui \
+    GUI/Toolbars/TransformationsToolbar.ui
 
 
 QT += opengl
