@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>350</width>
+    <width>618</width>
     <height>40</height>
    </rect>
   </property>
@@ -18,41 +18,54 @@
     <number>2</number>
    </property>
    <item>
-    <widget class="QToolButton" name="translateToolButton">
+    <widget class="QToolButton" name="toolButtonTransformations">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="labelX">
+    <widget class="QToolButton" name="toolButtonTranslate">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="labelTranslateX">
      <property name="text">
       <string>x</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QDoubleSpinBox" name="doubleSpinBoxX"/>
+    <widget class="QDoubleSpinBox" name="doubleSpinBoxTranslateX"/>
    </item>
    <item>
-    <widget class="QLabel" name="labelY">
+    <widget class="QLabel" name="labelTranslateY">
      <property name="text">
       <string>y</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QDoubleSpinBox" name="doubleSpinBoxY"/>
+    <widget class="QDoubleSpinBox" name="doubleSpinBoxTranslateY"/>
    </item>
    <item>
-    <widget class="QLabel" name="labelZ">
+    <widget class="QLabel" name="labelTranslateZ">
      <property name="text">
       <string>z</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QDoubleSpinBox" name="doubleSpinBoxZ"/>
+    <widget class="QDoubleSpinBox" name="doubleSpinBoxTranslateZ"/>
    </item>
    <item>
     <widget class="Line" name="line">
@@ -62,14 +75,65 @@
     </widget>
    </item>
    <item>
-    <widget class="QToolButton" name="zoomToolButton">
+    <widget class="QToolButton" name="toolButtonRotate">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
    <item>
+    <widget class="QLabel" name="labelRotateX">
+     <property name="text">
+      <string>x</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QDoubleSpinBox" name="doubleSpinBox"/>
+   </item>
+   <item>
+    <widget class="QLabel" name="labelRotateY">
+     <property name="text">
+      <string>y</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDoubleSpinBox" name="doubleSpinBox_2"/>
+   </item>
+   <item>
+    <widget class="QLabel" name="labelRotateZ">
+     <property name="text">
+      <string>z</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDoubleSpinBox" name="doubleSpinBox_3"/>
+   </item>
+   <item>
+    <widget class="Line" name="line_2">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QToolButton" name="toolButtonZoom">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="labelZoom">
+     <property name="text">
+      <string>zoom</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDoubleSpinBox" name="doubleSpinBox_4"/>
    </item>
   </layout>
  </widget>

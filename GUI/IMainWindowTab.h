@@ -10,7 +10,8 @@ class IMainWindowTab: public QWidget
     Q_OBJECT
 
 protected:
-    Cor3dApplication* cor3dApp;
+    Cor3dApplication*   cor3dApp;
+    GLWidget*           glwidget;
 
 public:
     IMainWindowTab(QWidget* parent = 0): QWidget(parent)
@@ -18,9 +19,11 @@ public:
         cor3dApp = (Cor3dApplication*) qApp;
     }
 
-    virtual GLWidget* getGLWidget() = 0;
-
 public slots:
+    void viewTranslationChanged(const DCoordinate3& translation);
+    void viewRotationChanged(const DCoordinate3& angles);
+    void viewZoomFactorChanged(double value);
+
     virtual void skeleton_list_changed() { }
     virtual void skeleton_selected() { }
     virtual void selected_skeleton_name_changed() { }

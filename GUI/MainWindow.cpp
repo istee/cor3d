@@ -21,6 +21,8 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     setupUi(this);
     _transformationToolbar = new TransformationsToolbar(this);
     _transformationAction = toolBar->addWidget(_transformationToolbar);
+
+    connect(_transformationToolbar, SIGNAL(viewTranslationChanged(DCoordinate3)), skeleton_editor, SLOT(viewTranslationChanged(DCoordinate3)));
 }
 
 void MainWindow::initialize()

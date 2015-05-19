@@ -12,7 +12,6 @@ class SkeletonEditorTab: public IMainWindowTab, public Ui::SkeletonEditorTab
 public:
     SkeletonEditorTab(QWidget* parent = 0);
     void initialize();
-    virtual GLWidget* getGLWidget();
 
 public slots:
 

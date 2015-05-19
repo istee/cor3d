@@ -8,8 +8,6 @@ PostureEditorTab::PostureEditorTab(QWidget *parent): IMainWindowTab(parent)
 {
     setupUi(this);
 
-    glwidget->updateGL();
-
     //transformations_widget->setGLWidget(glwidget);
 
 //    Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
@@ -60,11 +58,6 @@ void PostureEditorTab::initialize()
         //(*it)->update_content();
 
     }
-}
-
-PostureGLWidget* PostureEditorTab::getGLWidget()
-{
-    return glwidget;
 }
 
 // inherited slots - accessed by the model

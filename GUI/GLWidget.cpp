@@ -179,6 +179,7 @@ void GLWidget::set_translation(const DCoordinate3& translation)
     _trans_x = translation.x();
     _trans_y = translation.y();
     _trans_z = translation.z();
+    cout << "translation changed: " << translation << endl;
     emit transformations_changed();
 }
 

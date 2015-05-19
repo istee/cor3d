@@ -1,11 +1,14 @@
-#ifndef TRANSFORMATIONSTOOLBAR_H
-#define TRANSFORMATIONSTOOLBAR_H
+#pragma once
 
 #include <QWidget>
+
+#include "Core/DCoordinates3.h"
 
 namespace Ui {
     class TransformationsToolbar;
 }
+
+using namespace cagd;
 
 class TransformationsToolbar : public QWidget
 {
@@ -17,6 +20,12 @@ public:
 
 private:
     Ui::TransformationsToolbar *ui;
-};
 
-#endif // TRANSFORMATIONSTOOLBAR_H
+private slots:
+    void on_doubleSpinBoxTranslateZ_valueChanged(double );
+    void on_doubleSpinBoxTranslateY_valueChanged(double );
+    void on_doubleSpinBoxTranslateX_valueChanged(double );
+
+signals:
+    void viewTranslationChanged(DCoordinate3 translate);
+};

@@ -10,7 +10,6 @@ class PostureEditorTab: public IMainWindowTab, public Ui::PostureEditorTab
 public:
     PostureEditorTab(QWidget* parent = 0);
     void initialize();
-    virtual PostureGLWidget* getGLWidget();
 
     //inherited slots
     void skeleton_list_changed();

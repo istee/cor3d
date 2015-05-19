@@ -37,7 +37,8 @@ SOURCES += \
     GUI/SideWidgetComponents/ManageSceneTimePoints.cpp \
     GUI/PopupWindows/Export.cpp \
     GUI/PopupWindows/Import.cpp \
-    GUI/Toolbars/TransformationsToolbar.cpp
+    GUI/Toolbars/TransformationsToolbar.cpp \
+    GUI/IMainWIndowTab.cpp
 
 
 HEADERS += \

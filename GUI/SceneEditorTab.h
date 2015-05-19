@@ -10,7 +10,6 @@ class SceneEditorTab: public IMainWindowTab, public Ui::SceneEditorTab
 public:
     SceneEditorTab(QWidget* parent = 0);
     void initialize();
-    virtual GLWidget* getGLWidget();
 
     //inherited slots
     void skeleton_list_changed();

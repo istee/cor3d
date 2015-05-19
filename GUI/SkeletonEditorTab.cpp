@@ -4,12 +4,13 @@
 #include "GUI/SideWidgetComponents/BaseSideWidget.h"
 #include "GUI/SideWidgetComponents/SideWidgetGroupBox.h"
 
-SkeletonEditorTab::SkeletonEditorTab(QWidget *parent): IMainWindowTab(parent)
+SkeletonEditorTab::SkeletonEditorTab(QWidget *parent):IMainWindowTab(parent)
 {
     setupUi(this);
 
+    glwidget = new SkeletonGLWidget();
     glwidget->updateGL();
-
+    glwidgetHolderLayout->addWidget(glwidget);
     //transformations_widget->setGLWidget(glwidget);
 
     Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
@@ -66,11 +67,6 @@ void SkeletonEditorTab::initialize()
         (*it)->update_content();
 
     }
-}
-
-GLWidget* SkeletonEditorTab::getGLWidget()
-{
-    return glwidget;
 }
 
 void SkeletonEditorTab::handle_model_skeleton_list_changed()
