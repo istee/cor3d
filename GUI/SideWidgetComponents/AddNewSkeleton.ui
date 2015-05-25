@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -41,7 +41,7 @@
       <item>
        <widget class="NameLineEdit" name="name" native="true">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -56,6 +56,12 @@
       </item>
       <item>
        <widget class="QWidget" name="widget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -96,15 +102,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>NameLineEdit</class>
-   <extends>QWidget</extends>
-   <header>GUI/BasicWidgets/NameLineEdit.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>SideWidgetGroupBox</class>
    <extends>QGroupBox</extends>
    <header>GUI/SideWidgetComponents/SideWidgetGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>NameLineEdit</class>
+   <extends>QWidget</extends>
+   <header location="global">GUI/BasicWidgets/NameLineEdit.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

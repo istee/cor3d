@@ -119,7 +119,7 @@ public slots:
     void set_render_joints(int skeleton_id, bool value);
 
 signals:
-    void transformations_changed();
+    void modelTransformationsChanged();
     void selected_joint(double x, double y, double z);
     void view_joint_selection_changed(int);
     void view_joint_absolute_position_changed(DCoordinate3);

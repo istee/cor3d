@@ -38,7 +38,9 @@ SOURCES += \
     GUI/PopupWindows/Export.cpp \
     GUI/PopupWindows/Import.cpp \
     GUI/Toolbars/TransformationsToolbar.cpp \
-    GUI/IMainWIndowTab.cpp
+    GUI/IMainWIndowTab.cpp \
+    GUI/Toolbars/FileToolbar.cpp \
+    GUI/BasicWidgets/EditableDeletableListItem.cpp
 
 
 HEADERS += \
@@ -97,7 +99,10 @@ HEADERS += \
     Model/Chain.h \
     GUI/PopupWindows/Export.h \
     GUI/PopupWindows/Import.h \
-    GUI/Toolbars/TransformationsToolbar.h
+    GUI/Toolbars/TransformationsToolbar.h \
+    GUI/WidgetExtensions/SpinboxExtension.h \
+    GUI/Toolbars/FileToolbar.h \
+    GUI/BasicWidgets/EditableDeletableListItem.h
 
 FORMS += \
     GUI/BasicWidgets/DCoordinate3GroupBox.ui \
@@ -124,7 +129,9 @@ FORMS += \
     GUI/SideWidgetComponents/ManageAnimationTransitions.ui \
     GUI/PopupWindows/Export.ui \
     GUI/PopupWindows/Import.ui \
-    GUI/Toolbars/TransformationsToolbar.ui
+    GUI/Toolbars/TransformationsToolbar.ui \
+    GUI/Toolbars/FileToolbar.ui \
+    GUI/BasicWidgets/EditableDeletableListItem.ui
 
 
 QT += opengl

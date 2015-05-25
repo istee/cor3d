@@ -110,16 +110,20 @@ namespace cor3d {
         emit model_skeleton_selection_changed();
     }
 
-    void Cor3d::handle_view_skeleton_deleted()
+    void Cor3d::handle_view_skeleton_deleted(const string& name)
     {
-        delete _skeletons[_selected_skeleton_id];
+        unsigned int deleteId = get_skeleton_id_by_name(name);
+        delete _skeletons[deleteId];
         _skeletons.erase(_skeletons.begin() + _selected_skeleton_id);
         for (vector<Skeleton*>::iterator it = _skeletons.begin() + _selected_skeleton_id; it != _skeletons.end(); it++)
         {
             ((BaseEntity*) *it)->decrease_id();
         }
 
-        _selected_skeleton_id--;
+        if (_selected_skeleton_id > _skeletons.size())
+        {
+            _selected_skeleton_id--;
+        }
         emit model_skeleton_list_changed();
     }
 

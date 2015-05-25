@@ -55,7 +55,7 @@ namespace cor3d {
         void handle_view_skeleton_added(string);
         void handle_view_skeleton_imported(const string&);
         void handle_view_skeleton_selected(int);
-        void handle_view_skeleton_deleted();
+        void handle_view_skeleton_deleted(const string&);
         void handle_view_skeleton_exported(const string&);
         void handle_view_skeleton_name_changed(const string&);
         void handle_view_skeleton_model_changed(const string&);

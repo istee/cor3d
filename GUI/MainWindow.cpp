@@ -12,6 +12,7 @@
 #include "GUI/PopupWindows/Import.h"
 #include "GUI/SideWidgetComponents/RenderingOptionsWidget.h"
 #include "GUI/Toolbars/TransformationsToolbar.h"
+#include "GUI/Toolbars/FileToolbar.h"
 
 using namespace std;
 using namespace cor3d;
@@ -20,9 +21,14 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
 {
     setupUi(this);
     _transformationToolbar = new TransformationsToolbar(this);
-    _transformationAction = toolBar->addWidget(_transformationToolbar);
+    _transformationAction = transformationToolbarUi->addWidget(_transformationToolbar);
+
+    fileToolbarUi->addWidget(new FileToolbar(this));
 
     connect(_transformationToolbar, SIGNAL(viewTranslationChanged(DCoordinate3)), skeleton_editor, SLOT(viewTranslationChanged(DCoordinate3)));
+    connect(_transformationToolbar, SIGNAL(viewRotationChanged(DCoordinate3)), skeleton_editor, SLOT(viewRotationChanged(DCoordinate3)));
+    connect(_transformationToolbar, SIGNAL(viewZoomFactorChanged(double)), skeleton_editor, SLOT(viewZoomFactorChanged(double)));
+    connect(skeleton_editor, SIGNAL(modelTransformationsChanged()), this, SLOT(updateToolbarTransformations()));
 }
 
 void MainWindow::initialize()
@@ -91,5 +97,12 @@ void MainWindow::on_actionImport_triggered()
 
 void MainWindow::on_actionTransformations_triggered(bool checked)
 {
-    _transformationAction->setVisible(checked);
+    transformationToolbarUi->setVisible(checked);
+}
+
+void MainWindow::updateToolbarTransformations()
+{
+    _transformationToolbar->setTranslation(((IMainWindowTab*)tabWidget->currentWidget())->glwidget->get_translation());
+    _transformationToolbar->setRotation(((IMainWindowTab*)tabWidget->currentWidget())->glwidget->get_rotation());
+    _transformationToolbar->setZoomFactor(((IMainWindowTab*)tabWidget->currentWidget())->glwidget->get_zoom_factor());
 }

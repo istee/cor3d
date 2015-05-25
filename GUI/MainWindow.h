@@ -25,4 +25,6 @@ private slots:
     void on_actionRendering_options_activated();
     void on_action_Quit_triggered();
 
+    void updateToolbarTransformations();
+
 };

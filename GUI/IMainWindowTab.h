@@ -11,13 +11,11 @@ class IMainWindowTab: public QWidget
 
 protected:
     Cor3dApplication*   cor3dApp;
-    GLWidget*           glwidget;
+
 
 public:
-    IMainWindowTab(QWidget* parent = 0): QWidget(parent)
-    {
-        cor3dApp = (Cor3dApplication*) qApp;
-    }
+    IMainWindowTab(QWidget* parent);
+    GLWidget*           glwidget;
 
 public slots:
     void viewTranslationChanged(const DCoordinate3& translation);
@@ -37,4 +35,7 @@ public slots:
     virtual void transformations_changed() { }
 
     virtual void rendering_options_changed() { }
+
+signals:
+    void modelTransformationsChanged();
 };

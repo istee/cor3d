@@ -20,11 +20,11 @@ public slots:
 signals:
     void view_skeleton_deleted();
     void view_skeleton_selected(int id);
-    void view_skeleton_exported(const string& file);
+    void view_skeleton_added(const string& name);
+    void view_skeleton_deleted(const string& name);
 
 private slots:
-    void on_save_button_released();
+    void on_toolButtonAdd_clicked();
     void on_skeleton_listview_clicked(QModelIndex index);
     void on_skeleton_listview_activated(QModelIndex index);
-    void on_delete_button_released();
 };

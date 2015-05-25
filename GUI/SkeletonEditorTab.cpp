@@ -11,6 +11,7 @@ SkeletonEditorTab::SkeletonEditorTab(QWidget *parent):IMainWindowTab(parent)
     glwidget = new SkeletonGLWidget();
     glwidget->updateGL();
     glwidgetHolderLayout->addWidget(glwidget);
+    connect(glwidget, SIGNAL(modelTransformationsChanged()), this, SIGNAL(modelTransformationsChanged()));
     //transformations_widget->setGLWidget(glwidget);
 
     Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
@@ -23,10 +24,10 @@ SkeletonEditorTab::SkeletonEditorTab(QWidget *parent):IMainWindowTab(parent)
     //connect(glwidget, SIGNAL(transformations_changed()), this, SLOT(transformations_changed()));
 
 
-    connect(add_new_skeleton, SIGNAL(view_skeleton_added(string)), cor3dApp->cor3d, SLOT(handle_view_skeleton_added(string)));
-    connect(add_new_skeleton, SIGNAL(view_skeleton_imported(string)), cor3dApp->cor3d, SLOT(handle_view_skeleton_imported(string)));
+    connect(skeleton_list, SIGNAL(view_skeleton_added(string)), cor3dApp->cor3d, SLOT(handle_view_skeleton_added(string)));
+    //connect(add_new_skeleton, SIGNAL(view_skeleton_imported(string)), cor3dApp->cor3d, SLOT(handle_view_skeleton_imported(string)));
     connect(skeleton_list, SIGNAL(view_skeleton_selected(int)), cor3dApp->cor3d, SLOT(handle_view_skeleton_selected(int)));
-    connect(skeleton_list, SIGNAL(view_skeleton_deleted()), cor3dApp->cor3d, SLOT(handle_view_skeleton_deleted()));
+    connect(skeleton_list, SIGNAL(view_skeleton_deleted(const string&)), cor3dApp->cor3d, SLOT(handle_view_skeleton_deleted(const string&)));
     connect(skeleton_list, SIGNAL(view_skeleton_exported(string)), cor3dApp->cor3d, SLOT(handle_view_skeleton_exported(string)));
     connect(edit_skeleton, SIGNAL(view_skeleton_name_changed(string)), cor3dApp->cor3d, SLOT(handle_view_skeleton_name_changed(string)));
     connect(edit_skeleton, SIGNAL(view_skeleton_model_changed(string)), cor3dApp->cor3d, SLOT(handle_view_skeleton_model_changed(string)));
@@ -72,7 +73,7 @@ void SkeletonEditorTab::initialize()
 void SkeletonEditorTab::handle_model_skeleton_list_changed()
 {
     skeleton_list->update_content();
-    add_new_skeleton->update_content();
+    //add_new_skeleton->update_content();
 }
 
 void SkeletonEditorTab::handle_model_skeleton_selection_changed()
@@ -82,6 +83,7 @@ void SkeletonEditorTab::handle_model_skeleton_selection_changed()
     add_new_joint->update_content();
     edit_joint->update_content();
     glwidget->updateGL();
+
 
     Skeleton* skeleton = cor3dApp->cor3d->get_skeleton();
     connect(skeleton, SIGNAL(model_joint_list_changed()), this, SLOT(handle_model_joint_list_changed()));
@@ -97,12 +99,13 @@ void SkeletonEditorTab::handle_model_skeleton_selection_changed()
     connect(edit_joint, SIGNAL(view_joint_configuration_changed(DCoordinate3)), skeleton, SLOT(handle_view_joint_configuration_changed(DCoordinate3)));
     connect(glwidget, SIGNAL(view_joint_selection_changed(int)), skeleton, SLOT(handle_view_joint_selection_changed(int)));
     connect(glwidget, SIGNAL(view_joint_absolute_position_changed(DCoordinate3)), skeleton, SLOT(handle_view_joint_absolute_position_changed(DCoordinate3)));
+
 }
 
 void SkeletonEditorTab::handle_model_skeleton_name_changed()
 {
     skeleton_list->update_content();
-    add_new_skeleton->update_content();
+    //add_new_skeleton->update_content();
     edit_skeleton->update_content();
 }
 

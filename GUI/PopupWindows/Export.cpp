@@ -24,19 +24,27 @@ Export::Export(QWidget *parent) : QWidget(parent)
 
     Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
     const vector<BaseEntity*> skeleton_list = cor3dApp->cor3d->get_skeleton_list();
-    QStandardItemModel *model = new QStandardItemModel();
+    model = new QStandardItemModel();
+    model->setColumnCount(1);
+    model->setHeaderData(0, Qt::Horizontal, "Select items to export:");
 
     for (vector<BaseEntity*>::const_iterator it = skeleton_list.begin(); it != skeleton_list.end(); it++)
     {
         QStandardItem *item = new QStandardItem(QString::fromStdString((*it)->get_name()));
         item->setCheckable(true);
         item->setCheckState(Qt::Checked);
-        model->appendRow(item);
-        cout << (*it)->get_name() << endl;
+        AddItemToModel(item);
     }
     treeView->setModel(model);
 
     connect(exportFile, SIGNAL(file_changed(string)), this, SLOT(on_exportFile_changed(string)));
+}
+
+void Export::AddItemToModel(QStandardItem *item)
+{
+    model->appendRow(item);
+    buttonSelectAll->setEnabled(true);
+    buttonClearAll->setEnabled(true);
 }
 
 void Export::on_exportButton_clicked()
@@ -72,4 +80,27 @@ void Export::on_exportFile_changed(string filename)
 {
     cout << filename << endl;
     exportFile->setFilePath(filename);
+}
+
+void Export::on_closeButton_clicked()
+{
+    this->close();
+}
+
+void Export::on_buttonSelectAll_clicked()
+{
+    for (int i = 0 ; i < model->rowCount() ; i++)
+    {
+        model->item(i)->setCheckState(Qt::Checked);
+    }
+    treeView->setModel(model);
+}
+
+void Export::on_buttonClearAll_clicked()
+{
+    for (int i = 0 ; i < model->rowCount() ; i++)
+    {
+        model->item(i)->setCheckState(Qt::Unchecked);
+    }
+    treeView->setModel(model);
 }

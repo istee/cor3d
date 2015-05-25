@@ -24,7 +24,7 @@ Import::Import(QWidget *parent) : QWidget(parent)
 
 //    Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
 //    const vector<BaseEntity*> skeleton_list = cor3dApp->cor3d->get_skeleton_list();
-//    QStandardItemModel *model = new QStandardItemModel();
+    model = new QStandardItemModel();
 
 //    for (vector<BaseEntity*>::const_iterator it = skeleton_list.begin(); it != skeleton_list.end(); it++)
 //    {
@@ -34,7 +34,10 @@ Import::Import(QWidget *parent) : QWidget(parent)
 //        model->appendRow(item);
 //        cout << (*it)->get_name() << endl;
 //    }
-//    treeView->setModel(model);
+
+    model->setColumnCount(1);
+    model->setHeaderData(0, Qt::Horizontal, "Select items to import:");
+    treeView->setModel(model);
 
     connect(importFile, SIGNAL(file_changed(string)), this, SLOT(on_importFile_changed(string)));
 }
@@ -67,4 +70,9 @@ void Import::on_importFile_changed(string filename)
 {
     cout << filename << endl;
     importFile->setFilePath(filename);
+}
+
+void Import::on_closeButton_clicked()
+{
+    this->close();
 }

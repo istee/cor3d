@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>618</width>
+    <width>694</width>
     <height>40</height>
    </rect>
   </property>
@@ -45,7 +45,14 @@
     </widget>
    </item>
    <item>
-    <widget class="QDoubleSpinBox" name="doubleSpinBoxTranslateX"/>
+    <widget class="SpinboxExtension" name="doubleSpinBoxTranslateX">
+     <property name="minimum">
+      <double>-100.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>0.000000000000000</double>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QLabel" name="labelTranslateY">
@@ -55,7 +62,14 @@
     </widget>
    </item>
    <item>
-    <widget class="QDoubleSpinBox" name="doubleSpinBoxTranslateY"/>
+    <widget class="SpinboxExtension" name="doubleSpinBoxTranslateY">
+     <property name="minimum">
+      <double>-100.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>100.000000000000000</double>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QLabel" name="labelTranslateZ">
@@ -65,7 +79,14 @@
     </widget>
    </item>
    <item>
-    <widget class="QDoubleSpinBox" name="doubleSpinBoxTranslateZ"/>
+    <widget class="SpinboxExtension" name="doubleSpinBoxTranslateZ">
+     <property name="minimum">
+      <double>-100.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>100.000000000000000</double>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="Line" name="line">
@@ -89,7 +110,17 @@
     </widget>
    </item>
    <item>
-    <widget class="QDoubleSpinBox" name="doubleSpinBox"/>
+    <widget class="SpinboxExtension" name="doubleSpinBoxRotateX">
+     <property name="minimum">
+      <double>-180.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>180.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>5.000000000000000</double>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QLabel" name="labelRotateY">
@@ -99,7 +130,17 @@
     </widget>
    </item>
    <item>
-    <widget class="QDoubleSpinBox" name="doubleSpinBox_2"/>
+    <widget class="SpinboxExtension" name="doubleSpinBoxRotateY">
+     <property name="minimum">
+      <double>-180.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>180.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>5.000000000000000</double>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QLabel" name="labelRotateZ">
@@ -109,7 +150,20 @@
     </widget>
    </item>
    <item>
-    <widget class="QDoubleSpinBox" name="doubleSpinBox_3"/>
+    <widget class="SpinboxExtension" name="doubleSpinBoxRotateZ">
+     <property name="minimum">
+      <double>-180.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>180.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>5.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>0.000000000000000</double>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="Line" name="line_2">
@@ -133,10 +187,36 @@
     </widget>
    </item>
    <item>
-    <widget class="QDoubleSpinBox" name="doubleSpinBox_4"/>
+    <widget class="SpinboxExtension" name="doubleSpinBoxZoomFactor">
+     <property name="suffix">
+      <string>%</string>
+     </property>
+     <property name="decimals">
+      <number>0</number>
+     </property>
+     <property name="minimum">
+      <double>10.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>500.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>10.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>100.000000000000000</double>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SpinboxExtension</class>
+   <extends>QDoubleSpinBox</extends>
+   <header location="global">GUI/WidgetExtensions/SpinboxExtension.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

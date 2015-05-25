@@ -20,7 +20,7 @@ PostureEditorTab::PostureEditorTab(QWidget *parent): IMainWindowTab(parent)
 //    connect(cor3dApp->cor3d, SIGNAL(selected_skeleton_joint_data_changed()), this, SLOT(selected_skeleton_joint_data_changed()));
 //    connect(glwidget, SIGNAL(transformations_changed()), this, SLOT(transformations_changed()));
 //    connect(cor3dApp->cor3d, SIGNAL(rendering_options_changed()), this, SLOT(rendering_options_changed()));
-    connect(cor3dApp->cor3d, SIGNAL(model_skeleton_selection_changed()), this, SLOT(handle_model_skeleton_selection_changed()));
+//    connect(cor3dApp->cor3d, SIGNAL(model_skeleton_selection_changed()), this, SLOT(handle_model_skeleton_selection_changed()));
 
 //    connect(add_new_skeleton, SIGNAL(skeleton_added(string)), this, SLOT(skeleton_added(string)));
 //    connect(add_new_skeleton, SIGNAL(skeleton_imported(string)), cor3dApp->cor3d, SLOT(skeleton_import(string)));

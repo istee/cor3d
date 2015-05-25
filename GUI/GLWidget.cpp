@@ -179,8 +179,7 @@ void GLWidget::set_translation(const DCoordinate3& translation)
     _trans_x = translation.x();
     _trans_y = translation.y();
     _trans_z = translation.z();
-    cout << "translation changed: " << translation << endl;
-    emit transformations_changed();
+    emit modelTransformationsChanged();
 }
 
 void GLWidget::set_rotation(const DCoordinate3& angles)
@@ -188,13 +187,13 @@ void GLWidget::set_rotation(const DCoordinate3& angles)
     _angle_x = angles.x();
     _angle_y = angles.y();
     _angle_z = angles.z();
-    emit transformations_changed();
+    emit modelTransformationsChanged();
 }
 
 void GLWidget::set_zoom_factor(double zoom)
 {
     _zoom = zoom;
-    emit transformations_changed();
+    emit modelTransformationsChanged();
 }
 
 void GLWidget::pick(double x, double y)
@@ -523,7 +522,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 
             //DCoordinate3 transform = z_rot_mat * y_rot_mat * x_rot_mat * translation * mouse;
 
-            emit transformations_changed();
+            emit modelTransformationsChanged();
         }
     }
 
@@ -550,7 +549,7 @@ void GLWidget::wheelEvent(QWheelEvent *event)
             _zoom = 10;
         }
 
-        emit transformations_changed();
+        emit modelTransformationsChanged();
     }
 
     updateGL();
