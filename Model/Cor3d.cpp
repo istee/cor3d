@@ -113,9 +113,10 @@ namespace cor3d {
     void Cor3d::handle_view_skeleton_deleted(const string& name)
     {
         unsigned int deleteId = get_skeleton_id_by_name(name);
+        cout << "delete skeleton: " << name << "id: " << deleteId << endl;
         delete _skeletons[deleteId];
-        _skeletons.erase(_skeletons.begin() + _selected_skeleton_id);
-        for (vector<Skeleton*>::iterator it = _skeletons.begin() + _selected_skeleton_id; it != _skeletons.end(); it++)
+        _skeletons.erase(_skeletons.begin() + deleteId);
+        for (vector<Skeleton*>::iterator it = _skeletons.begin() + deleteId; it != _skeletons.end(); it++)
         {
             ((BaseEntity*) *it)->decrease_id();
         }

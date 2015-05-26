@@ -20,7 +20,7 @@ public:
     ~EditableDeletableListItem();
 
 signals:
-    void view_list_item_deleted(const std::string& labelText);
+    void view_list_item_deleted(const string& labelText);
 
 private:
     Ui::EditableDeletableListItem *ui;

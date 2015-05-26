@@ -75,6 +75,9 @@ namespace cor3d
         const DCoordinate3& get_joint_coordinates(int joint_id) const;
         const DCoordinate3 get_joint_parent_coordinates(int joint_id) const;
 
+        Joint get_joint(const string& name);
+        vector<BaseEntity*> get_joint_list2();
+
         ///////////////////////////
         // setter methods        //
         ///////////////////////////

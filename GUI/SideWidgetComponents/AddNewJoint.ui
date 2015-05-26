@@ -54,6 +54,15 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QTreeWidget" name="joints">
+        <column>
+         <property name="text">
+          <string notr="true">1</string>
+         </property>
+        </column>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>

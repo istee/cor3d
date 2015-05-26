@@ -21,7 +21,16 @@ namespace cor3d {
         _coordinates_need_update = false;
     }
 
+    vector<BaseEntity*> Skeleton::get_joint_list2()
+    {
+        return vector<BaseEntity*>();
+    }
 
+
+    Joint  Skeleton::get_joint(const string& name)
+    {
+        return _joints[0];
+    }
 
     int Skeleton::construct_chains_(int joint_id, int chain_index, int parent_chain_index)
     {
