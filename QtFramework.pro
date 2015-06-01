@@ -40,7 +40,9 @@ SOURCES += \
     GUI/Toolbars/TransformationsToolbar.cpp \
     GUI/IMainWIndowTab.cpp \
     GUI/Toolbars/FileToolbar.cpp \
-    GUI/BasicWidgets/EditableDeletableListItem.cpp
+    GUI/BasicWidgets/EditableDeletableListItem.cpp \
+    GUI/WidgetExtensions/BaseEntityListDisplayProperties.cpp \
+    GUI/WidgetExtensions/TreeWidgetExtension.cpp
 
 
 HEADERS += \
@@ -102,7 +104,9 @@ HEADERS += \
     GUI/Toolbars/TransformationsToolbar.h \
     GUI/WidgetExtensions/SpinboxExtension.h \
     GUI/Toolbars/FileToolbar.h \
-    GUI/BasicWidgets/EditableDeletableListItem.h
+    GUI/BasicWidgets/EditableDeletableListItem.h \
+    GUI/WidgetExtensions/BaseEntityDisplayProperties.h \
+    GUI/WidgetExtensions/TreeWidgetExtension.h
 
 FORMS += \
     GUI/BasicWidgets/DCoordinate3GroupBox.ui \

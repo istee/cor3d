@@ -39,6 +39,7 @@ namespace cor3d {
         Skeleton* getSkeletonById(unsigned int skeletonId);
         RenderingOptions* get_rendering_options();
         void importSkeleton(ifstream& stream);
+        unsigned int get_selected_skeleton_id() const;
 
     private:
         bool is_skeleton_id_valid(int skeleton_id);
@@ -48,6 +49,7 @@ namespace cor3d {
         void model_skeleton_list_changed();
         void model_skeleton_selection_changed();
         void model_skeleton_name_changed();
+        void model_skeleton_model_data_changed(const string& name);
         void model_skeleton_data_changed();
         void model_rendering_options_changed();
 
@@ -57,10 +59,10 @@ namespace cor3d {
         void handle_view_skeleton_selected(int);
         void handle_view_skeleton_deleted(const string&);
         void handle_view_skeleton_exported(const string&);
-        void handle_view_skeleton_name_changed(const string&);
-        void handle_view_skeleton_model_changed(const string&);
-        void handle_view_skeleton_model_scale_changed(const DCoordinate3&);
-        void handle_view_skeleton_model_offset_changed(const DCoordinate3&);
+        void handle_view_skeleton_renamed(const string&, const string&);
+        void handle_view_skeleton_model_changed(const string&, const string&);
+        void handle_view_skeleton_model_scale_changed(const string&, const DCoordinate3&);
+        void handle_view_skeleton_model_offset_changed(const string&, const DCoordinate3&);
 
         void handle_view_skeleton_render_toggled(bool);
         void handle_view_skeleton_material_changed(int);

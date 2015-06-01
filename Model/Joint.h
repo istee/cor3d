@@ -100,11 +100,13 @@ namespace cor3d {
         void add_child(unsigned int child_id)
         {
             _children_ids.push_back(child_id);
+            cout << "joint " << get_name() << " add " << child_id << endl;
         }
 
         void remove_child(unsigned int child_id)
         {
             _children_ids.erase(std::remove(_children_ids.begin(), _children_ids.end(), child_id), _children_ids.end());
+            cout << "joint " << get_name() << " remove " << child_id << endl;
         }
 
         void set_type(Type type)

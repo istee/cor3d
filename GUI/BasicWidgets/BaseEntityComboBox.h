@@ -24,6 +24,7 @@ public:
     void setLabel(const string& label_string);
     void setEditable(bool editable);
     void populate(const vector<BaseEntity>& values);
+    void populateFromPointer(const vector<BaseEntity*>& values);
 
 signals:
     void name_changed(string name);

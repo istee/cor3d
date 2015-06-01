@@ -32,6 +32,11 @@ namespace cor3d {
         return 0;
     }
 
+    unsigned int Cor3d::get_selected_skeleton_id() const
+    {
+        return _selected_skeleton_id;
+    }
+
     Skeleton* Cor3d::getSkeletonById(unsigned int skeletonId)
     {
         if (skeletonId >= 0 && skeletonId < _skeletons.size())
@@ -136,28 +141,28 @@ namespace cor3d {
         file.close();
     }
 
-    void Cor3d::handle_view_skeleton_name_changed(const string& name)
+    void Cor3d::handle_view_skeleton_renamed(const string& oldName, const string& newName)
     {
-        get_skeleton()->set_name(append_sequence_number<Skeleton>(name, _skeletons));
-        emit model_skeleton_data_changed();
+        ((Skeleton*) _skeletons[get_skeleton_id_by_name(oldName)])->set_name(newName);
+        emit model_skeleton_list_changed();
     }
 
-    void Cor3d::handle_view_skeleton_model_changed(const string& file_name)
+    void Cor3d::handle_view_skeleton_model_changed(const string& skeletonName, const string& file_name)
     {
-        get_skeleton()->set_model_file(file_name);
-        emit model_skeleton_data_changed();
+        ((Skeleton*) _skeletons[get_skeleton_id_by_name(skeletonName)])->set_model_file(file_name);
+        emit model_skeleton_model_data_changed(skeletonName);
     }
 
-    void Cor3d::handle_view_skeleton_model_scale_changed(const DCoordinate3& model_scale)
+    void Cor3d::handle_view_skeleton_model_scale_changed(const string& skeletonName, const DCoordinate3& model_scale)
     {
-        get_skeleton()->set_model_scale(model_scale);
-        emit model_skeleton_data_changed();
+        ((Skeleton*) _skeletons[get_skeleton_id_by_name(skeletonName)])->set_model_scale(model_scale);
+        emit model_skeleton_model_data_changed(skeletonName);
     }
 
-    void Cor3d::handle_view_skeleton_model_offset_changed(const DCoordinate3& model_offset)
+    void Cor3d::handle_view_skeleton_model_offset_changed(const string& skeletonName, const DCoordinate3& model_offset)
     {
-        get_skeleton()->set_model_offset(model_offset);
-        emit model_skeleton_data_changed();
+        ((Skeleton*) _skeletons[get_skeleton_id_by_name(skeletonName)])->set_model_offset(model_offset);
+        emit model_skeleton_model_data_changed(skeletonName);
     }
 
     void Cor3d::handle_view_skeleton_render_toggled(bool on)

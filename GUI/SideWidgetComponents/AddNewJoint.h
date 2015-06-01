@@ -1,10 +1,14 @@
 #pragma once
 
 #include <QWidget>
-#include <string>
-#include "ui_AddNewJoint.h"
+#include <QHash>
 
+#include <string>
+
+#include "ui_AddNewJoint.h"
 #include "BaseSideWidget.h"
+#include "GUI/WidgetExtensions/BaseEntityDisplayProperties.h"
+#include "GUI/WidgetExtensions/TreeWidgetExtension.h"
 
 using namespace std;
 
@@ -15,10 +19,24 @@ public:
     // special and default constructor
     AddNewJoint(QWidget *parent = 0);
     void update_content();
+    void selectJoint(const string& name);
+    void addJoint(const string& name);
+    void deleteJoint(const string& name);
+    void renameJoint(const string& oldName, const string& newName);
+
+
+private:
+    void populateJointTreeView(Skeleton* skeleton, Joint* parent, QTreeWidgetItem* item);
+    void addWidgetToTreeWidgetItems(QTreeWidgetItem* item);
+    QHash<string,BaseEntityDisplayProperties>  _jointsDisplayProperties;
 
 signals:
-    void view_joint_added(string name, int parent_id);
+    void view_joint_added(const string& name, const string& parentName);
+    void view_joint_selected(string name);
+    void view_joint_renamed(string, string);
+    void view_joint_deleted(string name);
 
 private slots:
-    void on_add_new_joint_button_released();
+    void on_treeViewJoints_itemSelectionChanged();
+    void on_toolButtonAdd_clicked();
 };

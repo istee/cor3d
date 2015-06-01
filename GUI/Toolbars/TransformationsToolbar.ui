@@ -25,6 +25,12 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="minimumSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
+     </property>
      <property name="text">
       <string/>
      </property>
@@ -32,6 +38,12 @@
    </item>
    <item>
     <widget class="QToolButton" name="toolButtonTranslate">
+     <property name="minimumSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
+     </property>
      <property name="text">
       <string/>
      </property>
@@ -97,6 +109,12 @@
    </item>
    <item>
     <widget class="QToolButton" name="toolButtonRotate">
+     <property name="minimumSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
+     </property>
      <property name="text">
       <string/>
      </property>
@@ -174,6 +192,12 @@
    </item>
    <item>
     <widget class="QToolButton" name="toolButtonZoom">
+     <property name="minimumSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
+     </property>
      <property name="text">
       <string/>
      </property>

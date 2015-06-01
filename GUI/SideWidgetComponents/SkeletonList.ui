@@ -7,19 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>250</width>
-    <height>261</height>
+    <height>300</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+   <sizepolicy hsizetype="Fixed" vsizetype="MinimumExpanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>250</width>
-    <height>0</height>
+    <width>150</width>
+    <height>30</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -27,6 +27,9 @@
     <width>16777215</width>
     <height>16777215</height>
    </size>
+  </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::DefaultContextMenu</enum>
   </property>
   <property name="windowTitle">
    <string>Available skeletons</string>
@@ -41,7 +44,7 @@
       </sizepolicy>
      </property>
      <property name="title">
-      <string>Available skeletons</string>
+      <string>Skeletons</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
@@ -52,14 +55,29 @@
           <height>80</height>
          </size>
         </property>
+        <property name="viewMode">
+         <enum>QListView::ListMode</enum>
+        </property>
+        <property name="sortingEnabled">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <widget class="QToolButton" name="toolButtonAdd">
+          <property name="minimumSize">
+           <size>
+            <width>30</width>
+            <height>30</height>
+           </size>
+          </property>
           <property name="text">
            <string/>
+          </property>
+          <property name="popupMode">
+           <enum>QToolButton::DelayedPopup</enum>
           </property>
          </widget>
         </item>
@@ -72,6 +90,16 @@
     </widget>
    </item>
   </layout>
+  <action name="actionGhj">
+   <property name="text">
+    <string>ghj</string>
+   </property>
+  </action>
+  <action name="actionGhjghjg">
+   <property name="text">
+    <string>ghjghjg</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

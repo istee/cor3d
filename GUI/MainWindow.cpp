@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     setupUi(this);
     _transformationToolbar = new TransformationsToolbar(this);
     _transformationAction = transformationToolbarUi->addWidget(_transformationToolbar);
+    transformationToolbarUi->setIconSize(QSize(30, 30));
 
     fileToolbarUi->addWidget(new FileToolbar(this));
 

@@ -38,6 +38,7 @@ EditJoint::EditJoint(QWidget *parent): BaseSideWidget(parent)
 
 void EditJoint::update_content()
 {
+    /*
     blockSignals(true);
     joint->setEnabled(false);
     editable_properties->setEnabled(false);
@@ -79,4 +80,5 @@ void EditJoint::update_content()
         }
     }
     blockSignals(false);
+    */
 }

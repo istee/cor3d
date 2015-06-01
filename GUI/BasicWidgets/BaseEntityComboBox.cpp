@@ -62,6 +62,17 @@ void BaseEntityComboBox::populate(const vector<BaseEntity>& values)
     comboBox->blockSignals(false);
 }
 
+void BaseEntityComboBox::populateFromPointer(const vector<BaseEntity*>& values)
+{
+    comboBox->blockSignals(true);
+    comboBox->clear();
+    for (vector<BaseEntity*>::const_iterator it = values.begin(); it != values.end(); it++)
+    {
+        comboBox->addItem(QString::fromStdString(((BaseEntity*)*it)->get_name()), QVariant(((BaseEntity*)*it)->get_id()));
+    }
+    comboBox->blockSignals(false);
+}
+
 void BaseEntityComboBox::on_comboBox_editTextChanged(QString string)
 {
     emit name_changed(string.toStdString());

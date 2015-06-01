@@ -11,6 +11,8 @@
 #include <QList>
 #include <iostream>
 
+using namespace std;
+
 class SideWidgetGroupBox: public QGroupBox
 {
     Q_OBJECT
@@ -61,8 +63,19 @@ public:
     {
         _check_box_state = !_check_box_state;
         set_content_visibility(_check_box_state);
+        if (_check_box_state)
+        {
+            //cout << "Minimum " << sizeHint().width() << " " << sizeHint().height() << endl;
+            this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+        }
+        else
+        {
+            //cout << "MinimumExpanding " << sizeHint().width() << " " << sizeHint().height() << endl;
+            this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
+        }
         update();
-        ((QWidget*) parent())->adjustSize();;
+        ((QWidget*) parent())->updateGeometry();
+        //cout << "after " << sizeHint().width() << " " << sizeHint().height() << endl;
     }
 
     void initStyleOption(QStyleOptionGroupBox *option) const

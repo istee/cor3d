@@ -31,7 +31,7 @@ namespace cor3d
         vector<Posture>         _postures;
         vector<DCoordinate3>    _current_posture;
         vector<Chain>           _chains;
-        vector<Joint>           _joints;
+        vector<Joint*>          _joints;
         bool                    _chains_moved;
         int                     _selected_joint;
 
@@ -52,6 +52,8 @@ namespace cor3d
 
         void clear_chains();
 
+        void addJoint(const string& parentName, const string& jointName);
+
 
         ///////////////////////////
         // getter methods        //
@@ -60,23 +62,14 @@ namespace cor3d
         DCoordinate3 get_model_offset() const;
         DCoordinate3 get_model_scale() const;
         unsigned int get_joint_count() const;
-        vector<BaseEntity> get_joint_list() const;
-        vector<BaseEntity> get_possible_parents(unsigned int id) const;
+        vector<BaseEntity*> get_joint_list() const;
+        vector<BaseEntity*> get_possible_parents(unsigned int id) const;
 
         int get_selected_joint_id() const;
-        const string& get_joint_name(int joint_id) const;
-        int get_joint_parent(int joint_id) const;
-        vector<unsigned int> get_joint_children(int joint_id) const;
-        Type get_joint_type(int joint_id) const;
-        const DCoordinate3& get_joint_axis(int joint_id) const;
-        const DCoordinate3& get_joint_orientation(int joint_id) const;
-        double get_joint_length(int joint_id) const;
-        const DCoordinate3& get_joint_configuration(int joint_id) const;
-        const DCoordinate3& get_joint_coordinates(int joint_id) const;
-        const DCoordinate3 get_joint_parent_coordinates(int joint_id) const;
+        unsigned int getJointIdByName(const string& name) const;
 
-        Joint get_joint(const string& name);
-        vector<BaseEntity*> get_joint_list2();
+        Joint* get_joint(unsigned int id) const;
+        Joint* get_selected_joint() const;
 
         ///////////////////////////
         // setter methods        //
@@ -108,10 +101,15 @@ namespace cor3d
         bool validate_joint_index_(int joint_id) const;
         void MoveSelected(double x, double y, double z);
         void FABRIK(Chain& chain, DCoordinate3 target, double tolerance);
+        void deleteJoint(unsigned int jointId);
+        void prepareDeleteJoints(unsigned int jointId, vector<unsigned int>& result);
 
     public slots:
         void handle_view_joint_added(const string&,int);
         void handle_view_joint_selection_changed(int);
+        void handle_view_joint_selection_changed(const string&);
+        void handle_view_joint_renamed(const string&, const string&);
+        void handle_view_joint_deleted(const string&);
         void handle_view_joint_parent_changed(int);
         void handle_view_joint_type_changed(int);
         void handle_view_joint_orientation_changed(const DCoordinate3&);
@@ -121,9 +119,14 @@ namespace cor3d
         void handle_view_joint_fabrik_moved(const DCoordinate3&);
 
     signals:
-        void model_joint_list_changed();
+        void model_joint_list_changed();        //delete
         void model_joint_selection_changed();
-        void model_joint_data_changed();
+        void model_joint_selection_changed(const string& name);
+        void model_joint_renamed(const string& oldName, const string& newName);
+        void model_joint_added(const string& name);
+        void model_joint_deleted(const string& name);
+        void model_joint_parent_changed(const string& name, const string& oldParentName, const string& newParentName);
+        void model_joint_data_changed(const string& name);
 
     private:
         friend std::ostream& operator <<(std::ostream& lhs, const Skeleton& rhs)
@@ -138,7 +141,7 @@ namespace cor3d
                 lhs << "skeleton_model_scale: " <<rhs.get_model_scale() << endl;
             }
             lhs << "skeleton_joint_count: " << rhs.get_joint_count() << endl;
-            for (vector<Joint>::const_iterator it = rhs._joints.begin(); it != rhs._joints.end(); it++)
+            for (vector<Joint*>::const_iterator it = rhs._joints.begin(); it != rhs._joints.end(); it++)
             {
                 lhs << *it;
             }
@@ -167,8 +170,8 @@ namespace cor3d
             cout << "joint_number: " << number << endl;
             for (int i = 0; i < number; i++)
             {
-                Joint joint(i, "", 0);
-                lhs >> joint;
+                Joint* joint = new Joint(i, "", 0);
+                lhs >> *joint;
                 rhs._joints.push_back(joint);
             }
             rhs._coordinates_need_update = true;
@@ -202,65 +205,6 @@ namespace cor3d
     inline int Skeleton::get_selected_joint_id() const
     {
         return _selected_joint;
-    }
-
-    inline const string& Skeleton::get_joint_name(int joint_id) const
-    {
-        return _joints[joint_id].get_name();
-    }
-
-    inline int Skeleton::get_joint_parent(int joint_id) const
-    {
-        return _joints[joint_id].get_parent();
-    }
-
-    inline vector<unsigned int> Skeleton::get_joint_children(int joint_id) const
-    {
-        return _joints[joint_id].get_children();
-    }
-
-    inline Type Skeleton::get_joint_type(int joint_id) const
-    {
-        return _joints[joint_id].get_type();
-    }
-
-    inline const DCoordinate3& Skeleton::get_joint_axis(int joint_id) const
-    {
-        return _joints[joint_id].get_axis();
-    }
-
-    inline const DCoordinate3& Skeleton::get_joint_orientation(int joint_id) const
-    {
-        return _joints[joint_id].get_orientation();
-    }
-
-    inline double Skeleton::get_joint_length(int joint_id) const
-    {
-        return _joints[joint_id].get_length();
-    }
-
-    inline const DCoordinate3& Skeleton::get_joint_configuration(int joint_id) const
-    {
-        return _joints[joint_id].get_configuration();
-    }
-
-    inline const DCoordinate3& Skeleton::get_joint_coordinates(int joint_id) const
-    {
-        return _joints[joint_id].get_coordinates();
-    }
-
-    inline const DCoordinate3 Skeleton::get_joint_parent_coordinates(int joint_id) const
-    {
-        if (!validate_joint_index_(joint_id))
-        {
-            return DCoordinate3();
-        }
-        int parent_id = get_joint_parent(joint_id);
-        if (!validate_joint_index_(parent_id))
-        {
-            return DCoordinate3();
-        }
-        return _joints[parent_id].get_coordinates();
     }
 
     inline void Skeleton::set_name(const string &name)

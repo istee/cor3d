@@ -20,7 +20,7 @@ void PostureGLWidget::specificPaintGL()
         if (skeleton->is_joint_selected())
         {
             unsigned int joint_id = skeleton->get_selected_joint_id();
-            DCoordinate3 position = skeleton->get_joint_coordinates(joint_id);
+            DCoordinate3 position = skeleton->get_joint(joint_id)->get_coordinates();
             render_move_arrows(rendering_options, &position);
         }
     }

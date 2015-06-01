@@ -252,7 +252,7 @@ void GLWidget::pick(double x, double y)
 
             if (skeleton->is_joint_selected())
             {
-                DCoordinate3 selected_position = skeleton->get_joint_coordinates(skeleton->get_selected_joint_id());
+                DCoordinate3 selected_position = skeleton->get_selected_joint()->get_coordinates();
 
                 render_move_arrows(cor3dApp->cor3d->get_rendering_options(), &selected_position, skeleton->get_joint_count(), true);
             }
@@ -381,7 +381,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
             cout << "before normalizing: " << n << " , " << n.length() << endl;
             n.normalize();
 
-            DCoordinate3 p0 = cor3dApp->cor3d->get_skeleton()->get_joint_coordinates(cor3dApp->cor3d->get_skeleton()->get_selected_joint_id());
+            DCoordinate3 p0 = cor3dApp->cor3d->get_skeleton()->get_selected_joint()->get_coordinates();
             //DCoordinate3 p0 = DCoordinate3(p0_const.x(), p0_const.y(), p0_const.z());
 
             double mouseX = event->x();
@@ -425,7 +425,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
                 //                cout << "p0: " << p0 << endl;
                 //                cout << "point: " << result << endl;
 
-                DCoordinate3 new_coord  = cor3dApp->cor3d->get_skeleton()->get_joint_coordinates(cor3dApp->cor3d->get_skeleton()->get_selected_joint_id());
+                DCoordinate3 new_coord  = cor3dApp->cor3d->get_skeleton()->get_selected_joint()->get_coordinates();
                 //DCoordinate3 *new_coord = _skeletons[0].GetSelectedPosition();
 
                 switch(_drag_type)

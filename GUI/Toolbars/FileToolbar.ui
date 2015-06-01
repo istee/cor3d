@@ -19,6 +19,12 @@
    </property>
    <item>
     <widget class="QToolButton" name="toolButtonOpen">
+     <property name="minimumSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
+     </property>
      <property name="text">
       <string/>
      </property>
@@ -26,6 +32,12 @@
    </item>
    <item>
     <widget class="QToolButton" name="toolButtonSave">
+     <property name="minimumSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
+     </property>
      <property name="text">
       <string/>
      </property>
@@ -33,6 +45,12 @@
    </item>
    <item>
     <widget class="QToolButton" name="toolButtonSaveAs">
+     <property name="minimumSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
+     </property>
      <property name="text">
       <string/>
      </property>
@@ -47,6 +65,12 @@
    </item>
    <item>
     <widget class="QToolButton" name="toolButtonExport">
+     <property name="minimumSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
+     </property>
      <property name="text">
       <string/>
      </property>
@@ -54,6 +78,12 @@
    </item>
    <item>
     <widget class="QToolButton" name="toolButtonImport">
+     <property name="minimumSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
+     </property>
      <property name="text">
       <string/>
      </property>
