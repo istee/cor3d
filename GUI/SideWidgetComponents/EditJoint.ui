@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>250</width>
-    <height>400</height>
+    <height>180</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -27,72 +27,33 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="SideWidgetGroupBox" name="groupBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="title">
-      <string>Edit joints</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="1" column="0" colspan="2">
-       <widget class="QWidget" name="editable_properties" native="true">
-        <layout class="QVBoxLayout" name="verticalLayout">
-         <property name="margin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="BaseEntityComboBox" name="parent_joint" native="true"/>
-         </item>
-         <item>
-          <widget class="BaseEntityComboBox" name="type" native="true"/>
-         </item>
-         <item>
-          <widget class="DCoordinate3GroupBox" name="position_vector" native="true"/>
-         </item>
-         <item>
-          <widget class="DCoordinate3GroupBox" name="rotation_axis" native="true"/>
-         </item>
-         <item>
-          <widget class="DCoordinate3GroupBox" name="configuration" native="true"/>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item row="0" column="0" colspan="2">
-       <widget class="BaseEntityComboBox" name="joint" native="true"/>
-      </item>
-     </layout>
-    </widget>
+    <widget class="BaseEntityComboBox" name="parent_joint" native="true"/>
+   </item>
+   <item row="1" column="0">
+    <widget class="BaseEntityComboBox" name="type" native="true"/>
+   </item>
+   <item row="2" column="0">
+    <widget class="DCoordinate3GroupBox" name="position_vector" native="true"/>
+   </item>
+   <item row="3" column="0">
+    <widget class="DCoordinate3GroupBox" name="rotation_axis" native="true"/>
+   </item>
+   <item row="4" column="0">
+    <widget class="DCoordinate3GroupBox" name="configuration" native="true"/>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>DCoordinate3GroupBox</class>
-   <extends>QWidget</extends>
-   <header location="global">GUI/BasicWidgets/DCoordinate3GroupBox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>SideWidgetGroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>GUI/SideWidgetComponents/SideWidgetGroupBox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>BaseEntityComboBox</class>
    <extends>QWidget</extends>
    <header location="global">GUI/BasicWidgets/BaseEntityComboBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>DCoordinate3GroupBox</class>
+   <extends>QWidget</extends>
+   <header location="global">GUI/BasicWidgets/DCoordinate3GroupBox.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

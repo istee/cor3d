@@ -26,6 +26,18 @@
    <string>Add new joint</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>9</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>9</number>
+   </property>
    <item row="0" column="0">
     <widget class="SideWidgetGroupBox" name="groupBox">
      <property name="sizePolicy">
@@ -41,6 +53,9 @@
       <string>Joint</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="margin">
+       <number>6</number>
+      </property>
       <item>
        <widget class="TreeWidgetExtension" name="treeViewJoints">
         <property name="indentation">

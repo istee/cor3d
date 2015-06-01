@@ -9,8 +9,9 @@ SkeletonEditorTab::SkeletonEditorTab(QWidget *parent):IMainWindowTab(parent)
     setupUi(this);
 
     glwidget = new SkeletonGLWidget();
+    glwidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     glwidget->updateGL();
-    glwidgetHolderLayout->addWidget(glwidget);
+    glwidgetHolderLayout->layout()->addWidget(glwidget);
     connect(glwidget, SIGNAL(modelTransformationsChanged()), this, SIGNAL(modelTransformationsChanged()));
     //transformations_widget->setGLWidget(glwidget);
 
@@ -60,13 +61,14 @@ SkeletonEditorTab::SkeletonEditorTab(QWidget *parent):IMainWindowTab(parent)
 
 void SkeletonEditorTab::initialize()
 {
-    QList<SideWidgetGroupBox*> groupbox_list = this->scrollAreaWidgetContents->findChildren<SideWidgetGroupBox*>();
+    QList<SideWidgetGroupBox*> groupbox_list = this->sideWidget->findChildren<SideWidgetGroupBox*>();
     for (QList<SideWidgetGroupBox*>::iterator it = groupbox_list.begin(); it != groupbox_list.end(); it++)
     {
         (*it)->toggled();
     }
 
-    QList<BaseSideWidget*> sidewidget_list = this->scrollAreaWidgetContents->findChildren<BaseSideWidget*>();
+    QList<BaseSideWidget*> sidewidget_list = this->sideWidget->findChildren<BaseSideWidget*>();
+    cout << "initialize " << sidewidget_list.count() << endl;
     for (QList<BaseSideWidget*>::iterator it = sidewidget_list.begin(); it != sidewidget_list.end(); it++)
     {
         (*it)->update_content();

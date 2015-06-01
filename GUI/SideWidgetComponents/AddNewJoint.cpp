@@ -36,6 +36,7 @@ void AddNewJoint::addWidgetToTreeWidgetItems(QTreeWidgetItem* item)
     EditableDeletableListItem* listItem = new EditableDeletableListItem(item->data(0, Qt::UserRole).toString().toStdString(), new EditJoint(), treeViewJoints);
     connect(listItem, SIGNAL(view_list_item_renamed(string,string)), this, SIGNAL(view_joint_renamed(string, string)));
     connect(listItem, SIGNAL(view_list_item_deleted(string)), this, SIGNAL(view_joint_deleted(const string&)));
+    connect(listItem, SIGNAL(view_list_item_edited(string)), this, SLOT(handle_view_joint_edited(string)));
     treeViewJoints->setItemWidget(item, 0, listItem);
 
     for( int i = 0; i < item->childCount(); ++i )
@@ -58,6 +59,7 @@ void AddNewJoint::addJoint(const string& name)
     EditableDeletableListItem* listItem = new EditableDeletableListItem(item->data(0, Qt::UserRole).toString().toStdString(), new EditJoint(), treeViewJoints);
     connect(listItem, SIGNAL(view_list_item_renamed(string,string)), this, SIGNAL(view_joint_renamed(string, string)));
     connect(listItem, SIGNAL(view_list_item_deleted(string)), this, SIGNAL(view_joint_deleted(const string&)));
+    connect(listItem, SIGNAL(view_list_item_edited(string)), this, SLOT(handle_view_joint_edited(string)));
     treeViewJoints->setItemWidget(item, 0, listItem);
     parentItem->setExpanded(true);
 
@@ -87,7 +89,8 @@ void AddNewJoint::update_content()
     Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
     Skeleton* skeleton = cor3dApp->cor3d->get_skeleton();
 
-    treeViewJoints->clear();
+    QTreeWidgetItem* oldRootItem = treeViewJoints->takeTopLevelItem(0);
+    delete oldRootItem;
 
     if (skeleton)
     {
@@ -153,4 +156,13 @@ void AddNewJoint::on_treeViewJoints_itemSelectionChanged()
     {
         emit(view_joint_selected(""));
     }
+}
+
+void AddNewJoint::handle_view_joint_edited(const string& name)
+{
+    QTreeWidgetItem* item = treeViewJoints->getTreeWidgetItemByData(name);
+    EditableDeletableListItem* listItem = (EditableDeletableListItem*) treeViewJoints->itemWidget(item, 0);
+    listItem->showEditWidget(!listItem->isEditWidgetVisible());
+    item->setSizeHint(0, listItem->sizeHint());
+    treeViewJoints->updateGeometry();
 }

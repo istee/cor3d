@@ -10,8 +10,6 @@ EditJoint::EditJoint(QWidget *parent): BaseSideWidget(parent)
 {
     setupUi(this);
 
-    joint->setLabel("Joint");
-    joint->setEditable(true);
     parent_joint->setLabel("Parent");
     type->setLabel("Type");
     rotation_axis->setTitle("Axis");
@@ -28,7 +26,6 @@ EditJoint::EditJoint(QWidget *parent): BaseSideWidget(parent)
     rotation_axis->setSettings(coordinate_settings);
     position_vector->setSettings(coordinate_settings);
 
-    connect(joint, SIGNAL(selection_changed(int)), this, SIGNAL(view_joint_selection_changed(int)));
     connect(parent_joint, SIGNAL(selection_changed(int)), this, SIGNAL(view_joint_parent_changed(int)));
     connect(type, SIGNAL(selection_changed(int)), this, SIGNAL(view_joint_type_changed(int)));
     connect(rotation_axis, SIGNAL(coordinates_changed(DCoordinate3)), this, SIGNAL(view_joint_axis_changed(DCoordinate3)));

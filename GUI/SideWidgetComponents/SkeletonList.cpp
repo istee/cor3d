@@ -147,3 +147,27 @@ void SkeletonList::on_toolButtonAdd_clicked()
 {
     emit view_skeleton_added(addName->value());
 }
+
+QSize SkeletonList::sizeHint() const
+{
+    if (SideWidgetGroupBox::_check_box_state)
+    {
+        return QSize(250, 500);
+    }
+    else
+    {
+        SideWidgetGroupBox::sizeHint();
+    }
+}
+
+QSizePolicy SkeletonList::sizePolicy() const
+{
+    if (SideWidgetGroupBox::_check_box_state)
+    {
+        return QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    }
+    else
+    {
+        SideWidgetGroupBox::sizePolicy();
+    }
+}

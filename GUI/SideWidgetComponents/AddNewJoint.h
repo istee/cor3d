@@ -24,7 +24,6 @@ public:
     void deleteJoint(const string& name);
     void renameJoint(const string& oldName, const string& newName);
 
-
 private:
     void populateJointTreeView(Skeleton* skeleton, Joint* parent, QTreeWidgetItem* item);
     void addWidgetToTreeWidgetItems(QTreeWidgetItem* item);
@@ -39,4 +38,5 @@ signals:
 private slots:
     void on_treeViewJoints_itemSelectionChanged();
     void on_toolButtonAdd_clicked();
+    void handle_view_joint_edited(const string& name);
 };

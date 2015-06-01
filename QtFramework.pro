@@ -42,7 +42,8 @@ SOURCES += \
     GUI/Toolbars/FileToolbar.cpp \
     GUI/BasicWidgets/EditableDeletableListItem.cpp \
     GUI/WidgetExtensions/BaseEntityListDisplayProperties.cpp \
-    GUI/WidgetExtensions/TreeWidgetExtension.cpp
+    GUI/WidgetExtensions/TreeWidgetExtension.cpp \
+    GUI/SideWidgetComponents/SideWidgetGroupBox.cpp
 
 
 HEADERS += \
