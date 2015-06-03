@@ -23,6 +23,9 @@ public:
     string lineEditText() const;
     void showEditWidget(bool show);
     bool isEditWidgetVisible();
+    void showRename(bool show);
+    void showEdit(bool show);
+    void showDelete(bool show);
     BaseSideWidget* editWidget();
     QSize sizeHint() const;
     QSize minimumSizeHint() const;

@@ -18,13 +18,9 @@ public:
     SkeletonList(QWidget *parent = 0);
     void update_content();
     void updateSkeletonModel(const string& skeletonName);
-    virtual QSize sizeHint() const;
-    virtual QSizePolicy sizePolicy() const;
 
 private:
     QHash<string,BaseEntityDisplayProperties>  _skeletonDisplayProperties;
-
-public slots:
 
 signals:
     void view_skeleton_deleted();

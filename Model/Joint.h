@@ -27,12 +27,14 @@ namespace cor3d {
         DCoordinate3            _orientation;
         DCoordinate3            _coordinate;
         DCoordinate3            _configuration;
+        DCoordinate3            _scale;
 
     public:
         Joint(unsigned int id, string name, int parent_id/*, DCoordinate3 parent_coordinate*/): BaseEntity(id, name)
         {
             _parent_id  = parent_id;
             _type       = ROTATIONAL;
+            _scale      = DCoordinate3(1, 1, 1);
             //_coordinate = parent_coordinate;
         }
 
@@ -81,6 +83,11 @@ namespace cor3d {
             return _coordinate;
         }
 
+        const DCoordinate3& get_scale() const
+        {
+            return _scale;
+        }
+
         static vector<BaseEntity> get_joint_types()
         {
             vector<BaseEntity> joint_types;
@@ -100,13 +107,11 @@ namespace cor3d {
         void add_child(unsigned int child_id)
         {
             _children_ids.push_back(child_id);
-            cout << "joint " << get_name() << " add " << child_id << endl;
         }
 
         void remove_child(unsigned int child_id)
         {
             _children_ids.erase(std::remove(_children_ids.begin(), _children_ids.end(), child_id), _children_ids.end());
-            cout << "joint " << get_name() << " remove " << child_id << endl;
         }
 
         void set_type(Type type)
@@ -128,9 +133,19 @@ namespace cor3d {
             _orientation = orientation;
         }
 
+        void set_coordinate(const DCoordinate3& coordinate)
+        {
+            _coordinate = coordinate;
+        }
+
         void set_configuration(const DCoordinate3& configuration)
         {
             _configuration = configuration;
+        }
+
+        void set_scale(const DCoordinate3& scale)
+        {
+            _scale = scale;
         }
     };
 }

@@ -20,9 +20,8 @@ namespace cor3d {
         {
             lhs << *it << " ";
         }
-        lhs << endl << "joint_axis: " << rhs.get_axis() << endl;
-        lhs << "joint_orientaion: " << rhs.get_orientation() << endl;
-        lhs << "joint_configuration: " << rhs.get_configuration() << endl;
+        lhs << endl << "joint_coordinates: " << rhs.get_coordinates() << endl;
+        lhs << "joint_scale: " << rhs.get_scale() << endl;
         return lhs;
     }
 
@@ -32,10 +31,8 @@ namespace cor3d {
         char name[256];
         int number, child;
         lhs >> text;
-        cout << "text: " << text << endl;
         lhs.getline(name, 256);
         rhs.set_name(name);
-        cout << "joint name: " << name << endl;
         lhs >> text >> rhs._id;
         lhs >> text >> rhs._parent_id;
         lhs >> text >> number;
@@ -46,11 +43,8 @@ namespace cor3d {
             lhs >> child;
             rhs._children_ids.push_back(child);
         }
-        lhs >> text >> rhs._axis;
-        cout << text << " axis: " << rhs._axis << endl;
-        lhs >> text >> rhs._orientation;
-        lhs >> text >> rhs._configuration;
-        cout << text << "orientation: " << rhs._orientation << endl;
+        lhs >> text >> rhs._coordinate;
+        lhs >> text >> rhs._scale;
         return lhs;
     }
 }

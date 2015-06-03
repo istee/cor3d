@@ -23,6 +23,9 @@ namespace cor3d
     {
         Q_OBJECT
 
+        friend std::ostream& operator <<(std::ostream& lhs, const Skeleton& rhs);
+        friend std::istream& operator >>(std::istream& lhs, Skeleton& rhs);
+
         string                  _model_file;
         TriangulatedMesh3       _model;
         DCoordinate3            _model_offset;
@@ -43,6 +46,7 @@ namespace cor3d
         Skeleton(unsigned int id, const string& name);
 
 
+        void addRoot();
         //int construct_chains_(int joint_id, int chain_index, int parent_chain_index);
         //void construct_chains();
 
@@ -69,6 +73,8 @@ namespace cor3d
         unsigned int getJointIdByName(const string& name) const;
 
         Joint* get_joint(unsigned int id) const;
+        Joint* get_joint(const string& name) const;
+        Joint* get_parent_joint(const string& name) const;
         Joint* get_selected_joint() const;
 
         ///////////////////////////
@@ -103,6 +109,7 @@ namespace cor3d
         void FABRIK(Chain& chain, DCoordinate3 target, double tolerance);
         void deleteJoint(unsigned int jointId);
         void prepareDeleteJoints(unsigned int jointId, vector<unsigned int>& result);
+        void handle_view_joint_coordinates_changed_(unsigned int jointId);
 
     public slots:
         void handle_view_joint_added(const string&,int);
@@ -110,6 +117,11 @@ namespace cor3d
         void handle_view_joint_selection_changed(const string&);
         void handle_view_joint_renamed(const string&, const string&);
         void handle_view_joint_deleted(const string&);
+        void handle_view_joint_coordinates_changed(const string&, const DCoordinate3& coordinates);
+        void handle_view_joint_rotation_axis_changed(const string&, const DCoordinate3& rotation_axis);
+        void handle_view_joint_rotation_constraint_changed(const string&, const DCoordinate3& rotation_constraint);
+        void handle_view_joint_scale_changed(const string& name, const DCoordinate3& scale);
+
         void handle_view_joint_parent_changed(int);
         void handle_view_joint_type_changed(int);
         void handle_view_joint_orientation_changed(const DCoordinate3&);
@@ -127,60 +139,7 @@ namespace cor3d
         void model_joint_deleted(const string& name);
         void model_joint_parent_changed(const string& name, const string& oldParentName, const string& newParentName);
         void model_joint_data_changed(const string& name);
-
-    private:
-        friend std::ostream& operator <<(std::ostream& lhs, const Skeleton& rhs)
-        {
-            lhs << "skeleton_name: " << rhs.get_name() << endl;
-            bool hasModelFile = "" != rhs.get_model_file();
-            lhs << "skeleton_has_model_file: " << hasModelFile << endl;
-            if (hasModelFile)
-            {
-                lhs << "skeleton_model_file: " << rhs.get_model_file() << endl;
-                lhs << "skeleton_model_offset: " << rhs.get_model_offset() << endl;
-                lhs << "skeleton_model_scale: " <<rhs.get_model_scale() << endl;
-            }
-            lhs << "skeleton_joint_count: " << rhs.get_joint_count() << endl;
-            for (vector<Joint*>::const_iterator it = rhs._joints.begin(); it != rhs._joints.end(); it++)
-            {
-                lhs << *it;
-            }
-            return lhs;
-        }
-
-        friend std::istream& operator >>(std::istream& lhs, Skeleton& rhs)
-        {
-            string text;
-            char name[256];
-            int number;
-            bool boolean;
-
-            lhs >> text;
-            lhs.getline(name, 256);
-            rhs.set_name(string(name));
-            lhs >> text >> boolean;
-            if (boolean)
-            {
-                lhs >> text >> text;
-                rhs.set_model_file(text);
-            }
-            lhs >> text >> rhs._model_offset;
-            lhs >> text >> rhs._model_scale;
-            lhs >> text >> number;
-            cout << "joint_number: " << number << endl;
-            for (int i = 0; i < number; i++)
-            {
-                Joint* joint = new Joint(i, "", 0);
-                lhs >> *joint;
-                rhs._joints.push_back(joint);
-            }
-            rhs._coordinates_need_update = true;
-            return lhs;
-        }
-
     };
-
-
 
     inline string Skeleton::get_model_file() const
     {

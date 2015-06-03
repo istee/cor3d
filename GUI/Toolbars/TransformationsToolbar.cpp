@@ -12,7 +12,6 @@ TransformationsToolbar::TransformationsToolbar(QWidget *parent) :
 
 void TransformationsToolbar::setTranslation(const DCoordinate3& translation)
 {
-    cout << "toolbar translation: " << translation << endl;
     this->ui->doubleSpinBoxTranslateX->setValue(translation.x());
     this->ui->doubleSpinBoxTranslateY->setValue(translation.y());
     this->ui->doubleSpinBoxTranslateZ->setValue(translation.z());

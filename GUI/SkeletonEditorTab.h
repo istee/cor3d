@@ -28,7 +28,7 @@ public slots:
     void handle_model_joint_deleted(const string& name);
     void handle_model_joint_renamed(const string& oldName, const string& newName);
     void handle_model_joint_selection_changed(const string& name);
-    void handle_model_joint_data_changed();
+    void handle_model_joint_data_changed(const string& name);
     void handle_model_rendering_options_changed();
 
 private slots:

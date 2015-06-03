@@ -86,8 +86,13 @@ namespace cor3d {
 
     void Cor3d::handle_view_skeleton_added(string name)
     {
-        _skeletons.push_back(new Skeleton(_skeletons.size(), append_sequence_number<Skeleton>(name, _skeletons)));
+        Skeleton* skeleton = new Skeleton(_skeletons.size(), append_sequence_number<Skeleton>(name, _skeletons));
+        skeleton->addRoot();
+        _skeletons.push_back(skeleton);
         emit model_skeleton_list_changed();
+
+        _selected_skeleton_id = skeleton->get_id();
+        emit model_skeleton_selection_changed();
     }
 
     void Cor3d::handle_view_skeleton_imported(const string& file_name)

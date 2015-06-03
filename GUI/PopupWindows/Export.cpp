@@ -52,7 +52,6 @@ void Export::on_exportButton_clicked()
     Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
     ofstream file;
     file.open(exportFile->fileLabel->text().toAscii(), ios::out);
-    cout << exportFile->fileLabel->text().toStdString() << endl;
     if (file.is_open())
     {
         int skeletonCount = treeView->model()->rowCount();
@@ -78,7 +77,6 @@ void Export::on_exportButton_clicked()
 
 void Export::on_exportFile_changed(string filename)
 {
-    cout << filename << endl;
     exportFile->setFilePath(filename);
 }
 

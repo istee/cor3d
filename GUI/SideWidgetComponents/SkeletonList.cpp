@@ -26,6 +26,8 @@ SkeletonList::SkeletonList(QWidget *parent): BaseSideWidget(parent)
     skeleton_listview->setSelectionBehavior(QAbstractItemView::SelectItems);
 
     _skeletonDisplayProperties = QHash<string,BaseEntityDisplayProperties>();
+
+    connect(groupBox, SIGNAL(groupbox_toggled(bool)), this, SLOT(handle_groupbox_toggled(bool)));
 }
 
 void SkeletonList::update_content()
@@ -96,7 +98,6 @@ void SkeletonList::update_content()
 
 void SkeletonList::updateSkeletonModel(const string& skeletonName)
 {
-    cout << "update skeleton model: " << skeletonName << endl;
     Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
     QList<QListWidgetItem *> items = skeleton_listview->findItems(QString::fromStdString(skeletonName), Qt::MatchExactly);
     if (items.size() == 1) {
@@ -126,48 +127,15 @@ void SkeletonList::on_skeleton_listview_activated(QModelIndex index)
 void SkeletonList::handle_view_skeleton_edited(const string& name)
 {
     QList<QListWidgetItem *> items = skeleton_listview->findItems(QString::fromStdString(name), Qt::MatchExactly);
-    if (items.size() == 1) {
+    if (items.size() == 1)
+    {
         EditableDeletableListItem* listItem = (EditableDeletableListItem*)skeleton_listview->itemWidget(items[0]);
         listItem->showEditWidget(!listItem->isEditWidgetVisible());
         items[0]->setSizeHint(listItem->sizeHint());
     }
-
-
-    //EditSkeleton* editSkeletonWidget = new EditSkeleton();
-    //listItem->addEditWidget(editSkeletonWidget);
-    //int count = skeleton_listview->count();
-    //for(int i = 0; i < count; i++)
-    //{
-      //QListWidgetItem *item = skeleton_listview->item(i);
-      //item->setSizeHint(QSize(item->sizeHint().width(), editSkeletonWidget->height() + 30));
-    //}
 }
 
 void SkeletonList::on_toolButtonAdd_clicked()
 {
     emit view_skeleton_added(addName->value());
-}
-
-QSize SkeletonList::sizeHint() const
-{
-    if (SideWidgetGroupBox::_check_box_state)
-    {
-        return QSize(250, 500);
-    }
-    else
-    {
-        SideWidgetGroupBox::sizeHint();
-    }
-}
-
-QSizePolicy SkeletonList::sizePolicy() const
-{
-    if (SideWidgetGroupBox::_check_box_state)
-    {
-        return QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    }
-    else
-    {
-        SideWidgetGroupBox::sizePolicy();
-    }
 }

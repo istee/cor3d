@@ -3,10 +3,20 @@
 #include "Cor3dApplication.h"
 #include "GUI/SideWidgetComponents/BaseSideWidget.h"
 #include "GUI/SideWidgetComponents/SideWidgetGroupBox.h"
+#include "GUI/PostureGLWidget.h"
 
 PostureEditorTab::PostureEditorTab(QWidget *parent): IMainWindowTab(parent)
 {
     setupUi(this);
+    QList<int> sizes = QList<int>();
+    sizes.append(1000);
+    sizes.append(1);
+    splitter->setSizes(sizes);
+
+    glwidget = new PostureGLWidget();
+    glwidget->updateGL();
+    glwidgetHolderLayout->layout()->addWidget(glwidget);
+
 
     //transformations_widget->setGLWidget(glwidget);
 
@@ -46,6 +56,7 @@ PostureEditorTab::PostureEditorTab(QWidget *parent): IMainWindowTab(parent)
 
 void PostureEditorTab::initialize()
 {
+    /*
     QList<SideWidgetGroupBox*> groupbox_list = this->scrollAreaWidgetContents->findChildren<SideWidgetGroupBox*>();
     for (QList<SideWidgetGroupBox*>::iterator it = groupbox_list.begin(); it != groupbox_list.end(); it++)
     {
@@ -58,6 +69,7 @@ void PostureEditorTab::initialize()
         //(*it)->update_content();
 
     }
+    */
 }
 
 // inherited slots - accessed by the model

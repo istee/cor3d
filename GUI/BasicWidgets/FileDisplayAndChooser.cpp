@@ -66,6 +66,5 @@ void FileDisplayAndChooser::on_pushButton_released()
     {
         filename = fileDialog.getOpenFileName(this, QString::fromStdString(_caption), QString::fromStdString(_folder), QString::fromStdString(_filter)).toStdString();
     }
-    cout << "file name" << filename << endl;
     emit file_changed(filename);
 }

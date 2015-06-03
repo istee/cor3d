@@ -23,17 +23,22 @@ public:
     void addJoint(const string& name);
     void deleteJoint(const string& name);
     void renameJoint(const string& oldName, const string& newName);
+    void updateJointData(const string& name);
 
 private:
     void populateJointTreeView(Skeleton* skeleton, Joint* parent, QTreeWidgetItem* item);
     void addWidgetToTreeWidgetItems(QTreeWidgetItem* item);
     QHash<string,BaseEntityDisplayProperties>  _jointsDisplayProperties;
+    void populateTreeViewJoints(Skeleton* skeleton, Joint* joint);
 
 signals:
     void view_joint_added(const string& name, const string& parentName);
     void view_joint_selected(string name);
     void view_joint_renamed(string, string);
     void view_joint_deleted(string name);
+
+    void view_joint_coordinates_changed(const string& name, const DCoordinate3& coordinates);
+    void view_joint_scale_changed(const string& name, const DCoordinate3& scale);
 
 private slots:
     void on_treeViewJoints_itemSelectionChanged();

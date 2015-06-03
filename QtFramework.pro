@@ -43,7 +43,9 @@ SOURCES += \
     GUI/BasicWidgets/EditableDeletableListItem.cpp \
     GUI/WidgetExtensions/BaseEntityListDisplayProperties.cpp \
     GUI/WidgetExtensions/TreeWidgetExtension.cpp \
-    GUI/SideWidgetComponents/SideWidgetGroupBox.cpp
+    GUI/SideWidgetComponents/SideWidgetGroupBox.cpp \
+    GUI/SideWidgetComponents/ManagePostures.cpp \
+    GUI/SideWidgetComponents/EditPosture.cpp
 
 
 HEADERS += \
@@ -107,7 +109,9 @@ HEADERS += \
     GUI/Toolbars/FileToolbar.h \
     GUI/BasicWidgets/EditableDeletableListItem.h \
     GUI/WidgetExtensions/BaseEntityDisplayProperties.h \
-    GUI/WidgetExtensions/TreeWidgetExtension.h
+    GUI/WidgetExtensions/TreeWidgetExtension.h \
+    GUI/SideWidgetComponents/ManagePostures.h \
+    GUI/SideWidgetComponents/EditPosture.h
 
 FORMS += \
     GUI/BasicWidgets/DCoordinate3GroupBox.ui \
@@ -136,7 +140,9 @@ FORMS += \
     GUI/PopupWindows/Import.ui \
     GUI/Toolbars/TransformationsToolbar.ui \
     GUI/Toolbars/FileToolbar.ui \
-    GUI/BasicWidgets/EditableDeletableListItem.ui
+    GUI/BasicWidgets/EditableDeletableListItem.ui \
+    GUI/SideWidgetComponents/ManagePostures.ui \
+    GUI/SideWidgetComponents/EditPosture.ui
 
 
 QT += opengl

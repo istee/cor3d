@@ -14,100 +14,49 @@
    <string>Form</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item>
-    <widget class="QWidget" name="glwidgetHolder" native="true"/>
-   </item>
-   <item>
-    <widget class="QScrollArea" name="scrollArea">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
-     <property name="widgetResizable">
-      <bool>true</bool>
+     <property name="handleWidth">
+      <number>3</number>
      </property>
-     <widget class="QWidget" name="scrollAreaWidgetContents">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>250</width>
-        <height>283</height>
-       </rect>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
+     <widget class="QWidget" name="glwidgetHolderLayout" native="true">
+      <layout class="QGridLayout" name="gridLayout">
+       <property name="margin">
+        <number>0</number>
+       </property>
+       <property name="spacing">
+        <number>0</number>
+       </property>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="sideWidget" native="true">
       <property name="minimumSize">
        <size>
-        <width>250</width>
+        <width>300</width>
         <height>0</height>
        </size>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="rightMargin">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="margin">
         <number>0</number>
        </property>
        <item>
-        <widget class="ManagePoses" name="manage_poses" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
+        <widget class="ManagePostures" name="managePostures" native="true"/>
        </item>
        <item>
-        <widget class="ConfigurePose" name="configure_pose" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="TransformationsWidget" name="transformations_widget" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
+        <widget class="EditPosture" name="editPosture" native="true"/>
        </item>
       </layout>
      </widget>
@@ -117,21 +66,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ConfigurePose</class>
+   <class>ManagePostures</class>
    <extends>QWidget</extends>
-   <header location="global">GUI/SideWidgetComponents/ConfigurePose.h</header>
+   <header location="global">GUI/SideWidgetComponents/ManagePostures.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>TransformationsWidget</class>
+   <class>EditPosture</class>
    <extends>QWidget</extends>
-   <header location="global">GUI/SideWidgetComponents/TransformationsWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ManagePoses</class>
-   <extends>QWidget</extends>
-   <header>GUI/SideWidgetComponents/ManagePoses.h</header>
+   <header>GUI/SideWidgetComponents/EditPosture.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

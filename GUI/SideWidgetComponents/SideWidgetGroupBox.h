@@ -32,8 +32,9 @@ public:
     void initStyleOption(QStyleOptionGroupBox *option) const;
     void paintEvent(QPaintEvent *);
     void set_content_visibility(bool visible);
-    virtual QSize sizeHint() const;
-    virtual QSizePolicy sizePolicy() const;
 private slots:
     void my_toggled(bool on);
+
+signals:
+    void groupbox_toggled(bool showContent);
 };

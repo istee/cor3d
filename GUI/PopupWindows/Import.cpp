@@ -47,7 +47,6 @@ void Import::on_importButton_clicked()
     Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
     ifstream file;
     file.open(importFile->fileLabel->text().toAscii(), ios::out);
-    cout << importFile->fileLabel->text().toStdString() << endl;
     if (file.is_open())
     {
         string text;

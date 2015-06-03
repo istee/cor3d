@@ -12,10 +12,9 @@ EditJoint::EditJoint(QWidget *parent): BaseSideWidget(parent)
 
     parent_joint->setLabel("Parent");
     type->setLabel("Type");
-    rotation_axis->setTitle("Axis");
-    position_vector->setTitle("Local position vector");
-    configuration->setTitle("Joint value");
-    configuration->setLabels("min", "initial", "max");
+    parent_relative_position->setTitle("Relative coordinates to parent");
+    absolute_position->setTitle("Absolute coordinates");
+    joint_scale->setTitle("Joint scale");
 
     vector<BaseEntity> joint_types = cor3d::Joint::get_joint_types();
     type->populate(joint_types);
@@ -23,14 +22,27 @@ EditJoint::EditJoint(QWidget *parent): BaseSideWidget(parent)
     coordinate_settings = DCoordinate3(-100, 0.1, 100);
     angle_settings = DCoordinate3(-180, 1, 180);
 
-    rotation_axis->setSettings(coordinate_settings);
-    position_vector->setSettings(coordinate_settings);
+    parent_relative_position->setSettings(coordinate_settings);
+    absolute_position->setSettings(coordinate_settings);
+    joint_scale->setSettings(DCoordinate3(0.1, 0.1, 2));
 
-    connect(parent_joint, SIGNAL(selection_changed(int)), this, SIGNAL(view_joint_parent_changed(int)));
-    connect(type, SIGNAL(selection_changed(int)), this, SIGNAL(view_joint_type_changed(int)));
-    connect(rotation_axis, SIGNAL(coordinates_changed(DCoordinate3)), this, SIGNAL(view_joint_axis_changed(DCoordinate3)));
-    connect(position_vector, SIGNAL(coordinates_changed(DCoordinate3)), this, SIGNAL(view_joint_orientation_changed(DCoordinate3)));
-    connect(configuration, SIGNAL(coordinates_changed(DCoordinate3)), this, SIGNAL(view_joint_configuration_changed(DCoordinate3)));
+    connect(absolute_position, SIGNAL(coordinates_changed(DCoordinate3)), this, SLOT(handle_joint_absolute_coordinates_changed(DCoordinate3)));
+    connect(parent_relative_position, SIGNAL(coordinates_changed(DCoordinate3)), this, SLOT(handle_joint_relative_coordinates_changed(DCoordinate3)));
+    connect(joint_scale, SIGNAL(coordinates_changed(DCoordinate3)), this, SLOT(handle_joint_scale_changed(DCoordinate3)));
+}
+
+void EditJoint::updateContent(BaseEntity* baseEntity)
+{
+    Joint* joint = (Joint*) baseEntity;
+    _entityName = joint->get_name();
+    type->setIndex(joint->get_type());
+    absolute_position->setValue(joint->get_coordinates());
+    joint_scale->setValue(joint->get_scale());
+
+    Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
+    Skeleton* skeleton = cor3dApp->cor3d->get_skeleton();
+    Joint* parent = skeleton->get_joint(joint->get_parent());
+    parent_relative_position->setValue(joint->get_coordinates() - parent->get_coordinates());
 }
 
 void EditJoint::update_content()
@@ -78,4 +90,24 @@ void EditJoint::update_content()
     }
     blockSignals(false);
     */
+}
+
+void EditJoint::handle_joint_absolute_coordinates_changed(const DCoordinate3& coordinates)
+{
+    emit (view_joint_coordinates_changed(_entityName, coordinates));
+}
+
+void EditJoint::handle_joint_relative_coordinates_changed(const DCoordinate3& coordinates)
+{
+    Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
+    Skeleton* skeleton = cor3dApp->cor3d->get_skeleton();
+    Joint* joint = skeleton->get_joint(skeleton->getJointIdByName(_entityName));
+    Joint* parentJoint = skeleton->get_joint(joint->get_parent());
+    DCoordinate3 absoluteCoordinates = parentJoint->get_coordinates() + coordinates;
+    emit (view_joint_coordinates_changed(_entityName, absoluteCoordinates));
+}
+
+void EditJoint::handle_joint_scale_changed(const DCoordinate3& scale)
+{
+    emit (view_joint_scale_changed(_entityName, scale));
 }

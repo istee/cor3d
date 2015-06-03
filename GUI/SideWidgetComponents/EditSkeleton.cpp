@@ -17,6 +17,9 @@ EditSkeleton::EditSkeleton(QWidget *parent): BaseSideWidget(parent)
     model_scale->setTitle("Model scale");
     model_offset->setTitle("Model offset");
 
+    model_scale->setSettings(DCoordinate3(0.1, 0.1, 10));
+    model_offset->setSettings(DCoordinate3(-100, 0.1, 100));
+
     connect(model_file, SIGNAL(file_changed(string)), this, SLOT(handle_skeleton_model_changed(string)));
     connect(model_scale, SIGNAL(coordinates_changed(DCoordinate3)), this, SLOT(handle_skeleton_model_scale_changed(DCoordinate3)));
     connect(model_offset, SIGNAL(coordinates_changed(DCoordinate3)), this, SLOT(handle_skeleton_model_offset_changed(DCoordinate3)));

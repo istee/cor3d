@@ -46,10 +46,7 @@ void SideWidgetGroupBox::toggled()
 {
     _check_box_state = !_check_box_state;
     set_content_visibility(_check_box_state);
-
-    update();
-    ((QWidget*) parent())->updateGeometry();
-    //cout << "after " << sizeHint().width() << " " << sizeHint().height() << endl;
+    emit (groupbox_toggled(_check_box_state));
 }
 
 void SideWidgetGroupBox::initStyleOption(QStyleOptionGroupBox *option) const
@@ -78,16 +75,6 @@ void SideWidgetGroupBox::set_content_visibility(bool visible)
     {
         (*it)->setVisible(visible);
     }
-}
-
-QSize SideWidgetGroupBox::sizeHint() const
-{
-    return _sizeHint;
-}
-
-QSizePolicy SideWidgetGroupBox::sizePolicy() const
-{
-    return _sizePolicy;
 }
 
 void SideWidgetGroupBox::my_toggled(bool on)

@@ -16,98 +16,83 @@ AddNewJoint::AddNewJoint(QWidget *parent): BaseSideWidget(parent)
     setupUi(this);
     addName->setLabel("Name");
     _jointsDisplayProperties = QHash<string,BaseEntityDisplayProperties>();
-}
 
-void AddNewJoint::populateJointTreeView(Skeleton* skeleton, Joint* parent,QTreeWidgetItem* parentItem)
-{
-    vector<unsigned int> childrenIds = parent->get_children();
-    for (vector<unsigned int>::iterator it = childrenIds.begin(); it != childrenIds.end(); it++)
-    {
-        Joint* child = skeleton->get_joint(*it);
-        QTreeWidgetItem* childItem =  new QTreeWidgetItem();
-        childItem->setData(0, Qt::UserRole, QVariant(QString::fromStdString(child->get_name())));
-        populateJointTreeView(skeleton, child, childItem);
-        parentItem->addChild(childItem);
-    }
-}
-
-void AddNewJoint::addWidgetToTreeWidgetItems(QTreeWidgetItem* item)
-{
-    EditableDeletableListItem* listItem = new EditableDeletableListItem(item->data(0, Qt::UserRole).toString().toStdString(), new EditJoint(), treeViewJoints);
-    connect(listItem, SIGNAL(view_list_item_renamed(string,string)), this, SIGNAL(view_joint_renamed(string, string)));
-    connect(listItem, SIGNAL(view_list_item_deleted(string)), this, SIGNAL(view_joint_deleted(const string&)));
-    connect(listItem, SIGNAL(view_list_item_edited(string)), this, SLOT(handle_view_joint_edited(string)));
-    treeViewJoints->setItemWidget(item, 0, listItem);
-
-    for( int i = 0; i < item->childCount(); ++i )
-            addWidgetToTreeWidgetItems(item->child(i));
+    connect(groupBox, SIGNAL(groupbox_toggled(bool)), this, SLOT(handle_groupbox_toggled(bool)));
 }
 
 void AddNewJoint::addJoint(const string& name)
 {
-    Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
-    Skeleton* skeleton = cor3dApp->cor3d->get_skeleton();
-    unsigned int jointId = skeleton->getJointIdByName(name);
-    Joint* joint = skeleton->get_joint(jointId);
+    Joint* joint = _cor3d->get_skeleton()->get_joint(name);
+    string parentName = _cor3d->get_skeleton()->get_parent_joint(name)->get_name();
 
-    QTreeWidgetItem* item = new QTreeWidgetItem();
-    item->setData(0, Qt::UserRole, QVariant(QString::fromStdString(name)));
-    Joint* parent = skeleton->get_joint(joint->get_parent());
-    QTreeWidgetItem* parentItem = treeViewJoints->getTreeWidgetItemByData(parent->get_name());
-    parentItem->addChild(item);
+    EditJoint* editJoint = new EditJoint(treeViewJoints);
+    editJoint->updateContent(joint);
+    connect(editJoint, SIGNAL(view_joint_coordinates_changed(string,DCoordinate3)), this, SIGNAL(view_joint_coordinates_changed(string,DCoordinate3)));
+    connect(editJoint, SIGNAL(view_joint_scale_changed(string,DCoordinate3)), this, SIGNAL(view_joint_scale_changed(string,DCoordinate3)));
 
-    EditableDeletableListItem* listItem = new EditableDeletableListItem(item->data(0, Qt::UserRole).toString().toStdString(), new EditJoint(), treeViewJoints);
+    EditableDeletableListItem* listItem = new EditableDeletableListItem(name, editJoint, treeViewJoints);
     connect(listItem, SIGNAL(view_list_item_renamed(string,string)), this, SIGNAL(view_joint_renamed(string, string)));
     connect(listItem, SIGNAL(view_list_item_deleted(string)), this, SIGNAL(view_joint_deleted(const string&)));
     connect(listItem, SIGNAL(view_list_item_edited(string)), this, SLOT(handle_view_joint_edited(string)));
-    treeViewJoints->setItemWidget(item, 0, listItem);
-    parentItem->setExpanded(true);
 
-    addName->setValue(skeleton->next_joint_name());
+    treeViewJoints->addTreeWidgetItem(parentName, name, listItem);
+
+    addName->setValue(_cor3d->get_skeleton()->next_joint_name());
 }
 
 void AddNewJoint::deleteJoint(const string& name)
 {
-    QTreeWidgetItem* item = treeViewJoints->getTreeWidgetItemByData(name);
-    delete item;
+    Joint* parent = _cor3d->get_skeleton()->get_parent_joint(name);
+    if (parent)
+    {
+        treeViewJoints->deleteTreeWidgetItemByData(parent->get_name(), name);
+    }
+    else
+    {
+        treeViewJoints->deleteTopLevelTreeWidgetItemByData(name);
+    }
 }
 
 void AddNewJoint::renameJoint(const string& oldName, const string& newName)
 {
-    QTreeWidgetItem* item = treeViewJoints->getTreeWidgetItemByData(oldName);
-    item->setData(0, Qt::UserRole, QVariant(QString::fromStdString(newName)));
-    EditableDeletableListItem* itemWidget = (EditableDeletableListItem*) treeViewJoints->itemWidget(item, 0);
-    itemWidget->setLabelText(newName);
+    treeViewJoints->renameTreeWidgetItem(oldName, newName);
+}
+
+void AddNewJoint::updateJointData(const string& name)
+{
+    treeViewJoints->updateEditWidget((BaseEntity*)_cor3d->get_skeleton()->get_joint(name));
+}
+
+void AddNewJoint::populateTreeViewJoints(Skeleton* skeleton, Joint* parent)
+{
+    for (unsigned int i = 0; i < parent->get_children().size(); i++)
+    {
+        Joint* joint = skeleton->get_joint(parent->get_children()[i]);
+        addJoint(joint->get_name());
+        populateTreeViewJoints(skeleton, joint);
+    }
 }
 
 void AddNewJoint::update_content()
 {
-    cout << "update_content joint" << endl;
+    QTreeWidgetItem* rootItem = treeViewJoints->topLevelItem(0);
+    if (rootItem)
+    {
+        string oldRootName = rootItem->data(0, Qt::UserRole).toString().toStdString();
+        deleteJoint(oldRootName);
+    }
 
-    this->setEnabled(false);
-
-    Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
-    Skeleton* skeleton = cor3dApp->cor3d->get_skeleton();
-
-    QTreeWidgetItem* oldRootItem = treeViewJoints->takeTopLevelItem(0);
-    delete oldRootItem;
-
+    Skeleton* skeleton = _cor3d->get_skeleton();
     if (skeleton)
     {
-        this->setEnabled(true);
         Joint* root = skeleton->get_joint(0);
-        QTreeWidgetItem* rootItem = new QTreeWidgetItem();
-        rootItem->setData(0, Qt::UserRole, QVariant(QString::fromStdString(root->get_name())));
-        populateJointTreeView(skeleton, root, rootItem);
-        treeViewJoints->addTopLevelItem(rootItem);
+        EditableDeletableListItem* listItem = new EditableDeletableListItem(root->get_name(), new EditJoint(), treeViewJoints);
+        connect(listItem, SIGNAL(view_list_item_renamed(string,string)), this, SIGNAL(view_joint_renamed(string, string)));
+        listItem->showEdit(false);
+        listItem->showDelete(false);
+        treeViewJoints->addTopLevelTreeWidgetItem(root->get_name(), listItem);
 
-        QModelIndexList indexes = treeViewJoints->model()->match(treeViewJoints->model()->index(0,0), Qt::DisplayRole, "*", -1, Qt::MatchWildcard|Qt::MatchRecursive);
-        foreach (QModelIndex index, indexes)
-        {
-            treeViewJoints->expand(index);
-        }
-
-        addWidgetToTreeWidgetItems(treeViewJoints->invisibleRootItem()->child(0));
+        populateTreeViewJoints(skeleton, root);
 
         addName->setValue(skeleton->next_joint_name());
     }
@@ -115,24 +100,7 @@ void AddNewJoint::update_content()
 
 void AddNewJoint::selectJoint(const string& name)
 {
-    QTreeWidgetItem* item = treeViewJoints->currentItem();
-    if (item)
-    {
-        string value = item->data(0, Qt::UserRole).toString().toStdString();
-        if (name != value)
-        {
-            item = treeViewJoints->getTreeWidgetItemByData(name);
-            if (item)
-            {
-                treeViewJoints->setCurrentItem(item);
-            }
-            else
-            {
-                item = treeViewJoints->currentItem();
-                treeViewJoints->setCurrentItem(item, 0, QItemSelectionModel::Deselect);
-            }
-        }
-    }
+    treeViewJoints->selectTreeWidgetItem(name);
 }
 
 void AddNewJoint::on_toolButtonAdd_clicked()
@@ -160,9 +128,5 @@ void AddNewJoint::on_treeViewJoints_itemSelectionChanged()
 
 void AddNewJoint::handle_view_joint_edited(const string& name)
 {
-    QTreeWidgetItem* item = treeViewJoints->getTreeWidgetItemByData(name);
-    EditableDeletableListItem* listItem = (EditableDeletableListItem*) treeViewJoints->itemWidget(item, 0);
-    listItem->showEditWidget(!listItem->isEditWidgetVisible());
-    item->setSizeHint(0, listItem->sizeHint());
-    treeViewJoints->updateGeometry();
+    treeViewJoints->toggleEditWidget(name);
 }

@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>250</width>
-    <height>180</height>
+    <height>150</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -33,13 +33,13 @@
     <widget class="BaseEntityComboBox" name="type" native="true"/>
    </item>
    <item row="2" column="0">
-    <widget class="DCoordinate3GroupBox" name="position_vector" native="true"/>
+    <widget class="DCoordinate3GroupBox" name="parent_relative_position" native="true"/>
    </item>
    <item row="3" column="0">
-    <widget class="DCoordinate3GroupBox" name="rotation_axis" native="true"/>
+    <widget class="DCoordinate3GroupBox" name="absolute_position" native="true"/>
    </item>
    <item row="4" column="0">
-    <widget class="DCoordinate3GroupBox" name="configuration" native="true"/>
+    <widget class="DCoordinate3GroupBox" name="joint_scale" native="true"/>
    </item>
   </layout>
  </widget>
