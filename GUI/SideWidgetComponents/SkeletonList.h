@@ -17,7 +17,11 @@ public:
     // special and default constructor
     SkeletonList(QWidget *parent = 0);
     void update_content();
+    void addSkeleton(const string& name);
+    void deleteSkeleton(const string& name);
+    void renameSkeleton(const string& oldName, const string& newName);
     void updateSkeletonModel(const string& skeletonName);
+    void selectSkeleton(const string& name);
 
 private:
     QHash<string,BaseEntityDisplayProperties>  _skeletonDisplayProperties;

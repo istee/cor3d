@@ -3,7 +3,7 @@
 #include <QWidget>
 
 #include "ui_EditJoint.h"
-#include "BaseSideWidget.h"
+#include "GUI/EditWidgets/BaseEditWidget.h"
 
 #include "Core/DCoordinates3.h"
 #include "Model/Joint.h"
@@ -12,7 +12,7 @@ using namespace cor3d;
 using namespace cagd;
 using namespace std;
 
-class EditJoint: public BaseSideWidget, public Ui::EditJoint
+class EditJoint: public BaseEditWidget, public Ui::EditJoint
 {
     Q_OBJECT
 

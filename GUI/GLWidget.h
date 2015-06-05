@@ -108,6 +108,14 @@ public:
     DCoordinate3 get_rotation() const;
     double get_zoom_factor() const;
 
+signals:
+    void glwidgetTranslationChanged(const DCoordinate3& translation);
+    void glwidgetRotationChanged(const DCoordinate3& rotation);
+    void glwidgetZoomChanged(double zoom);
+    void selected_joint(double x, double y, double z);
+    void view_joint_selection_changed(int);
+    void view_joint_absolute_position_changed(DCoordinate3);
+
 public slots:
     // public event handling methods/slots
     void set_translation(const DCoordinate3& translation);
@@ -117,10 +125,4 @@ public slots:
     void set_render_mesh(int skeleton_id, bool value);
     void set_render_links(int skeleton_id, bool value);
     void set_render_joints(int skeleton_id, bool value);
-
-signals:
-    void modelTransformationsChanged();
-    void selected_joint(double x, double y, double z);
-    void view_joint_selection_changed(int);
-    void view_joint_absolute_position_changed(DCoordinate3);
 };

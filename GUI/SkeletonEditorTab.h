@@ -16,22 +16,18 @@ public:
     void initialize();
 
 public slots:
-
-    void handle_model_skeleton_list_changed();
-    void handle_model_skeleton_selection_changed();
-    void handle_model_skeleton_name_changed();
+    void handle_model_skeleton_added(const string& name);
+    void handle_model_skeleton_deleted(const string& name);
+    void handle_model_skeleton_selection_changed(const string& oldSelectionName, const string& newSelectionName);
+    void handle_model_skeleton_renamed(const string& oldName, const string& newName);
     void handle_model_skeleton_model_data_changed(const string& skeletonName);
-    void handle_model_skeleton_data_changed();
 
-    void handle_model_joint_list_changed();
     void handle_model_joint_added(const string& name);
     void handle_model_joint_deleted(const string& name);
     void handle_model_joint_renamed(const string& oldName, const string& newName);
     void handle_model_joint_selection_changed(const string& name);
     void handle_model_joint_data_changed(const string& name);
     void handle_model_rendering_options_changed();
-
-private slots:
 //    void skeleton_added(const string& name);
 //    void skeleton_selected(int);
 //    void skeleton_deleted();

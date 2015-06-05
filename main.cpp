@@ -18,3 +18,4 @@ int main(int argc, char** argv)
     // running the application
     return app.exec();
 }
+

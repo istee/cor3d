@@ -71,7 +71,6 @@ void Export::on_exportButton_clicked()
     {
         cerr << "File could not be opened!\n"; // Report error
              cerr << "Error code: " << strerror(errno); // Get some info as to why
-        cout << "nem irunk" << endl;
     }
 }
 

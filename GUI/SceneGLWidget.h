@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GLWidget.h"
+#include "glwidget.h"
 
 class SceneGLWidget : public GLWidget {
 protected:

@@ -3,14 +3,14 @@
 #include <QWidget>
 
 #include "ui_EditSkeleton.h"
-#include "BaseSideWidget.h"
+#include "GUI/EditWidgets/BaseEditWidget.h"
 #include "Model/Skeleton.h"
 #include "Model/BaseEntity.h"
 
 using namespace cor3d;
 using namespace std;
 
-class EditSkeleton: public BaseSideWidget, public Ui::EditSkeleton
+class EditSkeleton: public BaseEditWidget, public Ui::EditSkeleton
 {
     Q_OBJECT
 

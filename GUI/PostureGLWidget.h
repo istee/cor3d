@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GLWidget.h"
+#include "glwidget.h"
 
 class PostureGLWidget : public GLWidget {
     Q_OBJECT

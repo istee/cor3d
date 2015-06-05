@@ -26,14 +26,19 @@ class RenderingOptions {
     string _joint_model_file;
     string _link_model_file;
 
-     TriangulatedMesh3   _joint_model;
-     TriangulatedMesh3   _link_model;
-     TriangulatedMesh3   _cone_model;
+    TriangulatedMesh3   _joint_model;
+    TriangulatedMesh3   _link_model;
+    TriangulatedMesh3   _cone_model;
 
-     vector<BaseEntity>  _material_names;
-     vector<Material*>   _materials;
+    vector<BaseEntity>  _material_names;
+    vector<Material*>   _materials;
 
-     bool               is_initialized;
+    bool               is_initialized;
+
+    DCoordinate3        _translation;
+    DCoordinate3        _rotation;
+    double              _zoom;
+
 public:
     RenderingOptions()
     {
@@ -67,6 +72,10 @@ public:
         _link_material = 1;
 
         is_initialized = false;
+
+        _translation = DCoordinate3(0.0, 0.0, 0.0);
+        _rotation = DCoordinate3(0.0, 0.0, 0.0);
+        _zoom = 1.0;
     }
 
     void initialize()
@@ -155,6 +164,21 @@ public:
         return _link_material;
     }
 
+    DCoordinate3 getTranslation() const
+    {
+        return _translation;
+    }
+
+    DCoordinate3 getRotation() const
+    {
+        return _rotation;
+    }
+
+    double getZoom() const
+    {
+        return _zoom;
+    }
+
     void set_render_model(bool render_model)
     {
         _render_model = render_model;
@@ -226,5 +250,20 @@ public:
     Material* get_material(unsigned int id)
     {
         return _materials[id];
+    }
+
+    void setTranslation(DCoordinate3 translation)
+    {
+        _translation = translation;
+    }
+
+    void setRotation(DCoordinate3 rotaion)
+    {
+        _rotation = rotaion;
+    }
+
+    void setZoom(double zoom)
+    {
+        _zoom = zoom;
     }
 };

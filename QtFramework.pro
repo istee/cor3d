@@ -25,16 +25,11 @@ SOURCES += \
     GUI/SkeletonEditorTab.cpp \
     GUI/BasicWidgets/FileDisplayAndChooser.cpp \
     GUI/BasicWidgets/NameLineEdit.cpp \
-    GUI/SideWidgetComponents/TransformationsWidget.cpp \
     GUI/SideWidgetComponents/RenderingOptionsWidget.cpp \
     Model/RenderingOptions.cpp \
     GUI/PostureEditorTab.cpp \
     GUI/SceneEditorTab.cpp \
     Model/BaseEntity.cpp \
-    GUI/SideWidgetComponents/ManagePoses.cpp \
-    GUI/SideWidgetComponents/ConfigurePose.cpp \
-    GUI/SideWidgetComponents/ManageScene.cpp \
-    GUI/SideWidgetComponents/ManageSceneTimePoints.cpp \
     GUI/PopupWindows/Export.cpp \
     GUI/PopupWindows/Import.cpp \
     GUI/Toolbars/TransformationsToolbar.cpp \
@@ -45,7 +40,9 @@ SOURCES += \
     GUI/WidgetExtensions/TreeWidgetExtension.cpp \
     GUI/SideWidgetComponents/SideWidgetGroupBox.cpp \
     GUI/SideWidgetComponents/ManagePostures.cpp \
-    GUI/SideWidgetComponents/EditPosture.cpp
+    GUI/SideWidgetComponents/EditPosture.cpp \
+    GUI/EditWidgets/BaseEditWidget.cpp \
+    GUI/WidgetExtensions/ListWidgetExtension.cpp
 
 
 HEADERS += \
@@ -88,7 +85,6 @@ HEADERS += \
     GUI/SkeletonEditorTab.h \
     GUI/BasicWidgets/FileDisplayAndChooser.h \
     GUI/BasicWidgets/NameLineEdit.h \
-    GUI/SideWidgetComponents/TransformationsWidget.h \
     GUI/SideWidgetComponents/RenderingOptionsWidget.h \
     GUI/SideWidgetComponents/SideWidgetGroupBox.h \
     GUI/SideWidgetComponents/BaseSideWidget.h \
@@ -96,10 +92,6 @@ HEADERS += \
     GUI/PostureEditorTab.h \
     GUI/SceneEditorTab.h \
     Model/BaseEntityCollection.h \
-    GUI/SideWidgetComponents/ConfigurePose.h \
-    GUI/SideWidgetComponents/ManagePoses.h \
-    GUI/SideWidgetComponents/ManageScene.h \
-    GUI/SideWidgetComponents/ManageSceneTimePoints.h \
     GUI/MainWindowTabWidgetIncludes.h \
     Model/Chain.h \
     GUI/PopupWindows/Export.h \
@@ -111,7 +103,9 @@ HEADERS += \
     GUI/WidgetExtensions/BaseEntityDisplayProperties.h \
     GUI/WidgetExtensions/TreeWidgetExtension.h \
     GUI/SideWidgetComponents/ManagePostures.h \
-    GUI/SideWidgetComponents/EditPosture.h
+    GUI/SideWidgetComponents/EditPosture.h \
+    GUI/EditWidgets/BaseEditWidget.h \
+    GUI/WidgetExtensions/ListWidgetExtension.h
 
 FORMS += \
     GUI/BasicWidgets/DCoordinate3GroupBox.ui \
@@ -125,17 +119,9 @@ FORMS += \
     GUI/SkeletonEditorTab.ui \
     GUI/BasicWidgets/NameLineEdit.ui \
     GUI/BasicWidgets/FileDisplayAndChooser.ui \
-    GUI/SideWidgetComponents/TransformationsWidget.ui \
     GUI/SideWidgetComponents/RenderingOptionsWidget.ui \
     GUI/PostureEditorTab.ui \
     GUI/SceneEditorTab.ui \
-    GUI/SideWidgetComponents/ConfigurePose.ui \
-    GUI/SideWidgetComponents/ManagePoses.ui \
-    GUI/SideWidgetComponents/ManageScene.ui \
-    GUI/SideWidgetComponents/SetScenePose.ui \
-    GUI/SideWidgetComponents/ManageSceneTimePoints.ui \
-    GUI/SideWidgetComponents/DeleteTimePoint.ui \
-    GUI/SideWidgetComponents/ManageAnimationTransitions.ui \
     GUI/PopupWindows/Export.ui \
     GUI/PopupWindows/Import.ui \
     GUI/Toolbars/TransformationsToolbar.ui \

@@ -8,7 +8,17 @@ TreeWidgetExtension::TreeWidgetExtension(QWidget* parent = 0) : QTreeWidget(pare
 
 QTreeWidgetItem* TreeWidgetExtension::getTreeWidgetItemByData(const string& value)
 {
-    return _getTreeWidgetItemByData(this->topLevelItem(0), value);
+    QTreeWidgetItem* item = 0;
+    for (unsigned int i = 0; i < this->topLevelItemCount(); i++)
+    {
+        item = _getTreeWidgetItemByData(this->topLevelItem(i), value);
+        if (item)
+        {
+            return item;
+        }
+    }
+
+    return 0;
 }
 
 void TreeWidgetExtension::deleteTreeWidgetItemByData(const string& parentDataValue, const string& dataValue)
@@ -44,6 +54,7 @@ void TreeWidgetExtension::addTopLevelTreeWidgetItem(const string& dataValue, QWi
     topLevelItem->setData(0, Qt::UserRole, QVariant(QString::fromStdString(dataValue)));
     addTopLevelItem(topLevelItem);
     setItemWidget(topLevelItem, 0, itemWidget);
+    topLevelItem->setExpanded(true);
 }
 
 void TreeWidgetExtension::renameTreeWidgetItem(const string& oldName, const string& newName)
@@ -69,16 +80,20 @@ void TreeWidgetExtension::selectTreeWidgetItem(const string dataValue)
         string value = item->data(0, Qt::UserRole).toString().toStdString();
         if (dataValue != value)
         {
-            item = getTreeWidgetItemByData(dataValue);
-            if (item)
-            {
-                setCurrentItem(item);
-            }
-            else
-            {
-                item = currentItem();
-                setCurrentItem(item, 0, QItemSelectionModel::Deselect);
-            }
+            setCurrentItem(item, 0, QItemSelectionModel::Deselect);
+        }
+        item = getTreeWidgetItemByData(dataValue);
+        if (item)
+        {
+            setCurrentItem(item);
+        }
+    }
+    else
+    {
+        item = getTreeWidgetItemByData(dataValue);
+        if (item)
+        {
+            setCurrentItem(item);
         }
     }
 }
@@ -93,7 +108,6 @@ void TreeWidgetExtension::toggleEditWidget(const string& dataValue)
     item->setExpanded(!isExpanded);
     item->setExpanded(isExpanded);
 }
-
 
 QTreeWidgetItem* TreeWidgetExtension::_getTreeWidgetItemByData(QTreeWidgetItem* item, const string& value)
 {

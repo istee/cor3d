@@ -22,14 +22,17 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     setupUi(this);
     _transformationToolbar = new TransformationsToolbar(this);
     _transformationAction = transformationToolbarUi->addWidget(_transformationToolbar);
-    transformationToolbarUi->setIconSize(QSize(30, 30));
+
+    Cor3d* _cor3d = ((Cor3dApplication*) qApp)->cor3d;
 
     fileToolbarUi->addWidget(new FileToolbar(this));
+    connect(_transformationToolbar, SIGNAL(viewTranslationChanged(DCoordinate3)), _cor3d, SLOT(handle_view_translation_changed(DCoordinate3)));
+    connect(_transformationToolbar, SIGNAL(viewRotationChanged(DCoordinate3)), _cor3d, SLOT(handle_view_rotation_changed(DCoordinate3)));
+    connect(_transformationToolbar, SIGNAL(viewZoomFactorChanged(double)), _cor3d, SLOT(handle_view_zoom_changed(double)));
 
-    connect(_transformationToolbar, SIGNAL(viewTranslationChanged(DCoordinate3)), skeleton_editor, SLOT(viewTranslationChanged(DCoordinate3)));
-    connect(_transformationToolbar, SIGNAL(viewRotationChanged(DCoordinate3)), skeleton_editor, SLOT(viewRotationChanged(DCoordinate3)));
-    connect(_transformationToolbar, SIGNAL(viewZoomFactorChanged(double)), skeleton_editor, SLOT(viewZoomFactorChanged(double)));
-    connect(skeleton_editor, SIGNAL(modelTransformationsChanged()), this, SLOT(updateToolbarTransformations()));
+    connect(_cor3d, SIGNAL(model_translation_changed(DCoordinate3)), this, SLOT(handle_model_translation_changed(DCoordinate3)));
+    connect(_cor3d, SIGNAL(model_rotation_changed(DCoordinate3)), this, SLOT(handle_model_rotation_changed(DCoordinate3)));
+    connect(_cor3d, SIGNAL(model_zoom_changed(double)), this, SLOT(handle_model_zoom_changed(double)));
 }
 
 void MainWindow::initialize()
@@ -101,9 +104,44 @@ void MainWindow::on_actionTransformations_triggered(bool checked)
     transformationToolbarUi->setVisible(checked);
 }
 
-void MainWindow::updateToolbarTransformations()
+void MainWindow::handle_model_translation_changed(const DCoordinate3& translation)
 {
-    _transformationToolbar->setTranslation(((IMainWindowTab*)tabWidget->currentWidget())->glwidget->get_translation());
-    _transformationToolbar->setRotation(((IMainWindowTab*)tabWidget->currentWidget())->glwidget->get_rotation());
-    _transformationToolbar->setZoomFactor(((IMainWindowTab*)tabWidget->currentWidget())->glwidget->get_zoom_factor());
+    _transformationToolbar->setTranslation(translation);
+    for (int i = 1; i < tabWidget->count(); i++)
+    {
+        IMainWindowTab* mainWindowTab = (IMainWindowTab* ) tabWidget->widget(i);
+        mainWindowTab->setGLWidgetTranslation(translation);
+    }
+    IMainWindowTab* currentMainWindowTab = (IMainWindowTab* ) tabWidget->currentWidget();
+    currentMainWindowTab->updateGlWidget();
+}
+
+void MainWindow::handle_model_rotation_changed(const DCoordinate3& rotation)
+{
+    _transformationToolbar->setRotation(rotation);
+    for (int i = 1; i < tabWidget->count(); i++)
+    {
+        IMainWindowTab* mainWindowTab = (IMainWindowTab* ) tabWidget->widget(i);
+        mainWindowTab->setGLWidgetRotation(rotation);
+    }
+    IMainWindowTab* currentMainWindowTab = (IMainWindowTab* ) tabWidget->currentWidget();
+    currentMainWindowTab->updateGlWidget();
+}
+
+void MainWindow::handle_model_zoom_changed(double zoom)
+{
+    _transformationToolbar->setZoomFactor(zoom);
+    for (int i = 1; i < tabWidget->count(); i++)
+    {
+        IMainWindowTab* mainWindowTab = (IMainWindowTab* ) tabWidget->widget(i);
+        mainWindowTab->setGLWidgetZoomFactor(zoom);
+    }
+    IMainWindowTab* currentMainWindowTab = (IMainWindowTab* ) tabWidget->currentWidget();
+    currentMainWindowTab->updateGlWidget();
+}
+
+void MainWindow::on_tabWidget_currentChanged(QWidget* tabWidget)
+{
+    IMainWindowTab* mainWindowTab = (IMainWindowTab*) tabWidget;
+    mainWindowTab->updateGlWidget();
 }

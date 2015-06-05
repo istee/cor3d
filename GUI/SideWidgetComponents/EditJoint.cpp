@@ -6,7 +6,7 @@
 
 using namespace std;
 
-EditJoint::EditJoint(QWidget *parent): BaseSideWidget(parent)
+EditJoint::EditJoint(QWidget *parent): BaseEditWidget(parent)
 {
     setupUi(this);
 
@@ -94,6 +94,7 @@ void EditJoint::update_content()
 
 void EditJoint::handle_joint_absolute_coordinates_changed(const DCoordinate3& coordinates)
 {
+    cout << _entityName << " " << coordinates << endl;
     emit (view_joint_coordinates_changed(_entityName, coordinates));
 }
 

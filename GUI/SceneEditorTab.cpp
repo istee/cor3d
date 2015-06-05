@@ -3,6 +3,7 @@
 #include "Cor3dApplication.h"
 #include "GUI/SideWidgetComponents/BaseSideWidget.h"
 #include "GUI/SideWidgetComponents/SideWidgetGroupBox.h"
+#include "GUI/SceneGLWidget.h"
 
 SceneEditorTab::SceneEditorTab(QWidget *parent): IMainWindowTab(parent)
 {
@@ -11,10 +12,15 @@ SceneEditorTab::SceneEditorTab(QWidget *parent): IMainWindowTab(parent)
     play_button->setIcon(QIcon("Resources/pause.png"));
     play_button->setIconSize(QSize(50, 50));
     horizontalSlider->setMaximum(0);
+
+    glwidget = new SceneGLWidget();
+    glwidget->updateGL();
+    glwidgetHolderLayout->layout()->addWidget(glwidget);
 }
 
 void SceneEditorTab::initialize()
 {
+    /*
     QList<SideWidgetGroupBox*> groupbox_list = this->scrollAreaWidgetContents->findChildren<SideWidgetGroupBox*>();
     for (QList<SideWidgetGroupBox*>::iterator it = groupbox_list.begin(); it != groupbox_list.end(); it++)
     {
@@ -27,6 +33,7 @@ void SceneEditorTab::initialize()
         //(*it)->update_content();
 
     }
+    */
 }
 
 // inherited slots - accessed by the model

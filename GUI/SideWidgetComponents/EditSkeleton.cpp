@@ -8,7 +8,7 @@
 using namespace std;
 using namespace cor3d;
 
-EditSkeleton::EditSkeleton(QWidget *parent): BaseSideWidget(parent)
+EditSkeleton::EditSkeleton(QWidget *parent): BaseEditWidget(parent)
 {
     setupUi(this);
     model_file->setLabel("Model file");
@@ -27,7 +27,6 @@ EditSkeleton::EditSkeleton(QWidget *parent): BaseSideWidget(parent)
 
 void EditSkeleton::update_content()
 {
-    cout << "editskeleton update_content" << endl;
 }
 
 void EditSkeleton::updateContent(BaseEntity* baseEntity)

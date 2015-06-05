@@ -33,7 +33,7 @@ namespace cor3d {
         int number;
         bool boolean;
 
-        lhs >> text >> std::skipws;
+        lhs >> text;
         lhs.getline(name, 256);
         rhs.set_name(string(name));
         lhs >> text >> boolean;
@@ -51,7 +51,7 @@ namespace cor3d {
             lhs >> *joint;
             rhs._joints.push_back(joint);
         }
-        rhs._coordinates_need_update = true;
+        rhs._coordinates_need_update = false;
         return lhs;
     }
 
@@ -160,7 +160,7 @@ namespace cor3d {
 
     void Skeleton::construct_chains()
     {
-        update_joint_coordinates();
+        //update_joint_coordinates();
         if (_selected_joint >= 0)
         {
             Chain chain = Chain(0, -1, true);
@@ -409,6 +409,7 @@ namespace cor3d {
 
     }
 
+/*
     void Skeleton::update_joint_coordinates_(unsigned int joint_id, const DCoordinate3& parent_coordinates)
     {
         get_joint(joint_id)->update_coordinates(parent_coordinates);
@@ -431,6 +432,7 @@ namespace cor3d {
             _coordinates_need_update = false;
         }
     }
+    */
 
     bool Skeleton::validate_joint_index_(int joint_id) const
     {
@@ -447,7 +449,7 @@ namespace cor3d {
 
     void Skeleton::render(RenderingOptions* rendering_options, bool glLoad)
     {
-        update_joint_coordinates();
+        //update_joint_coordinates();
 
         render_joints(rendering_options, glLoad);
 
@@ -667,9 +669,12 @@ namespace cor3d {
                 matrix[14] = start[2];
                 matrix[15] = 1.0;
 
+                DCoordinate3 jointScale = get_joint(((Joint*)*it)->get_parent())->get_scale();
+                double scale = min(jointScale.x(), min(jointScale.y(), jointScale.z())) / 10.0;
+
                 glPushMatrix();
                     glMultMatrixf(matrix);
-                    glScalef(0.1, 0.1, length);
+                    glScalef(scale, scale, length);
                     link_model->Render();
                 glPopMatrix();
             }
@@ -697,12 +702,13 @@ namespace cor3d {
         if ((unsigned int) joint_id > _joints.size())
         {
             _selected_joint = -1;
+            emit model_joint_selection_changed("");
         }
         else
         {
             _selected_joint = joint_id;
+            emit model_joint_selection_changed(_joints[_selected_joint]->get_name());
         }
-        emit model_joint_selection_changed();
     }
 
     void Skeleton::handle_view_joint_selection_changed(const string& jointName)
@@ -769,6 +775,7 @@ namespace cor3d {
 
     void Skeleton::handle_view_joint_coordinates_changed(const string& name, const DCoordinate3& coordinates)
     {
+        cout << "joint coordinates change " << name << " " << coordinates << endl;
         Joint* joint = get_joint(getJointIdByName(name));
         if (joint)
         {
@@ -844,9 +851,8 @@ namespace cor3d {
 
     void Skeleton::handle_view_joint_absolute_position_changed(const DCoordinate3& coordinates)
     {
-        //_joints[_selected_joint].set_orientation(coordinates - _joints[_joints[_selected_joint].get_parent()].get_coordinates());
-        _coordinates_need_update = true;
-        //emit model_joint_data_changed();
+        _joints[_selected_joint]->set_coordinate(coordinates);
+        emit model_joint_data_changed(_joints[_selected_joint]->get_name());
     }
 
     void Skeleton::handle_view_joint_fabrik_moved(const DCoordinate3& target)

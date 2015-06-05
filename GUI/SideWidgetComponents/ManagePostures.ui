@@ -21,7 +21,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QTreeWidget" name="treeWidget">
+       <widget class="TreeWidgetExtension" name="postureTreeWidget">
         <property name="headerHidden">
          <bool>true</bool>
         </property>
@@ -43,6 +43,11 @@
    <extends>QGroupBox</extends>
    <header>GUI/SideWidgetComponents/SideWidgetGroupBox.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TreeWidgetExtension</class>
+   <extends>QTreeWidget</extends>
+   <header>GUI/WidgetExtensions/TreeWidgetExtension.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

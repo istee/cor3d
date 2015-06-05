@@ -1,24 +1,27 @@
 #include "IMainWindowTab.h"
+#include "glwidget.h"
 
 IMainWindowTab::IMainWindowTab(QWidget* parent = 0): QWidget(parent)
 {
     cor3dApp = (Cor3dApplication*) qApp;
 }
 
-void IMainWindowTab::viewTranslationChanged(const DCoordinate3& translation)
+void IMainWindowTab::setGLWidgetTranslation(const DCoordinate3& translation)
 {
     glwidget->set_translation(translation);
-    glwidget->updateGL();
 }
 
-void IMainWindowTab::viewRotationChanged(const DCoordinate3& angles)
+void IMainWindowTab::setGLWidgetRotation(const DCoordinate3& angles)
 {
     glwidget->set_rotation(angles);
-    glwidget->updateGL();
 }
 
-void IMainWindowTab::viewZoomFactorChanged(double zoom)
+void IMainWindowTab::setGLWidgetZoomFactor(double zoom)
 {
     glwidget->set_zoom_factor(zoom);
+}
+
+void IMainWindowTab::updateGlWidget() const
+{
     glwidget->updateGL();
 }

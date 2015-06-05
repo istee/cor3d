@@ -94,7 +94,7 @@ namespace cor3d
 
         void remove_joint(unsigned int joint_id);
 
-        void update_joint_coordinates();
+        //void update_joint_coordinates();
         void render(RenderingOptions* rendering_options, bool glLoad = false);
         void render_joints(RenderingOptions* rendering_options, bool glLoad = false) const;
         void render_links(RenderingOptions* rendering_options, bool glLoad = false) const;
@@ -103,7 +103,7 @@ namespace cor3d
 
 
     private:
-        void update_joint_coordinates_(unsigned int joint_id, const DCoordinate3& parent_coordinates);
+        //void update_joint_coordinates_(unsigned int joint_id, const DCoordinate3& parent_coordinates);
         bool validate_joint_index_(int joint_id) const;
         void MoveSelected(double x, double y, double z);
         void FABRIK(Chain& chain, DCoordinate3 target, double tolerance);

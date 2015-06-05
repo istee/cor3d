@@ -13,7 +13,6 @@
 #include "Model/Cor3d.h"
 #include "Model/BaseEntity.h"
 #include "GUI/BasicWidgets/EditableDeletableListItem.h"
-#include "GUI/SideWidgetComponents/TransformationsWidget.h"
 #include "GUI/SideWidgetComponents/EditSkeleton.h"
 
 using namespace std;
@@ -28,10 +27,46 @@ SkeletonList::SkeletonList(QWidget *parent): BaseSideWidget(parent)
     _skeletonDisplayProperties = QHash<string,BaseEntityDisplayProperties>();
 
     connect(groupBox, SIGNAL(groupbox_toggled(bool)), this, SLOT(handle_groupbox_toggled(bool)));
+
+    addName->setValue(_cor3d->next_name());
+}
+
+void SkeletonList::addSkeleton(const string& name)
+{
+    Skeleton* skeleton = _cor3d->getSkeletonByName(name);
+
+    EditSkeleton* listItemWidget = new EditSkeleton();
+    connect(listItemWidget, SIGNAL(view_skeleton_model_changed(string,string)), this, SIGNAL(view_skeleton_model_changed(string,string)));
+    connect(listItemWidget, SIGNAL(view_skeleton_model_offset_changed(string,DCoordinate3)), this, SIGNAL(view_skeleton_model_offset_changed(string,DCoordinate3)));
+    connect(listItemWidget, SIGNAL(view_skeleton_model_scale_changed(string,DCoordinate3)), this, SIGNAL(view_skeleton_model_scale_changed(string,DCoordinate3)));
+    listItemWidget->updateContent(skeleton);
+
+    EditableDeletableListItem* listItem = new EditableDeletableListItem(name, listItemWidget, skeleton_listview);
+    connect(listItem, SIGNAL(view_list_item_deleted(string)), this, SIGNAL(view_skeleton_deleted(const string&)));
+    connect(listItem, SIGNAL(view_list_item_renamed(string,string)), this, SIGNAL(view_skeleton_renamed(string,string)));
+    connect(listItem, SIGNAL(view_list_item_edited(string)), this, SLOT(handle_view_skeleton_edited(string)));
+
+    skeleton_listview->addListWigetItem(name, listItem);
+
+    addName->setValue(_cor3d->next_name());
+}
+
+void SkeletonList::deleteSkeleton(const string& name)
+{
+    skeleton_listview->deleteListWidgetItemByData(name);
+    addName->setValue(_cor3d->next_name());
+}
+
+void SkeletonList::renameSkeleton(const string& oldName, const string& newName)
+{
+    skeleton_listview->renameListWidgetItem(oldName, newName);
 }
 
 void SkeletonList::update_content()
 {
+    /*
+    cout << "why the fuck are we here? " << endl;
+
     //skeleton_listview->clear();
     QList<string> currentSkeletonList = QList<string>();
     for(int row = 0; row < skeleton_listview->count(); row++)
@@ -90,20 +125,22 @@ void SkeletonList::update_content()
     Skeleton* selected = cor3dApp->cor3d->get_skeleton();
     if (selected)
     {
+        cout << *selected << endl << endl;
         skeleton_listview->setCurrentIndex(skeleton_listview->model()->index(selected->get_id(), 0));
     }
 
     addName->setValue(cor3dApp->cor3d->next_name());
+    */
 }
 
 void SkeletonList::updateSkeletonModel(const string& skeletonName)
 {
-    Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
-    QList<QListWidgetItem *> items = skeleton_listview->findItems(QString::fromStdString(skeletonName), Qt::MatchExactly);
-    if (items.size() == 1) {
-        EditableDeletableListItem* listItem = (EditableDeletableListItem*)skeleton_listview->itemWidget(items[0]);
-        listItem->editWidget()->updateContent(cor3dApp->cor3d->getSkeletonById(cor3dApp->cor3d->get_skeleton_id_by_name(skeletonName)));
-    }
+    skeleton_listview->updateEditWidget(_cor3d->getSkeletonByName(skeletonName));
+}
+
+void SkeletonList::selectSkeleton(const string& name)
+{
+    skeleton_listview->selectListWidgetItem(name);
 }
 
 void SkeletonList::on_skeleton_listview_clicked(QModelIndex index)
@@ -126,13 +163,7 @@ void SkeletonList::on_skeleton_listview_activated(QModelIndex index)
 
 void SkeletonList::handle_view_skeleton_edited(const string& name)
 {
-    QList<QListWidgetItem *> items = skeleton_listview->findItems(QString::fromStdString(name), Qt::MatchExactly);
-    if (items.size() == 1)
-    {
-        EditableDeletableListItem* listItem = (EditableDeletableListItem*)skeleton_listview->itemWidget(items[0]);
-        listItem->showEditWidget(!listItem->isEditWidgetVisible());
-        items[0]->setSizeHint(listItem->sizeHint());
-    }
+    skeleton_listview->toggleEditWidget(name);
 }
 
 void SkeletonList::on_toolButtonAdd_clicked()

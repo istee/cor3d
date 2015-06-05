@@ -78,72 +78,8 @@
        </widget>
       </item>
       <item>
-       <widget class="QScrollArea" name="scrollArea">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>250</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="widgetResizable">
-         <bool>true</bool>
-        </property>
-        <widget class="QWidget" name="scrollAreaWidgetContents">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>248</width>
-           <height>282</height>
-          </rect>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="ManageScene" name="widget_5" native="true"/>
-          </item>
-          <item>
-           <widget class="ManageSceneTimePoints" name="widget_6" native="true"/>
-          </item>
-          <item>
-           <widget class="QWidget" name="widget_7" native="true"/>
-          </item>
-          <item>
-           <widget class="TransformationsWidget" name="widget_4" native="true"/>
-          </item>
-          <item>
-           <spacer name="verticalSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </widget>
+       <widget class="QWidget" name="glwidgetHolderLayout" native="true">
+        <layout class="QGridLayout" name="gridLayout"/>
        </widget>
       </item>
      </layout>
@@ -151,26 +87,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>TransformationsWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">GUI/SideWidgetComponents/TransformationsWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ManageScene</class>
-   <extends>QWidget</extends>
-   <header>GUI/SideWidgetComponents/ManageScene.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ManageSceneTimePoints</class>
-   <extends>QWidget</extends>
-   <header>GUI/SIdeWidgetComponents/ManageSceneTimePoints.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

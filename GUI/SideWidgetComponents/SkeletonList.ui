@@ -63,7 +63,7 @@
        <number>6</number>
       </property>
       <item>
-       <widget class="QListWidget" name="skeleton_listview">
+       <widget class="ListWidgetExtension" name="skeleton_listview">
         <property name="minimumSize">
          <size>
           <width>212</width>
@@ -128,6 +128,11 @@
    <extends>QWidget</extends>
    <header location="global">GUI/BasicWidgets/NameLineEdit.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ListWidgetExtension</class>
+   <extends>QListWidget</extends>
+   <header>GUI/WidgetExtensions/ListWidgetExtension.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

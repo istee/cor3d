@@ -1,4 +1,4 @@
-#include "GLWidget.h"
+#include "glwidget.h"
 #include <math.h>
 
 #include "../Core/Colors4.h"
@@ -179,7 +179,6 @@ void GLWidget::set_translation(const DCoordinate3& translation)
     _trans_x = translation.x();
     _trans_y = translation.y();
     _trans_z = translation.z();
-    emit modelTransformationsChanged();
 }
 
 void GLWidget::set_rotation(const DCoordinate3& angles)
@@ -187,13 +186,11 @@ void GLWidget::set_rotation(const DCoordinate3& angles)
     _angle_x = angles.x();
     _angle_y = angles.y();
     _angle_z = angles.z();
-    emit modelTransformationsChanged();
 }
 
 void GLWidget::set_zoom_factor(double zoom)
 {
     _zoom = zoom;
-    emit modelTransformationsChanged();
 }
 
 void GLWidget::pick(double x, double y)
@@ -522,7 +519,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 
             //DCoordinate3 transform = z_rot_mat * y_rot_mat * x_rot_mat * translation * mouse;
 
-            emit modelTransformationsChanged();
+            emit glwidgetTranslationChanged(DCoordinate3(_trans_x, _trans_y, _trans_z));
         }
     }
 
@@ -549,7 +546,7 @@ void GLWidget::wheelEvent(QWheelEvent *event)
             _zoom = 10;
         }
 
-        emit modelTransformationsChanged();
+        emit glwidgetZoomChanged(_zoom);
     }
 
     updateGL();

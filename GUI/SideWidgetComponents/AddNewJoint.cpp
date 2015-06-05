@@ -75,12 +75,7 @@ void AddNewJoint::populateTreeViewJoints(Skeleton* skeleton, Joint* parent)
 
 void AddNewJoint::update_content()
 {
-    QTreeWidgetItem* rootItem = treeViewJoints->topLevelItem(0);
-    if (rootItem)
-    {
-        string oldRootName = rootItem->data(0, Qt::UserRole).toString().toStdString();
-        deleteJoint(oldRootName);
-    }
+    treeViewJoints->clear();
 
     Skeleton* skeleton = _cor3d->get_skeleton();
     if (skeleton)

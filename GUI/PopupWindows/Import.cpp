@@ -22,18 +22,7 @@ Import::Import(QWidget *parent) : QWidget(parent)
     importFile->setAcceptMode(QFileDialog::AcceptOpen);
     importFile->setFilePath("");
 
-//    Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
-//    const vector<BaseEntity*> skeleton_list = cor3dApp->cor3d->get_skeleton_list();
     model = new QStandardItemModel();
-
-//    for (vector<BaseEntity*>::const_iterator it = skeleton_list.begin(); it != skeleton_list.end(); it++)
-//    {
-//        QStandardItem *item = new QStandardItem(QString::fromStdString((*it)->get_name()));
-//        item->setCheckable(true);
-//        item->setCheckState(Qt::Checked);
-//        model->appendRow(item);
-//        cout << (*it)->get_name() << endl;
-//    }
 
     model->setColumnCount(1);
     model->setHeaderData(0, Qt::Horizontal, "Select items to import:");
@@ -61,13 +50,11 @@ void Import::on_importButton_clicked()
     {
         cerr << "File could not be opened!\n"; // Report error
              cerr << "Error code: " << strerror(errno); // Get some info as to why
-        cout << "nem irunk" << endl;
     }
 }
 
 void Import::on_importFile_changed(string filename)
 {
-    cout << filename << endl;
     importFile->setFilePath(filename);
 }
 

@@ -5,7 +5,7 @@
 
 using namespace std;
 
-EditableDeletableListItem::EditableDeletableListItem(const std::string& labelText, BaseSideWidget* editWidget, QWidget *parent) :
+EditableDeletableListItem::EditableDeletableListItem(const std::string& labelText, BaseEditWidget* editWidget, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::EditableDeletableListItem)
 {
@@ -14,16 +14,26 @@ EditableDeletableListItem::EditableDeletableListItem(const std::string& labelTex
     ui->lineEdit->setVisible(false);
     _sizeHint = QSize(100, 40);
 
+    _isRenameVisible = true;
+    _isEditVisible = true;
+    _isDeleteVisible = true;
     _isRenameActive = false;
     _isEditActive = false;
     _editWidget = editWidget;
-    _editWidget->setVisible(false);
-    ui->verticalLayout->addWidget(editWidget);
+    if (_editWidget)
+    {
+        _editWidget->setVisible(false);
+        ui->verticalLayout->addWidget(editWidget);
+    }
 }
 
 void EditableDeletableListItem::setLabelText(const string& text)
 {
     ui->label->setText(QString::fromStdString(text));
+    if (_editWidget)
+    {
+        _editWidget->setEntityName(text);
+    }
 }
 
 string EditableDeletableListItem::labelText() const
@@ -38,11 +48,14 @@ string EditableDeletableListItem::lineEditText() const
 
 void EditableDeletableListItem::showEditWidget(bool show)
 {
-    _isEditActive = show;
-    _editWidget->setVisible(_isEditActive);
-    if (_isEditActive)
+    if (_editWidget)
     {
-        _editWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        _isEditActive = show;
+        _editWidget->setVisible(_isEditActive);
+        if (_isEditActive)
+        {
+            _editWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        }
     }
 }
 
@@ -51,7 +64,7 @@ bool EditableDeletableListItem::isEditWidgetVisible()
     return _isEditActive;
 }
 
-BaseSideWidget* EditableDeletableListItem::editWidget()
+BaseEditWidget* EditableDeletableListItem::editWidget()
 {
     return _editWidget;
 }
@@ -59,21 +72,24 @@ BaseSideWidget* EditableDeletableListItem::editWidget()
 void EditableDeletableListItem::showRename(bool show)
 {
     ui->toolButtonRename->setVisible(show);
+    _isRenameVisible = show;
 }
 
 void EditableDeletableListItem::showEdit(bool show)
 {
     ui->toolButtonEdit->setVisible(show);
+    _isEditVisible = show;
 }
 
 void EditableDeletableListItem::showDelete(bool show)
 {
     ui->toolButtonDelete->setVisible(show);
+    _isDeleteVisible = show;
 }
 
 QSize EditableDeletableListItem::sizeHint() const
 {
-    if (_isEditActive)
+    if (_editWidget && _isEditActive)
     {
         return QSize(_sizeHint.width(), _sizeHint.height() + _editWidget->sizeHint().height());
     }
@@ -130,8 +146,14 @@ void EditableDeletableListItem::handleRename()
 void EditableDeletableListItem::setVisible(bool visible)
 {
     QWidget::setVisible(visible);
+    ui->toolButtonRename->setVisible(visible && _isRenameVisible);
+    ui->toolButtonEdit->setVisible(visible && _isEditVisible);
+    ui->toolButtonDelete->setVisible(visible && _isDeleteVisible);
     ui->lineEdit->setVisible(visible && _isRenameActive);
-    _editWidget->setVisible(visible && _isEditActive);
+    if (_editWidget)
+    {
+        _editWidget->setVisible(visible && _isEditActive);
+    }
 }
 
 void EditableDeletableListItem::on_toolButtonRename_clicked()

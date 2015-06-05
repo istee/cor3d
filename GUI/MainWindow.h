@@ -19,12 +19,14 @@ public:
 
 private slots:
     // private event handling methods/slots
+    void on_tabWidget_currentChanged(QWidget* );
     void on_actionTransformations_triggered(bool checked);
     void on_actionImport_triggered();
     void on_actionExport_triggered();
     void on_actionRendering_options_activated();
     void on_action_Quit_triggered();
 
-    void updateToolbarTransformations();
-
+    void handle_model_translation_changed(const DCoordinate3&);
+    void handle_model_rotation_changed(const DCoordinate3&);
+    void handle_model_zoom_changed(double);
 };

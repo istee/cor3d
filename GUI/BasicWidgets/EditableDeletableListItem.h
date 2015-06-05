@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <string>
 
-#include "GUI/SideWidgetComponents/BaseSideWidget.h"
+#include "GUI/EditWidgets/BaseEditWidget.h"
 
 using namespace std;
 
@@ -17,7 +17,7 @@ class EditableDeletableListItem : public QWidget
     Q_OBJECT
 
 public:
-    explicit EditableDeletableListItem(const string& labelText, BaseSideWidget* editWidget, QWidget *parent = 0);
+    explicit EditableDeletableListItem(const string& labelText, BaseEditWidget* editWidget, QWidget *parent = 0);
     void setLabelText(const string& text);
     string labelText() const;
     string lineEditText() const;
@@ -26,7 +26,7 @@ public:
     void showRename(bool show);
     void showEdit(bool show);
     void showDelete(bool show);
-    BaseSideWidget* editWidget();
+    BaseEditWidget* editWidget();
     QSize sizeHint() const;
     QSize minimumSizeHint() const;
     ~EditableDeletableListItem();
@@ -40,7 +40,10 @@ private:
     QSize               _sizeHint;
     bool                _isRenameActive;
     bool                _isEditActive;
-    BaseSideWidget*     _editWidget;
+    bool                _isRenameVisible;
+    bool                _isEditVisible;
+    bool                _isDeleteVisible;
+    BaseEditWidget*     _editWidget;
 
     void handleRename();
     void setVisible(bool visible);

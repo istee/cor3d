@@ -19,10 +19,6 @@ namespace cor3d {
 
         RenderingOptions*   _rendering_options;
 
-
-
-
-
     protected:
         vector<Skeleton*> get_data()
         {
@@ -37,6 +33,7 @@ namespace cor3d {
         vector<BaseEntity*> get_skeleton_list();
         Skeleton* get_skeleton();
         Skeleton* getSkeletonById(unsigned int skeletonId);
+        Skeleton* getSkeletonByName(const string& skeletonName);
         RenderingOptions* get_rendering_options();
         void importSkeleton(ifstream& stream);
         unsigned int get_selected_skeleton_id() const;
@@ -46,16 +43,26 @@ namespace cor3d {
         bool is_skeleton_selected();
 
     signals:
-        void model_skeleton_list_changed();
-        void model_skeleton_selection_changed();
+        void model_translation_changed(const DCoordinate3&);
+        void model_rotation_changed(const DCoordinate3&);
+        void model_zoom_changed(double zoom);
+
+        void model_skeleton_added(const string& name);
+        void model_skeleton_deleted(const string& name);
+        void model_skeleton_renamed(const string& oldName, const string& newName);
+
+        void model_skeleton_selection_changed(const string& oldSelectionName, const string& newSelectionName);
         void model_skeleton_name_changed();
         void model_skeleton_model_data_changed(const string& name);
         void model_skeleton_data_changed();
         void model_rendering_options_changed();
 
     public slots:
+        void handle_view_translation_changed(const DCoordinate3&);
+        void handle_view_rotation_changed(const DCoordinate3&);
+        void handle_view_zoom_changed(double zoom);
+
         void handle_view_skeleton_added(string);
-        void handle_view_skeleton_imported(const string&);
         void handle_view_skeleton_selected(int);
         void handle_view_skeleton_deleted(const string&);
         void handle_view_skeleton_exported(const string&);

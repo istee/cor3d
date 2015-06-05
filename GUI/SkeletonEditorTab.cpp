@@ -1,4 +1,5 @@
 #include "SkeletonEditorTab.h"
+#include "glwidget.h"
 
 #include "Cor3dApplication.h"
 #include "GUI/SideWidgetComponents/BaseSideWidget.h"
@@ -15,13 +16,16 @@ SkeletonEditorTab::SkeletonEditorTab(QWidget *parent):IMainWindowTab(parent)
     glwidget = new SkeletonGLWidget();
     glwidget->updateGL();
     glwidgetHolderLayout->layout()->addWidget(glwidget);
-    connect(glwidget, SIGNAL(modelTransformationsChanged()), this, SIGNAL(modelTransformationsChanged()));
 
     Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
-    connect(cor3dApp->cor3d, SIGNAL(model_skeleton_list_changed()), this, SLOT(handle_model_skeleton_list_changed()));
-    connect(cor3dApp->cor3d, SIGNAL(model_skeleton_selection_changed()), this, SLOT(handle_model_skeleton_selection_changed()));
-    connect(cor3dApp->cor3d, SIGNAL(model_skeleton_name_changed()), this, SLOT(handle_model_skeleton_name_changed()));
-    connect(cor3dApp->cor3d, SIGNAL(model_skeleton_data_changed()), this, SLOT(handle_model_skeleton_data_changed()));
+    connect(glwidget, SIGNAL(glwidgetTranslationChanged(DCoordinate3)), cor3dApp->cor3d, SLOT(handle_view_translation_changed(DCoordinate3)));
+    connect(glwidget, SIGNAL(glwidgetRotationChanged(DCoordinate3)), cor3dApp->cor3d, SLOT(handle_view_rotation_changed(DCoordinate3)));
+    connect(glwidget, SIGNAL(glwidgetZoomChanged(double)), cor3dApp->cor3d, SLOT(handle_view_zoom_changed(double)));
+
+    connect(cor3dApp->cor3d, SIGNAL(model_skeleton_added(string)), this, SLOT(handle_model_skeleton_added(string)));
+    connect(cor3dApp->cor3d, SIGNAL(model_skeleton_deleted(string)), this, SLOT(handle_model_skeleton_deleted(string)));
+    connect(cor3dApp->cor3d, SIGNAL(model_skeleton_renamed(string,string)), this, SLOT(handle_model_skeleton_renamed(string,string)));
+    connect(cor3dApp->cor3d, SIGNAL(model_skeleton_selection_changed(string,string)), this, SLOT(handle_model_skeleton_selection_changed(string, string)));
     connect(cor3dApp->cor3d, SIGNAL(model_rendering_options_changed()), this, SLOT(handle_model_rendering_options_changed()));
     connect(cor3dApp->cor3d, SIGNAL(model_skeleton_model_data_changed(string)), this, SLOT(handle_model_skeleton_model_data_changed(string)));
 
@@ -32,29 +36,6 @@ SkeletonEditorTab::SkeletonEditorTab(QWidget *parent):IMainWindowTab(parent)
     connect(skeleton_list, SIGNAL(view_skeleton_model_changed(string,string)), cor3dApp->cor3d, SLOT(handle_view_skeleton_model_changed(string,string)));
     connect(skeleton_list, SIGNAL(view_skeleton_model_offset_changed(string,DCoordinate3)), cor3dApp->cor3d, SLOT(handle_view_skeleton_model_offset_changed(string,DCoordinate3)));
     connect(skeleton_list, SIGNAL(view_skeleton_model_scale_changed(string,DCoordinate3)), cor3dApp->cor3d, SLOT(handle_view_skeleton_model_scale_changed(string,DCoordinate3)));
-
-    //connect(edit_skeleton, SIGNAL(view_skeleton_model_changed(string)), cor3dApp->cor3d, SLOT(handle_view_skeleton_model_changed(string)));
-    //connect(edit_skeleton, SIGNAL(view_skeleton_model_scale_changed(DCoordinate3)), cor3dApp->cor3d, SLOT(handle_view_skeleton_model_scale_changed(DCoordinate3)));
-    //connect(edit_skeleton, SIGNAL(view_skeleton_model_offset_changed(DCoordinate3)), cor3dApp->cor3d, SLOT(handle_view_skeleton_model_offset_changed(DCoordinate3)));
-
-    /*
-    connect(rendering_options_widget, SIGNAL(view_skeleton_render_toggled(bool)), cor3dApp->cor3d, SLOT(handle_view_skeleton_render_toggled(bool)));
-    connect(rendering_options_widget, SIGNAL(view_skeleton_material_changed(int)), cor3dApp->cor3d, SLOT(handle_view_skeleton_material_changed(int)));
-    connect(rendering_options_widget, SIGNAL(view_joint_render_toggled(bool)), cor3dApp->cor3d, SLOT(handle_view_joint_render_toggled(bool)));
-    connect(rendering_options_widget, SIGNAL(view_joint_model_file_changed(string)), cor3dApp->cor3d, SLOT(handle_view_joint_model_file_changed(const string&)));
-    connect(rendering_options_widget, SIGNAL(view_joint_material_changed(int)), cor3dApp->cor3d, SLOT(handle_view_joint_material_changed(int)));
-    connect(rendering_options_widget, SIGNAL(view_selected_joint_material_changed(int)), cor3dApp->cor3d, SLOT(handle_view_selected_joint_material_changed(int)));
-    connect(rendering_options_widget, SIGNAL(view_link_render_toggled(bool)), cor3dApp->cor3d, SLOT(handle_view_link_render_toggled(bool)));
-    connect(rendering_options_widget, SIGNAL(view_link_model_file_changed(string)), cor3dApp->cor3d, SLOT(handle_view_link_model_file_changed(const string&)));
-    connect(rendering_options_widget, SIGNAL(view_link_material_changed(int)), cor3dApp->cor3d, SLOT(handle_view_link_material_changed(int)));
-    */
-
-    //connect(rendering_options_widget, SIGNAL(view_rendering_options_changed(RenderingOptions*)), cor3dApp->cor3d, SLOT(rendering_options_edited(RenderingOptions*)));
-
-    //connect(transformations_widget, SIGNAL(view_rotation_changed(DCoordinate3)), glwidget, SLOT(handle_view_rotation_changed(DCoordinate3)));
-    //connect(transformations_widget, SIGNAL(view_translation_changed(DCoordinate3)), glwidget, SLOT(handle_view_translation_changed(DCoordinate3)));
-    //connect(transformations_widget, SIGNAL(view_zoom_factor_changed(double)), glwidget, SLOT(handle_view_zoom_factor_changed(double)));
-
 }
 
 void SkeletonEditorTab::initialize()
@@ -73,21 +54,42 @@ void SkeletonEditorTab::initialize()
     }
 }
 
-void SkeletonEditorTab::handle_model_skeleton_list_changed()
+void SkeletonEditorTab::handle_model_skeleton_added(const string& name)
 {
-    skeleton_list->update_content();
-    //add_new_skeleton->update_content();
+    skeleton_list->addSkeleton(name);
 }
 
-void SkeletonEditorTab::handle_model_skeleton_selection_changed()
+void SkeletonEditorTab::handle_model_skeleton_deleted(const string& name)
 {
-    skeleton_list->update_content();
+    skeleton_list->deleteSkeleton(name);
+}
+
+void SkeletonEditorTab::handle_model_skeleton_selection_changed(const string& oldSelectionName, const string& newSelectionName)
+{
+    Skeleton* oldSelection = cor3dApp->cor3d->getSkeletonByName(oldSelectionName);
+    if (oldSelection)
+    {
+        disconnect(oldSelection, SIGNAL(model_joint_added(string)), this, SLOT(handle_model_joint_added(string)));
+        disconnect(oldSelection, SIGNAL(model_joint_deleted(string)), this, SLOT(handle_model_joint_deleted(string)));
+        disconnect(oldSelection, SIGNAL(model_joint_renamed(string,string)), this, SLOT(handle_model_joint_renamed(string,string)));
+        disconnect(oldSelection, SIGNAL(model_joint_selection_changed(string)), this, SLOT(handle_model_joint_selection_changed(string)));
+        disconnect(oldSelection, SIGNAL(model_joint_data_changed(string)), this, SLOT(handle_model_joint_data_changed(string)));
+
+        disconnect(add_new_joint, SIGNAL(view_joint_selected(string)), oldSelection, SLOT(handle_view_joint_selection_changed(string)));
+        disconnect(add_new_joint, SIGNAL(view_joint_renamed(string,string)), oldSelection, SLOT(handle_view_joint_renamed(string, string)));
+        disconnect(add_new_joint, SIGNAL(view_joint_deleted(string)), oldSelection, SLOT(handle_view_joint_deleted(string)));
+        disconnect(add_new_joint, SIGNAL(view_joint_coordinates_changed(string,DCoordinate3)), oldSelection, SLOT(handle_view_joint_coordinates_changed(string, DCoordinate3)));
+        disconnect(add_new_joint, SIGNAL(view_joint_scale_changed(string,DCoordinate3)), oldSelection, SLOT(handle_view_joint_scale_changed(string,DCoordinate3)));
+
+        connect(glwidget, SIGNAL(view_joint_selection_changed(int)), oldSelection, SLOT(handle_view_joint_selection_changed(int)));
+        connect(glwidget, SIGNAL(view_joint_absolute_position_changed(DCoordinate3)), oldSelection, SLOT(handle_view_joint_absolute_position_changed(DCoordinate3)));
+    }
+
+    skeleton_list->selectSkeleton(newSelectionName);
     add_new_joint->update_content();
     glwidget->updateGL();
 
-
-    Skeleton* skeleton = cor3dApp->cor3d->get_skeleton();
-    connect(skeleton, SIGNAL(model_joint_list_changed()), this, SLOT(handle_model_joint_list_changed()));
+    Skeleton* skeleton = cor3dApp->cor3d->getSkeletonByName(newSelectionName);
     connect(skeleton, SIGNAL(model_joint_added(string)), this, SLOT(handle_model_joint_added(string)));
     connect(skeleton, SIGNAL(model_joint_deleted(string)), this, SLOT(handle_model_joint_deleted(string)));
     connect(skeleton, SIGNAL(model_joint_renamed(string,string)), this, SLOT(handle_model_joint_renamed(string,string)));
@@ -102,27 +104,11 @@ void SkeletonEditorTab::handle_model_skeleton_selection_changed()
 
     connect(glwidget, SIGNAL(view_joint_selection_changed(int)), skeleton, SLOT(handle_view_joint_selection_changed(int)));
     connect(glwidget, SIGNAL(view_joint_absolute_position_changed(DCoordinate3)), skeleton, SLOT(handle_view_joint_absolute_position_changed(DCoordinate3)));
-
 }
 
-void SkeletonEditorTab::handle_model_skeleton_name_changed()
+void SkeletonEditorTab::handle_model_skeleton_renamed(const string& oldName, const string& newName)
 {
-    skeleton_list->update_content();
-    //add_new_skeleton->update_content();
-    //edit_skeleton->update_content();
-}
-
-void SkeletonEditorTab::handle_model_skeleton_data_changed()
-{
-    //edit_skeleton->update_content();
-    glwidget->updateGL();
-}
-
-void SkeletonEditorTab::handle_model_joint_list_changed()
-{
-    add_new_joint->update_content();
-    //edit_joint->update_content();
-    glwidget->updateGL();
+    skeleton_list->renameSkeleton(oldName, newName);
 }
 
 void SkeletonEditorTab::handle_model_joint_added(const string& name)
@@ -154,12 +140,6 @@ void SkeletonEditorTab::handle_model_joint_data_changed(const string& name)
     add_new_joint->updateJointData(name);
     glwidget->updateGL();
 }
-
-//void SkeletonEditorTab::transformations_changed()
-//{
-//    transformations_widget->update_content();
-//    glwidget->updateGL();
-//}
 
 void SkeletonEditorTab::handle_model_rendering_options_changed()
 {

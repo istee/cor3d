@@ -46,6 +46,16 @@ namespace cor3d {
         return 0;
     }
 
+    Skeleton* Cor3d::getSkeletonByName(const string& skeletonName)
+    {
+        int skeletonId = get_skeleton_id_by_name(skeletonName);
+        if (skeletonId >= 0 && skeletonId < _skeletons.size())
+        {
+            return _skeletons[skeletonId];
+        }
+        return 0;
+    }
+
     vector<BaseEntity*> Cor3d::get_skeleton_list()
     {
         return get_base_entities<Skeleton>(_skeletons);
@@ -76,48 +86,67 @@ namespace cor3d {
 
     void Cor3d::importSkeleton(ifstream& stream)
     {
-        Skeleton* sk = new Skeleton(_skeletons.size(), "");
+        Skeleton* sk = new Skeleton(_skeletons.size(), "asd");
         stream >> *sk;
+        cout << *sk << endl << endl;
         _skeletons.push_back(sk);
-        emit model_skeleton_list_changed();
+        emit model_skeleton_added(sk->get_name());
     }
 
     // implementation of public slots
+
+    void Cor3d::handle_view_translation_changed(const DCoordinate3& translation)
+    {
+        _rendering_options->setTranslation(translation);
+        emit model_translation_changed(_rendering_options->getTranslation());
+    }
+
+    void Cor3d::handle_view_rotation_changed(const DCoordinate3& rotation)
+    {
+        _rendering_options->setRotation(rotation);
+        emit model_rotation_changed(_rendering_options->getRotation());
+    }
+
+    void Cor3d::handle_view_zoom_changed(double zoom)
+    {
+        _rendering_options->setZoom(zoom);
+        emit model_zoom_changed(_rendering_options->getZoom());
+    }
 
     void Cor3d::handle_view_skeleton_added(string name)
     {
         Skeleton* skeleton = new Skeleton(_skeletons.size(), append_sequence_number<Skeleton>(name, _skeletons));
         skeleton->addRoot();
         _skeletons.push_back(skeleton);
-        emit model_skeleton_list_changed();
+        emit model_skeleton_added(skeleton->get_name());
 
-        _selected_skeleton_id = skeleton->get_id();
-        emit model_skeleton_selection_changed();
-    }
-
-    void Cor3d::handle_view_skeleton_imported(const string& file_name)
-    {
-        ifstream file;
-        Skeleton* sk = new Skeleton(_skeletons.size(), "");
-        file.open(file_name.c_str());
-        file >> *sk;
-        _skeletons.push_back(sk);
-        file.close();
-        emit model_skeleton_list_changed();
+        handle_view_skeleton_selected(skeleton->get_id());
     }
 
     void Cor3d::handle_view_skeleton_selected(int id)
     {
-        if (!is_skeleton_id_valid(id))
+        if (id != _selected_skeleton_id)
         {
-            _selected_skeleton_id = -1;
-        }
-        else
-        {
-            _selected_skeleton_id = id;
-        }
+            string oldSelected = "", newSelected = "";
+            Skeleton* skeleton = get_skeleton();
+            if (skeleton)
+            {
+                oldSelected = skeleton->get_name();
+            }
 
-        emit model_skeleton_selection_changed();
+            if (!is_skeleton_id_valid(id))
+            {
+                _selected_skeleton_id = -1;
+            }
+            else
+            {
+                _selected_skeleton_id = id;
+                newSelected = get_skeleton()->get_name();
+            }
+
+            cout << "emit " << oldSelected << " " << newSelected << endl;
+            emit model_skeleton_selection_changed(oldSelected, newSelected);
+        }
     }
 
     void Cor3d::handle_view_skeleton_deleted(const string& name)
@@ -135,7 +164,7 @@ namespace cor3d {
         {
             _selected_skeleton_id--;
         }
-        emit model_skeleton_list_changed();
+        emit model_skeleton_deleted(name);
     }
 
     void Cor3d::handle_view_skeleton_exported(const string& file_name)
@@ -149,7 +178,7 @@ namespace cor3d {
     void Cor3d::handle_view_skeleton_renamed(const string& oldName, const string& newName)
     {
         ((Skeleton*) _skeletons[get_skeleton_id_by_name(oldName)])->set_name(newName);
-        emit model_skeleton_list_changed();
+        emit model_skeleton_renamed(oldName, newName);
     }
 
     void Cor3d::handle_view_skeleton_model_changed(const string& skeletonName, const string& file_name)
