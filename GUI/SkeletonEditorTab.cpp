@@ -43,13 +43,13 @@ void SkeletonEditorTab::initialize()
     QList<SideWidgetGroupBox*> groupbox_list = this->sideWidget->findChildren<SideWidgetGroupBox*>();
     for (QList<SideWidgetGroupBox*>::iterator it = groupbox_list.begin(); it != groupbox_list.end(); it++)
     {
-        (*it)->toggled();
+        //(*it)->toggled();
     }
 
     QList<BaseSideWidget*> sidewidget_list = this->sideWidget->findChildren<BaseSideWidget*>();
     for (QList<BaseSideWidget*>::iterator it = sidewidget_list.begin(); it != sidewidget_list.end(); it++)
     {
-        (*it)->update_content();
+        //(*it)->update_content();
 
     }
 }

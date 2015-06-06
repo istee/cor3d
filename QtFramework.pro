@@ -105,7 +105,8 @@ HEADERS += \
     GUI/SideWidgetComponents/ManagePostures.h \
     GUI/SideWidgetComponents/EditPosture.h \
     GUI/EditWidgets/BaseEditWidget.h \
-    GUI/WidgetExtensions/ListWidgetExtension.h
+    GUI/WidgetExtensions/ListWidgetExtension.h \
+    GUI/WidgetExtensions/ToolButtonExtension.h
 
 FORMS += \
     GUI/BasicWidgets/DCoordinate3GroupBox.ui \

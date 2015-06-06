@@ -3,7 +3,7 @@
 #include <QWidget>
 
 #include "Cor3dApplication.h"
-#include "GLWidget.h"
+#include "glwidget.h"
 
 class IMainWindowTab: public QWidget
 {

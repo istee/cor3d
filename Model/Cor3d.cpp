@@ -91,6 +91,8 @@ namespace cor3d {
         cout << *sk << endl << endl;
         _skeletons.push_back(sk);
         emit model_skeleton_added(sk->get_name());
+
+        emit handle_view_skeleton_selected(sk->get_name());
     }
 
     // implementation of public slots
@@ -144,8 +146,30 @@ namespace cor3d {
                 newSelected = get_skeleton()->get_name();
             }
 
-            cout << "emit " << oldSelected << " " << newSelected << endl;
             emit model_skeleton_selection_changed(oldSelected, newSelected);
+        }
+    }
+
+    void Cor3d::handle_view_skeleton_selected(const string& name)
+    {
+        Skeleton* newSelection = getSkeletonByName(name);
+        string newSelectionName = "";
+        if (newSelection)
+        {
+            newSelectionName = newSelection->get_name();
+        }
+
+        Skeleton* oldSelection = getSkeletonById(_selected_skeleton_id);
+        string oldSelectionName = "";
+        if (oldSelection)
+        {
+            oldSelectionName = oldSelection->get_name();
+        }
+
+        if (newSelectionName != oldSelectionName)
+        {
+            _selected_skeleton_id = newSelection->get_id();
+            emit model_skeleton_selection_changed(oldSelectionName, newSelectionName);
         }
     }
 

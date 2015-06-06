@@ -4,13 +4,19 @@
 #include "ui_MainWindow.h"
 #include "GUI/Toolbars/TransformationsToolbar.h"
 
+#include <iostream>
+
+using namespace std;
+
 class MainWindow: public QMainWindow, public Ui::MainWindow
 {
     Q_OBJECT
 
 private:
     TransformationsToolbar* _transformationToolbar;
-    QAction* _transformationAction;
+    QAction*                _transformationAction;
+
+    unsigned int            _selectedTab;
 
 public:
     // special and default constructor

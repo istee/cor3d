@@ -26,6 +26,11 @@ void PostureGLWidget::specificPaintGL()
     }
 }
 
+void PostureGLWidget::drag(double x, double y, double z)
+{
+    emit view_joint_fabrik_moved(DCoordinate3(x, y, z));
+}
+
 void PostureGLWidget::drag_starting()
 {
     cor3dApp->cor3d->get_skeleton()->construct_chains();

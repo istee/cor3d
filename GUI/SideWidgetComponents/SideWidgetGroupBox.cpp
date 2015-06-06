@@ -1,3 +1,5 @@
+#include <QTreeWidget>
+
 #include "SideWidgetGroupBox.h"
 
 SideWidgetGroupBox::SideWidgetGroupBox(QWidget* parent = 0): QGroupBox(parent)
@@ -74,6 +76,11 @@ void SideWidgetGroupBox::set_content_visibility(bool visible)
     for (QList<QWidget*>::iterator it = list.begin(); it != list.end(); it++)
     {
         (*it)->setVisible(visible);
+    }
+    QList<QTreeWidget*> treeWidgets = this->findChildren<QTreeWidget*>();
+    for (QList<QTreeWidget*>::iterator it = treeWidgets.begin(); it != treeWidgets.end(); it++)
+    {
+        (*it)->setHeaderHidden(true);
     }
 }
 

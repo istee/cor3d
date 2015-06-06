@@ -74,6 +74,7 @@ void TreeWidgetExtension::updateEditWidget(BaseEntity* baseEntity)
 
 void TreeWidgetExtension::selectTreeWidgetItem(const string dataValue)
 {
+    blockSignals(true);
     QTreeWidgetItem* item = currentItem();
     if (item)
     {
@@ -96,6 +97,7 @@ void TreeWidgetExtension::selectTreeWidgetItem(const string dataValue)
             setCurrentItem(item);
         }
     }
+    blockSignals(false);
 }
 
 void TreeWidgetExtension::toggleEditWidget(const string& dataValue)

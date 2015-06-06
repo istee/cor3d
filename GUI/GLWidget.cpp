@@ -425,6 +425,8 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
                 DCoordinate3 new_coord  = cor3dApp->cor3d->get_skeleton()->get_selected_joint()->get_coordinates();
                 //DCoordinate3 *new_coord = _skeletons[0].GetSelectedPosition();
 
+
+                cout << "drag type " << _drag_type << endl;
                 switch(_drag_type)
                 {
                 case 0:

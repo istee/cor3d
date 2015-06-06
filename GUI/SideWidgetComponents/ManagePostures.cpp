@@ -31,7 +31,32 @@ void ManagePostures::renameSkeleton(const string& oldName, const string& newName
     ui->postureTreeWidget->renameTreeWidgetItem(oldName, newName);
 }
 
+void ManagePostures::selectSkeleton(const string& skeletonName)
+{
+    ui->postureTreeWidget->selectTreeWidgetItem(skeletonName);
+}
+
 ManagePostures::~ManagePostures()
 {
     delete ui;
+}
+
+void ManagePostures::on_postureTreeWidget_currentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous)
+{
+    if (!current->parent() && !previous->parent())
+    {
+        emit viewSkeletonSelected(current->data(0, Qt::UserRole).toString().toStdString());
+    }
+
+    /*
+    if (!current->parent())
+    {
+        emit viewSkeletonSelected(current->data(0, Qt::UserRole).toString().toStdString());
+    }
+    else
+    {
+        emit viewSkeletonSelected(current->parent()->data(0, Qt::UserRole).toString().toStdString());
+
+    }
+    */
 }

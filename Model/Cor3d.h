@@ -37,6 +37,10 @@ namespace cor3d {
         RenderingOptions* get_rendering_options();
         void importSkeleton(ifstream& stream);
         unsigned int get_selected_skeleton_id() const;
+        RenderingOptions* getRenderingOpstions() const
+        {
+            return _rendering_options;
+        }
 
     private:
         bool is_skeleton_id_valid(int skeleton_id);
@@ -64,6 +68,7 @@ namespace cor3d {
 
         void handle_view_skeleton_added(string);
         void handle_view_skeleton_selected(int);
+        void handle_view_skeleton_selected(const string&);
         void handle_view_skeleton_deleted(const string&);
         void handle_view_skeleton_exported(const string&);
         void handle_view_skeleton_renamed(const string&, const string&);
