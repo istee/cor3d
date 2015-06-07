@@ -42,7 +42,8 @@ SOURCES += \
     GUI/SideWidgetComponents/ManagePostures.cpp \
     GUI/SideWidgetComponents/EditPosture.cpp \
     GUI/EditWidgets/BaseEditWidget.cpp \
-    GUI/WidgetExtensions/ListWidgetExtension.cpp
+    GUI/WidgetExtensions/ListWidgetExtension.cpp \
+    Model/Posture.cpp
 
 
 HEADERS += \

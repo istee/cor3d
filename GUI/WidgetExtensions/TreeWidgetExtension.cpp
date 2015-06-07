@@ -21,6 +21,25 @@ QTreeWidgetItem* TreeWidgetExtension::getTreeWidgetItemByData(const string& valu
     return 0;
 }
 
+QTreeWidgetItem* TreeWidgetExtension::getTopLevelTreeWidgetItemByData(const string& value)
+{
+    for (unsigned int i = 0; i < this->topLevelItemCount(); i++)
+    {
+        QTreeWidgetItem* item = this->topLevelItem(i);
+        if (item->data(0, Qt::UserRole).toString().toStdString() == value)
+        {
+            return item;
+        }
+    }
+
+    return 0;
+}
+
+QTreeWidgetItem* TreeWidgetExtension::getChildrenTreeWidgetItemByData(QTreeWidgetItem* parent, const string& value)
+{
+    return _getTreeWidgetItemByData(parent, value);
+}
+
 void TreeWidgetExtension::deleteTreeWidgetItemByData(const string& parentDataValue, const string& dataValue)
 {
     QTreeWidgetItem* parentItem = getTreeWidgetItemByData(parentDataValue);
@@ -65,6 +84,13 @@ void TreeWidgetExtension::renameTreeWidgetItem(const string& oldName, const stri
     itemWidget->setLabelText(newName);
 }
 
+void TreeWidgetExtension::renameTreeWidgetItem(QTreeWidgetItem* item, const string& newName)
+{
+    item->setData(0, Qt::UserRole, QVariant(QString::fromStdString(newName)));
+    EditableDeletableListItem* itemWidget = (EditableDeletableListItem*) this->itemWidget(item, 0);
+    itemWidget->setLabelText(newName);
+}
+
 void TreeWidgetExtension::updateEditWidget(BaseEntity* baseEntity)
 {
     QTreeWidgetItem* item = getTreeWidgetItemByData(baseEntity->get_name());
@@ -75,26 +101,27 @@ void TreeWidgetExtension::updateEditWidget(BaseEntity* baseEntity)
 void TreeWidgetExtension::selectTreeWidgetItem(const string dataValue)
 {
     blockSignals(true);
-    QTreeWidgetItem* item = currentItem();
+    this->clearSelection();
+    QTreeWidgetItem* item = getTreeWidgetItemByData(dataValue);
     if (item)
     {
-        string value = item->data(0, Qt::UserRole).toString().toStdString();
-        if (dataValue != value)
-        {
-            setCurrentItem(item, 0, QItemSelectionModel::Deselect);
-        }
-        item = getTreeWidgetItemByData(dataValue);
-        if (item)
-        {
-            setCurrentItem(item);
-        }
+        setSelectionMode(QAbstractItemView::SingleSelection);
+        item->setSelected(true);
     }
-    else
+    blockSignals(false);
+}
+
+void TreeWidgetExtension::selectTreeWidgetItemWithChildren(const string dataValue)
+{
+    blockSignals(true);
+    this->clearSelection();
+    QTreeWidgetItem* item = getTreeWidgetItemByData(dataValue);
+    if (item)
     {
-        item = getTreeWidgetItemByData(dataValue);
-        if (item)
+        item->setSelected(true);
+        for (int r = 0; r < item->childCount(); r++)
         {
-            setCurrentItem(item);
+            item->child(r)->setSelected(true);
         }
     }
     blockSignals(false);

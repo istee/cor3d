@@ -32,9 +32,9 @@ public:
     ~EditableDeletableListItem();
 
 signals:
-    void view_list_item_deleted(const string& labelText);
-    void view_list_item_renamed(const string& labelText, const string& lineEditText);
-    void view_list_item_edited(const string& labeltext);
+    void viewListItemDeleted(const string& labelText);
+    void viewListItemRenamed(const string& labelText, const string& lineEditText);
+    void viewListItemEdited(const string& labeltext);
 
 private:
     QSize               _sizeHint;

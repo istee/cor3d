@@ -39,16 +39,17 @@ void ListWidgetExtension::updateEditWidget(BaseEntity* baseEntity)
 
 void ListWidgetExtension::selectListWidgetItem(const string& dataValue)
 {
+    blockSignals(true);
     QListWidgetItem* item = getListWidgetItemByData(dataValue);
     if (item)
     {
         this->setCurrentItem(item);
     }
     else
-
     {
         clearSelection();
     }
+    blockSignals(false);
 }
 
 void ListWidgetExtension::toggleEditWidget(const string& dataValue)

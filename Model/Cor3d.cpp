@@ -11,6 +11,8 @@ namespace cor3d {
     {
         _selected_skeleton_id = -1;
         _rendering_options = new RenderingOptions();
+
+        emit modelRenderingOptionsChanged(_rendering_options);
     }
 
     string Cor3d::next_name() const
@@ -90,9 +92,9 @@ namespace cor3d {
         stream >> *sk;
         cout << *sk << endl << endl;
         _skeletons.push_back(sk);
-        emit model_skeleton_added(sk->get_name());
+        emit modelSkeletonAdded(sk);
 
-        emit handle_view_skeleton_selected(sk->get_name());
+        emit handleViewSkeletonSelected(sk->get_name());
     }
 
     // implementation of public slots
@@ -115,14 +117,17 @@ namespace cor3d {
         emit model_zoom_changed(_rendering_options->getZoom());
     }
 
-    void Cor3d::handle_view_skeleton_added(string name)
+    void Cor3d::handleViewSkeletonAdded(string name)
     {
+        Skeleton* selected = get_skeleton();
+
         Skeleton* skeleton = new Skeleton(_skeletons.size(), append_sequence_number<Skeleton>(name, _skeletons));
         skeleton->addRoot();
         _skeletons.push_back(skeleton);
-        emit model_skeleton_added(skeleton->get_name());
+        emit modelSkeletonAdded(skeleton);
 
-        handle_view_skeleton_selected(skeleton->get_id());
+        _selected_skeleton_id = skeleton->get_id();
+        emit modelSkeletonSelected(skeleton, selected);
     }
 
     void Cor3d::handle_view_skeleton_selected(int id)
@@ -146,11 +151,11 @@ namespace cor3d {
                 newSelected = get_skeleton()->get_name();
             }
 
-            emit model_skeleton_selection_changed(oldSelected, newSelected);
+            //emit model_skeleton_selection_changed(oldSelected, newSelected);
         }
     }
 
-    void Cor3d::handle_view_skeleton_selected(const string& name)
+    void Cor3d::handleViewSkeletonSelected(const string& name)
     {
         Skeleton* newSelection = getSkeletonByName(name);
         string newSelectionName = "";
@@ -166,29 +171,32 @@ namespace cor3d {
             oldSelectionName = oldSelection->get_name();
         }
 
+        cout << "new " << newSelectionName << " old " << oldSelectionName << endl;
         if (newSelectionName != oldSelectionName)
         {
             _selected_skeleton_id = newSelection->get_id();
-            emit model_skeleton_selection_changed(oldSelectionName, newSelectionName);
+            emit modelSkeletonSelected(newSelection, oldSelection);
         }
     }
 
-    void Cor3d::handle_view_skeleton_deleted(const string& name)
+    void Cor3d::handleViewSkeletonDeleted(const string& name)
     {
         unsigned int deleteId = get_skeleton_id_by_name(name);
-        cout << "delete skeleton: " << name << "id: " << deleteId << endl;
-        delete _skeletons[deleteId];
+        Skeleton* deleteSkeleton = _skeletons[deleteId];
         _skeletons.erase(_skeletons.begin() + deleteId);
         for (vector<Skeleton*>::iterator it = _skeletons.begin() + deleteId; it != _skeletons.end(); it++)
         {
             ((BaseEntity*) *it)->decrease_id();
         }
 
-        if (_selected_skeleton_id > _skeletons.size())
+        if (_selected_skeleton_id == deleteId)
         {
             _selected_skeleton_id--;
+            emit modelSkeletonSelected(get_skeleton(), 0);
         }
-        emit model_skeleton_deleted(name);
+
+        delete deleteSkeleton;
+        emit modelSkeletonDeleted(name);
     }
 
     void Cor3d::handle_view_skeleton_exported(const string& file_name)
@@ -199,82 +207,9 @@ namespace cor3d {
         file.close();
     }
 
-    void Cor3d::handle_view_skeleton_renamed(const string& oldName, const string& newName)
+    void Cor3d::handleViewSkeletonRenamed(const string& oldName, const string& newName)
     {
         ((Skeleton*) _skeletons[get_skeleton_id_by_name(oldName)])->set_name(newName);
-        emit model_skeleton_renamed(oldName, newName);
+        emit modelSkeletonRenamed(oldName, newName);
     }
-
-    void Cor3d::handle_view_skeleton_model_changed(const string& skeletonName, const string& file_name)
-    {
-        ((Skeleton*) _skeletons[get_skeleton_id_by_name(skeletonName)])->set_model_file(file_name);
-        emit model_skeleton_model_data_changed(skeletonName);
-    }
-
-    void Cor3d::handle_view_skeleton_model_scale_changed(const string& skeletonName, const DCoordinate3& model_scale)
-    {
-        ((Skeleton*) _skeletons[get_skeleton_id_by_name(skeletonName)])->set_model_scale(model_scale);
-        emit model_skeleton_model_data_changed(skeletonName);
-    }
-
-    void Cor3d::handle_view_skeleton_model_offset_changed(const string& skeletonName, const DCoordinate3& model_offset)
-    {
-        ((Skeleton*) _skeletons[get_skeleton_id_by_name(skeletonName)])->set_model_offset(model_offset);
-        emit model_skeleton_model_data_changed(skeletonName);
-    }
-
-    void Cor3d::handle_view_skeleton_render_toggled(bool on)
-    {
-        _rendering_options->set_render_model(on);
-        emit model_rendering_options_changed();
-    }
-
-    void Cor3d::handle_view_skeleton_material_changed(int material_id)
-    {
-        _rendering_options->set_model_material(material_id);
-        emit model_rendering_options_changed();
-    }
-
-    void Cor3d::handle_view_joint_render_toggled(bool on)
-    {
-        _rendering_options->set_render_joints(on);
-        emit model_rendering_options_changed();
-    }
-
-    void Cor3d::handle_view_joint_model_file_changed(const string& file)
-    {
-        _rendering_options->set_joint_model_file(file);
-        emit model_rendering_options_changed();
-    }
-
-    void Cor3d::handle_view_joint_material_changed(int material_id)
-    {
-        _rendering_options->set_joint_material(material_id);
-        emit model_rendering_options_changed();
-    }
-
-    void Cor3d::handle_view_selected_joint_material_changed(int material_id)
-    {
-        _rendering_options->set_selected_joint_material(material_id);
-        emit model_rendering_options_changed();
-    }
-
-    void Cor3d::handle_view_link_render_toggled(bool on)
-    {
-        _rendering_options->set_render_links(on);
-        emit model_rendering_options_changed();
-    }
-
-    void Cor3d::handle_view_link_model_file_changed(const string& file)
-    {
-        _rendering_options->set_link_model_file(file);
-        emit model_rendering_options_changed();
-    }
-
-    void Cor3d::handle_view_link_material_changed(int material_id)
-    {
-        _rendering_options->set_link_material(material_id);
-        emit model_rendering_options_changed();
-    }
-
 }

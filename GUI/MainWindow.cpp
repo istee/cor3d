@@ -35,13 +35,14 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     connect(_cor3d, SIGNAL(model_rotation_changed(DCoordinate3)), this, SLOT(handle_model_rotation_changed(DCoordinate3)));
     connect(_cor3d, SIGNAL(model_zoom_changed(double)), this, SLOT(handle_model_zoom_changed(double)));
 
-    _selectedTab = 0;
+    IMainWindowTab* skeletonEditorTab = (IMainWindowTab*) tabWidget->widget(2);
+    skeletonEditorTab->setSelected(true);
 }
 
 void MainWindow::initialize()
 {
-    skeleton_editor->initialize();
-    posture_editor->initialize();
+    //skeleton_editor->initialize();
+    //posture_editor->initialize();
     scene_editor->initialize();
 }
 
@@ -61,28 +62,6 @@ void MainWindow::on_actionRendering_options_activated()
     roWidget->setWindowModality(Qt::ApplicationModal);
     roWidget->setWindowFlags(Qt::Window);
     roWidget->show();
-
-/*
-    QBoxLayout *frameLayout = new QHBoxLayout();
-    frameLayout->addWidget(roWidget);
-
-    QFrame *qFrame = new QFrame(this);
-    qFrame->setFrameStyle(QFrame::Sunken | QFrame::Box);
-    qFrame->setGeometry(50,-2,100,15);
-    qFrame->setLayout(frameLayout);
-    qFrame->show();
-
-
-    QDialog *dialog = new QDialog( this );
-    dialog->setWindowFlags( Qt::WindowStaysOnTopHint );
-                    dialog->show();
-
-
-    QWidget *popup = new QWidget();
-    popup->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
-    popup->setWindowModality(Qt::ApplicationModal);
-    popup->show();
-    */
 }
 
 void MainWindow::on_actionExport_triggered()
@@ -111,7 +90,7 @@ void MainWindow::handle_model_translation_changed(const DCoordinate3& translatio
 {
     IMainWindowTab* currentMainWindowTab = (IMainWindowTab* ) tabWidget->currentWidget();
     currentMainWindowTab->setGLWidgetTranslation(translation);
-    currentMainWindowTab->updateGlWidget();
+    currentMainWindowTab->updateGLWidget();
     _transformationToolbar->setTranslation(translation);
 }
 
@@ -119,7 +98,7 @@ void MainWindow::handle_model_rotation_changed(const DCoordinate3& rotation)
 {
     IMainWindowTab* currentMainWindowTab = (IMainWindowTab* ) tabWidget->currentWidget();
     currentMainWindowTab->setGLWidgetRotation(rotation);
-    currentMainWindowTab->updateGlWidget();
+    currentMainWindowTab->updateGLWidget();
     _transformationToolbar->setRotation(rotation);
 }
 
@@ -127,17 +106,28 @@ void MainWindow::handle_model_zoom_changed(double zoom)
 {
     IMainWindowTab* currentMainWindowTab = (IMainWindowTab* ) tabWidget->currentWidget();
     currentMainWindowTab->setGLWidgetZoomFactor(zoom);
-    currentMainWindowTab->updateGlWidget();
+    currentMainWindowTab->updateGLWidget();
     _transformationToolbar->setZoomFactor(zoom);
 }
 
-void MainWindow::on_tabWidget_currentChanged(QWidget* tabWidget)
+void MainWindow::on_tabWidget_currentChanged(QWidget* tab)
 {
     Cor3d* cor3d = ((Cor3dApplication*) qApp)->cor3d;
     RenderingOptions* renderingOptions = cor3d->getRenderingOpstions();
-    IMainWindowTab* mainWindowTab = (IMainWindowTab*) tabWidget;
+    IMainWindowTab* mainWindowTab = (IMainWindowTab*) tab;
     mainWindowTab->setGLWidgetTranslation(renderingOptions->getTranslation());
     mainWindowTab->setGLWidgetRotation(renderingOptions->getRotation());
     mainWindowTab->setGLWidgetZoomFactor(renderingOptions->getZoom());
-    mainWindowTab->updateGlWidget();
+    mainWindowTab->setSelected(true);
+    mainWindowTab->updateGLWidget();
+
+    for (int i = 0; tabWidget->count(); i++)
+    {
+        if (tabWidget->widget(i) != tab)
+        {
+            cout << " tab false " << endl;
+            IMainWindowTab* t = (IMainWindowTab*) tabWidget->widget(i);
+            t->setSelected(false);
+        }
+    }
 }

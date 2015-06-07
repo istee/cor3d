@@ -25,12 +25,12 @@ public:
     void data_changed();
 
 signals:
-    void view_skeleton_model_changed(const string& skeletonName, const string& file);
-    void view_skeleton_model_scale_changed(const string& skeletonName, const DCoordinate3& scale);
-    void view_skeleton_model_offset_changed(const string& skeletonName, const DCoordinate3& offset);
+    void viewSkeletonModelChanged(const string& file);
+    void viewSkeletonModelScaleChanged(const DCoordinate3& scale);
+    void viewSkeletonModelOffsetChanged(const DCoordinate3& offset);
 
 private slots:
-    void handle_skeleton_model_changed(const string& file);
-    void handle_skeleton_model_scale_changed(const DCoordinate3& scale);
-    void handle_skeleton_model_offset_changed(const DCoordinate3& offset);
+    void handleSkeletonModelChanged(const string& file);
+    void handleSkeletonModelScaleChanged(const DCoordinate3& scale);
+    void handleSkeletonModelOffsetChanged(const DCoordinate3& offset);
 };

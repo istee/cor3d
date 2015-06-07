@@ -30,12 +30,14 @@ namespace cor3d {
         DCoordinate3            _scale;
 
     public:
-        Joint(unsigned int id, string name, int parent_id/*, DCoordinate3 parent_coordinate*/): BaseEntity(id, name)
+        Joint(unsigned int id, string name, int parent_id, const DCoordinate3& parentCoordinate = DCoordinate3(0.0, 0.0, 0.0)): BaseEntity(id, name)
         {
             _parent_id  = parent_id;
             _type       = ROTATIONAL;
             _scale      = DCoordinate3(1, 1, 1);
-            //_coordinate = parent_coordinate;
+            _orientation = DCoordinate3(0.0, 0.0, 0.0);
+            _coordinate = DCoordinate3(parentCoordinate);
+            _orientation = DCoordinate3(0.0, 0.0, 0.0);
         }
 
         void update_coordinates(const DCoordinate3& parent_coordinates);

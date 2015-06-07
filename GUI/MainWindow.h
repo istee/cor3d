@@ -16,8 +16,6 @@ private:
     TransformationsToolbar* _transformationToolbar;
     QAction*                _transformationAction;
 
-    unsigned int            _selectedTab;
-
 public:
     // special and default constructor
     MainWindow(QWidget *parent = 0);

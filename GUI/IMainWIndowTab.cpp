@@ -1,9 +1,13 @@
+#include <QTabWidget>
+
 #include "IMainWindowTab.h"
 #include "glwidget.h"
 
 IMainWindowTab::IMainWindowTab(QWidget* parent = 0): QWidget(parent)
 {
     cor3dApp = (Cor3dApplication*) qApp;
+
+    _isSelected = false;
 }
 
 void IMainWindowTab::setGLWidgetTranslation(const DCoordinate3& translation)
@@ -21,7 +25,16 @@ void IMainWindowTab::setGLWidgetZoomFactor(double zoom)
     glwidget->set_zoom_factor(zoom);
 }
 
-void IMainWindowTab::updateGlWidget() const
+void IMainWindowTab::setSelected(bool selected)
 {
-    glwidget->updateGL();
+    _isSelected = selected;
+}
+
+void IMainWindowTab::updateGLWidget() const
+{
+    if (_isSelected)
+    {
+        cout << "update van" << endl;
+        glwidget->updateGL();
+    }
 }

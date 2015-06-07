@@ -64,7 +64,7 @@ private:
     cagd::DCoordinate3 _drag_offset;
     cagd::DCoordinate3 _initial_normal;
 
-
+    Skeleton*               _skeleton;
 
     GLuint _dl_grid;
 
@@ -107,6 +107,8 @@ public:
     DCoordinate3 get_translation() const;
     DCoordinate3 get_rotation() const;
     double get_zoom_factor() const;
+
+    void setSkeleton(Skeleton *skeleton);
 
 signals:
     void glwidgetTranslationChanged(const DCoordinate3& translation);

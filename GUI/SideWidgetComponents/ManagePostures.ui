@@ -42,7 +42,7 @@
          </widget>
         </item>
         <item>
-         <widget class="NameLineEdit" name="widget" native="true"/>
+         <widget class="NameLineEdit" name="addName" native="true"/>
         </item>
        </layout>
       </item>

@@ -74,7 +74,7 @@
          <enum>QListView::ListMode</enum>
         </property>
         <property name="sortingEnabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
       </item>

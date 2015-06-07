@@ -17,30 +17,24 @@ public:
     // special and default constructor
     SkeletonList(QWidget *parent = 0);
     void update_content();
-    void addSkeleton(const string& name);
+    void addSkeleton(Skeleton* skeleton);
     void deleteSkeleton(const string& name);
     void renameSkeleton(const string& oldName, const string& newName);
-    void updateSkeletonModel(const string& skeletonName);
+    void updateSkeletonModel(Skeleton* skeleton);
     void selectSkeleton(const string& name);
 
 private:
     QHash<string,BaseEntityDisplayProperties>  _skeletonDisplayProperties;
 
 signals:
-    void view_skeleton_deleted();
-    void view_skeleton_selected(int id);
-    void view_skeleton_added(const string& name);
-    void view_skeleton_deleted(const string& name);
-    void view_skeleton_renamed(const string& oldName, const string& newName);
-
-    void view_skeleton_model_changed(const string& name, const string& fileName);
-    void view_skeleton_model_offset_changed(const string& name, const DCoordinate3& offset);
-    void view_skeleton_model_scale_changed(const string& name, const DCoordinate3& scale);
-
+    void viewSkeletonSelected(const string& name);
+    void viewSkeletonAdded(const string& name);
+    void viewSkeletonDeleted(const string& name);
+    void viewSkeletonRenamed(const string& oldName, const string& newName);
 private slots:
+    void on_skeleton_listview_currentItemChanged(QListWidgetItem* current, QListWidgetItem* previous);
     void on_toolButtonAdd_clicked();
-    void on_skeleton_listview_clicked(QModelIndex index);
-    void on_skeleton_listview_activated(QModelIndex index);
 
-    void handle_view_skeleton_edited(const string& name);
+    void handleViewSkeletonEdited(const string& name);
+    void handleModelSkeletonDataChanged(Skeleton* skeleton);
 };

@@ -22,7 +22,7 @@ public:
         _expandedPolicy = QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         _collapsedPolicy = QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     }
-    virtual void update_content() = 0;
+
     virtual void updateContent(BaseEntity*)
     {
 

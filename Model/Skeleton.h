@@ -31,7 +31,7 @@ namespace cor3d
         DCoordinate3            _model_offset;
         DCoordinate3            _model_scale;
 
-        vector<Posture>         _postures;
+        vector<Posture*>         _postures;
         vector<DCoordinate3>    _current_posture;
         vector<Chain>           _chains;
         vector<Joint*>          _joints;
@@ -59,6 +59,11 @@ namespace cor3d
         void addJoint(const string& parentName, const string& jointName);
 
 
+        void addPosture(const string& name);
+        void deletePosture(const string& name);
+        void renamePosture(const string& oldName, const string& newName);
+
+
         ///////////////////////////
         // getter methods        //
         ///////////////////////////
@@ -76,6 +81,7 @@ namespace cor3d
         Joint* get_joint(const string& name) const;
         Joint* get_parent_joint(const string& name) const;
         Joint* get_selected_joint() const;
+
 
         ///////////////////////////
         // setter methods        //
@@ -101,6 +107,9 @@ namespace cor3d
         void render_axis(RenderingOptions* rendering_options, bool glLoad = false) const;
         void render_chains(RenderingOptions* rendering_options, bool glLoad = false) const;
 
+        string nextAutoPostureName() const;
+        Posture* getPostureByName(const string& name) const;
+
 
     private:
         //void update_joint_coordinates_(unsigned int joint_id, const DCoordinate3& parent_coordinates);
@@ -112,15 +121,20 @@ namespace cor3d
         void handle_view_joint_coordinates_changed_(unsigned int jointId);
 
     public slots:
-        void handle_view_joint_added(const string&,int);
+
+        void handleViewJointAdded(const string& name, const string& parentName);
+        void handleViewJointDeleted(const string&);
+        void handleViewJointRenamed(const string&, const string&);
+        void handleViewJointSelected(const string&);
+
         void handle_view_joint_selection_changed(int);
-        void handle_view_joint_selection_changed(const string&);
-        void handle_view_joint_renamed(const string&, const string&);
-        void handle_view_joint_deleted(const string&);
-        void handle_view_joint_coordinates_changed(const string&, const DCoordinate3& coordinates);
+
+        void handleViewJointAbsoluteCoordinatesChanged(const string& name, const DCoordinate3& absoluteCoordinates);
+        void handleViewJointRelativeCoordinatesChanged(const string& name, const DCoordinate3& relativeCoordinates);
+        void handleViewJointScaleChanged(const string& name, const DCoordinate3& scale);
+
         void handle_view_joint_rotation_axis_changed(const string&, const DCoordinate3& rotation_axis);
         void handle_view_joint_rotation_constraint_changed(const string&, const DCoordinate3& rotation_constraint);
-        void handle_view_joint_scale_changed(const string& name, const DCoordinate3& scale);
 
         void handle_view_joint_parent_changed(int);
         void handle_view_joint_type_changed(int);
@@ -130,15 +144,29 @@ namespace cor3d
         void handle_view_joint_absolute_position_changed(const DCoordinate3&);
         void handle_view_joint_fabrik_moved(const DCoordinate3&);
 
+        void handle_view_posture_added(const string&);
+        void handle_view_posture_deleted(const string&);
+        void handle_view_posture_renamed(const string&, const string&);
+
+        void handleViewSkeletonModelChanged(const string&);
+        void handleViewSkeletonModelScaleChanged(const DCoordinate3&);
+        void handleViewSkeletonModelOffsetChanged(const DCoordinate3&);
+
     signals:
-        void model_joint_list_changed();        //delete
+        void modelSkeletonDataChanged(Skeleton* skeleton);
+
         void model_joint_selection_changed();
-        void model_joint_selection_changed(const string& name);
-        void model_joint_renamed(const string& oldName, const string& newName);
-        void model_joint_added(const string& name);
-        void model_joint_deleted(const string& name);
-        void model_joint_parent_changed(const string& name, const string& oldParentName, const string& newParentName);
-        void model_joint_data_changed(const string& name);
+
+        void modelJointAdded(Skeleton* skeleton, Joint* joint, const string& parentName);
+        void modelJointRenamed(const string& oldName, const string& newName);
+        void modelJointDeleted(const string& name);
+        void modelJointSelected(const string& name);
+        void modelJointParentChanged(const string& name, const string& oldParentName, const string& newParentName);
+        void modelJointDataChanged(Joint* joint);
+
+        void modelPostureAdded(Skeleton* skeleton, Posture* posture);
+        void modelPostureDeleted(const string& skeletonName, const string& postureName);
+        void modelPostureRenamed(const string& skeletonName, const string& oldPostureName, const string& newPostureName);
     };
 
     inline string Skeleton::get_model_file() const
@@ -175,13 +203,13 @@ namespace cor3d
     inline void Skeleton::set_model_offset(const DCoordinate3& model_offset)
     {
         _model_offset = model_offset;
-        //emit model_joint_data_changed();
+        emit modelSkeletonDataChanged(this);
     }
 
     inline void Skeleton::set_model_scale(const DCoordinate3& model_scale)
     {
         _model_scale = model_scale;
-        //emit model_joint_data_changed();
+        emit modelSkeletonDataChanged(this);
     }
 
 

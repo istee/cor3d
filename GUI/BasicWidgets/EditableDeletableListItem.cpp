@@ -118,7 +118,7 @@ EditableDeletableListItem::~EditableDeletableListItem()
 
 void EditableDeletableListItem::on_toolButtonDelete_clicked()
 {
-    emit view_list_item_deleted(ui->label->text().toStdString());
+    emit viewListItemDeleted(ui->label->text().toStdString());
 }
 
 void EditableDeletableListItem::handleRename()
@@ -138,7 +138,7 @@ void EditableDeletableListItem::handleRename()
         ui->label->setVisible(true);
         if (ui->label->text() != ui->lineEdit->text())
         {
-            emit view_list_item_renamed(ui->label->text().toStdString(), ui->lineEdit->text().toStdString());
+            emit viewListItemRenamed(ui->label->text().toStdString(), ui->lineEdit->text().toStdString());
         }
     }
 }
@@ -168,5 +168,5 @@ void EditableDeletableListItem::on_lineEdit_returnPressed()
 
 void EditableDeletableListItem::on_toolButtonEdit_clicked()
 {
-    emit view_list_item_edited(ui->label->text().toStdString());
+    emit viewListItemEdited(ui->label->text().toStdString());
 }

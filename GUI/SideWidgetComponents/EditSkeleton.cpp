@@ -20,9 +20,9 @@ EditSkeleton::EditSkeleton(QWidget *parent): BaseEditWidget(parent)
     model_scale->setSettings(DCoordinate3(0.1, 0.1, 10));
     model_offset->setSettings(DCoordinate3(-100, 0.1, 100));
 
-    connect(model_file, SIGNAL(file_changed(string)), this, SLOT(handle_skeleton_model_changed(string)));
-    connect(model_scale, SIGNAL(coordinates_changed(DCoordinate3)), this, SLOT(handle_skeleton_model_scale_changed(DCoordinate3)));
-    connect(model_offset, SIGNAL(coordinates_changed(DCoordinate3)), this, SLOT(handle_skeleton_model_offset_changed(DCoordinate3)));
+    connect(model_file, SIGNAL(file_changed(string)), this, SLOT(handleSkeletonModelChanged(string)));
+    connect(model_scale, SIGNAL(coordinates_changed(DCoordinate3)), this, SLOT(handleSkeletonModelScaleChanged(DCoordinate3)));
+    connect(model_offset, SIGNAL(coordinates_changed(DCoordinate3)), this, SLOT(handleSkeletonModelOffsetChanged(DCoordinate3)));
 }
 
 void EditSkeleton::update_content()
@@ -38,17 +38,17 @@ void EditSkeleton::updateContent(BaseEntity* baseEntity)
     model_offset->setValue(skeleton->get_model_offset());
 }
 
-void EditSkeleton::handle_skeleton_model_changed(const string& file)
+void EditSkeleton::handleSkeletonModelChanged(const string& file)
 {
-    emit view_skeleton_model_changed(_skeletonName, file);
+    emit viewSkeletonModelChanged(file);
 }
 
-void EditSkeleton::handle_skeleton_model_offset_changed(const DCoordinate3& offset)
+void EditSkeleton::handleSkeletonModelOffsetChanged(const DCoordinate3& offset)
 {
-    emit view_skeleton_model_offset_changed(_skeletonName, offset);
+    emit viewSkeletonModelOffsetChanged(offset);
 }
 
-void EditSkeleton::handle_skeleton_model_scale_changed(const DCoordinate3& scale)
+void EditSkeleton::handleSkeletonModelScaleChanged(const DCoordinate3& scale)
 {
-    emit view_skeleton_model_scale_changed(_skeletonName, scale);
+    emit viewSkeletonModelScaleChanged(scale);
 }

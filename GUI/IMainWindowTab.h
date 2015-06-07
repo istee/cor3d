@@ -12,11 +12,14 @@ class IMainWindowTab: public QWidget
 protected:
     Cor3dApplication*   cor3dApp;
     GLWidget*           glwidget;
+    bool                _isSelected;
 
 public:
     IMainWindowTab(QWidget* parent);
-    void updateGlWidget() const;
     void setGLWidgetTranslation(const DCoordinate3& translation);
     void setGLWidgetRotation(const DCoordinate3& angles);
     void setGLWidgetZoomFactor(double value);
+    void setSelected(bool selected);
+public slots:
+    void updateGLWidget() const;
 };

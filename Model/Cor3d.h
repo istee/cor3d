@@ -51,40 +51,22 @@ namespace cor3d {
         void model_rotation_changed(const DCoordinate3&);
         void model_zoom_changed(double zoom);
 
-        void model_skeleton_added(const string& name);
-        void model_skeleton_deleted(const string& name);
-        void model_skeleton_renamed(const string& oldName, const string& newName);
+        void modelSkeletonAdded(Skeleton* skeleton);
+        void modelSkeletonDeleted(const string& name);
+        void modelSkeletonRenamed(const string& oldName, const string& newName);
+        void modelSkeletonSelected(Skeleton* selected, Skeleton* previous);
 
-        void model_skeleton_selection_changed(const string& oldSelectionName, const string& newSelectionName);
-        void model_skeleton_name_changed();
-        void model_skeleton_model_data_changed(const string& name);
-        void model_skeleton_data_changed();
-        void model_rendering_options_changed();
-
+        void modelRenderingOptionsChanged(RenderingOptions* renderingOptions);
     public slots:
         void handle_view_translation_changed(const DCoordinate3&);
         void handle_view_rotation_changed(const DCoordinate3&);
         void handle_view_zoom_changed(double zoom);
 
-        void handle_view_skeleton_added(string);
+        void handleViewSkeletonAdded(string);
         void handle_view_skeleton_selected(int);
-        void handle_view_skeleton_selected(const string&);
-        void handle_view_skeleton_deleted(const string&);
+        void handleViewSkeletonSelected(const string&);
+        void handleViewSkeletonDeleted(const string&);
         void handle_view_skeleton_exported(const string&);
-        void handle_view_skeleton_renamed(const string&, const string&);
-        void handle_view_skeleton_model_changed(const string&, const string&);
-        void handle_view_skeleton_model_scale_changed(const string&, const DCoordinate3&);
-        void handle_view_skeleton_model_offset_changed(const string&, const DCoordinate3&);
-
-        void handle_view_skeleton_render_toggled(bool);
-        void handle_view_skeleton_material_changed(int);
-        void handle_view_joint_render_toggled(bool);
-        void handle_view_joint_model_file_changed(const string&);
-        void handle_view_joint_material_changed(int);
-        void handle_view_selected_joint_material_changed(int);
-        void handle_view_link_render_toggled(bool);
-        void handle_view_link_model_file_changed(const string&);
-        void handle_view_link_material_changed(int);
-
+        void handleViewSkeletonRenamed(const string&, const string&);
     };
 }

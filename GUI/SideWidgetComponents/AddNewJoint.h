@@ -18,12 +18,12 @@ class AddNewJoint: public BaseSideWidget, public Ui::AddNewJoint
 public:
     // special and default constructor
     AddNewJoint(QWidget *parent = 0);
-    void update_content();
+    void populateJoints(Skeleton* skeleton, Skeleton* previous);
     void selectJoint(const string& name);
-    void addJoint(const string& name);
+    void addJoint(Skeleton* skeleton, Joint* joint, const string& parentName);
     void deleteJoint(const string& name);
     void renameJoint(const string& oldName, const string& newName);
-    void updateJointData(const string& name);
+    void updateJointData(Joint* joint);
 
 private:
     void populateJointTreeView(Skeleton* skeleton, Joint* parent, QTreeWidgetItem* item);
@@ -32,10 +32,9 @@ private:
     void populateTreeViewJoints(Skeleton* skeleton, Joint* joint);
 
 signals:
-    void view_joint_added(const string& name, const string& parentName);
-    void view_joint_selected(string name);
-    void view_joint_renamed(string, string);
-    void view_joint_deleted(string name);
+    void viewJointAdded(const string& name, const string& parentName);
+    void viewJointSelected(string name);
+
 
     void view_joint_coordinates_changed(const string& name, const DCoordinate3& coordinates);
     void view_joint_scale_changed(const string& name, const DCoordinate3& scale);
@@ -43,5 +42,5 @@ signals:
 private slots:
     void on_treeViewJoints_itemSelectionChanged();
     void on_toolButtonAdd_clicked();
-    void handle_view_joint_edited(const string& name);
+    void handleViewJointEdited(const string& name);
 };
