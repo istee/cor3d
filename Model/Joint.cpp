@@ -21,6 +21,7 @@ namespace cor3d {
             lhs << *it << " ";
         }
         lhs << endl << "joint_coordinates: " << rhs.get_coordinates() << endl;
+        lhs << "_joint_parent_relative_coordinates: " << rhs.get_orientation() << endl;
         lhs << "joint_scale: " << rhs.get_scale() << endl;
         return lhs;
     }
@@ -44,6 +45,7 @@ namespace cor3d {
             rhs._children_ids.push_back(child);
         }
         lhs >> text >> rhs._coordinate;
+        lhs >> text >> rhs._orientation;
         lhs >> text >> rhs._scale;
         return lhs;
     }

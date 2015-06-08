@@ -55,6 +55,7 @@ namespace cor3d {
         void modelSkeletonDeleted(const string& name);
         void modelSkeletonRenamed(const string& oldName, const string& newName);
         void modelSkeletonSelected(Skeleton* selected, Skeleton* previous);
+        void modelPostureSelected(Skeleton* selectedSkeleton, Posture* selectedPosture, Skeleton* previousSkeleton, Posture* previousPosture);
 
         void modelRenderingOptionsChanged(RenderingOptions* renderingOptions);
     public slots:
@@ -68,5 +69,6 @@ namespace cor3d {
         void handleViewSkeletonDeleted(const string&);
         void handle_view_skeleton_exported(const string&);
         void handleViewSkeletonRenamed(const string&, const string&);
+        //void handleViewPostureSelected(const string& skeletonName, const string& postureName);
     };
 }

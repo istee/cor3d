@@ -18,7 +18,7 @@ public slots:
     void handleModelSkeletonAdded(Skeleton* skeleton);
     void handleModelSkeletonDeleted(const string& name);
     void handleModelSkeletonRenamed(const string& oldName, const string& newName);
-    void handleModelSelected(Skeleton* selected, Skeleton* previous);
+    void handleModelSkeletonSelected(Skeleton* selected, Skeleton* previous);
 
     void handleModelJointAdded(Skeleton* skeleton, Joint* joint, const string& name);
     void handleModelJointDeleted(const string& name);

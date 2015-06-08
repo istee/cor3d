@@ -72,7 +72,6 @@ void AddNewJoint::populateJoints(Skeleton* skeleton, Skeleton* previous)
 
     if (previous)
     {
-        cout << "disconnect " << endl;
         disconnect(this, SIGNAL(viewJointAdded(string, string)), previous, SLOT(handleViewJointAdded(string,string)));
         disconnect(this, SIGNAL(viewJointSelected(string)), previous, SLOT(handleViewJointSelected(string)));
     }
@@ -106,11 +105,9 @@ void AddNewJoint::selectJoint(const string& name)
 
 void AddNewJoint::on_toolButtonAdd_clicked()
 {
-    cout << "on_toolButtonAdd_clicked " << endl;
     QTreeWidgetItem* item = treeViewJoints->currentItem();
     if (item)
     {
-        cout << "emit is van" << endl;
         emit viewJointAdded(addName->value(), item->data(0, Qt::UserRole).toString().toStdString());
     }
 }
@@ -119,12 +116,10 @@ void AddNewJoint::on_treeViewJoints_itemSelectionChanged()
 {
     if (treeViewJoints->selectedItems().count() == 1)
     {
-        cout << "on_treeViewJoints_itemSelectionChanged " << treeViewJoints->selectedItems()[0]->data(0, Qt::UserRole).toString().toStdString() << endl;
         emit(viewJointSelected(treeViewJoints->selectedItems()[0]->data(0, Qt::UserRole).toString().toStdString()));
     }
     else
     {
-        cout << "on_treeViewJoints_itemSelectionChanged " << endl;
         emit(viewJointSelected(""));
     }
 }

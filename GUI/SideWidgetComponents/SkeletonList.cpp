@@ -46,8 +46,6 @@ void SkeletonList::addSkeleton(Skeleton* skeleton)
 
     skeleton_listview->addListWigetItem(skeleton->get_name(), listItem);
 
-    //connect(skeleton, SIGNAL(model))
-
     addName->setValue(_cor3d->next_name());
 }
 
@@ -69,7 +67,6 @@ void SkeletonList::updateSkeletonModel(Skeleton* skeleton)
 
 void SkeletonList::selectSkeleton(const string& name)
 {
-    cout << "select name " <<  name << endl;
     skeleton_listview->selectListWidgetItem(name);
 }
 

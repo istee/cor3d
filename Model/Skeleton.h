@@ -37,6 +37,7 @@ namespace cor3d
         vector<Joint*>          _joints;
         bool                    _chains_moved;
         int                     _selected_joint;
+        int                     _selectedPosture;
 
         bool                    _coordinates_need_update;
 
@@ -82,6 +83,8 @@ namespace cor3d
         Joint* get_parent_joint(const string& name) const;
         Joint* get_selected_joint() const;
 
+        Posture* selectedPosture() const;
+
 
         ///////////////////////////
         // setter methods        //
@@ -109,6 +112,8 @@ namespace cor3d
 
         string nextAutoPostureName() const;
         Posture* getPostureByName(const string& name) const;
+        Posture* getPostureById(int id);
+        unsigned int postureCount() const;
 
 
     private:
@@ -144,9 +149,10 @@ namespace cor3d
         void handle_view_joint_absolute_position_changed(const DCoordinate3&);
         void handle_view_joint_fabrik_moved(const DCoordinate3&);
 
-        void handle_view_posture_added(const string&);
-        void handle_view_posture_deleted(const string&);
-        void handle_view_posture_renamed(const string&, const string&);
+        void handleViewPostureAdded(const string&);
+        void handleViewPostureDeleted(const string&);
+        void handleViewPostureRenamed(const string&, const string&);
+        void handleViewPostureSelected(const string&);
 
         void handleViewSkeletonModelChanged(const string&);
         void handleViewSkeletonModelScaleChanged(const DCoordinate3&);
@@ -165,8 +171,9 @@ namespace cor3d
         void modelJointDataChanged(Joint* joint);
 
         void modelPostureAdded(Skeleton* skeleton, Posture* posture);
-        void modelPostureDeleted(const string& skeletonName, const string& postureName);
-        void modelPostureRenamed(const string& skeletonName, const string& oldPostureName, const string& newPostureName);
+        void modelPostureDeleted(const string& postureName);
+        void modelPostureRenamed(const string& oldPostureName, const string& newPostureName);
+        void modelPostureSelected(Skeleton* skeleton, Posture* posture);
     };
 
     inline string Skeleton::get_model_file() const
@@ -223,7 +230,15 @@ namespace cor3d
         return _selected_joint >= 0;
     }
 
+    inline Posture* Skeleton::selectedPosture() const
+    {
+        if (_selectedPosture >=0 && _selectedPosture < _postures.size())
+        {
+            _postures[_selectedPosture];
+        }
 
+        return 0;
+    }
 
 
 }

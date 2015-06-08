@@ -60,6 +60,7 @@ namespace cor3d {
         _model_scale = DCoordinate3(1.0, 1.0, 1.0);
         _model_offset = DCoordinate3(0, 0, 0);
         _selected_joint = -1;
+        _selectedPosture = -1;
         _coordinates_need_update = false;
     }
 
@@ -68,6 +69,7 @@ namespace cor3d {
         _model_scale = DCoordinate3(1.0, 1.0, 1.0);
         _model_offset = DCoordinate3(0, 0, 0);
         _selected_joint = -1;
+        _selectedPosture = -1;
         _coordinates_need_update = false;
     }
 
@@ -883,19 +885,24 @@ namespace cor3d {
         MoveSelected(target.x(), target.y(), target.z());
     }
 
-    void Skeleton::handle_view_posture_added(const string& name)
+    void Skeleton::handleViewPostureAdded(const string& name)
     {
         addPosture(name);
     }
 
-    void Skeleton::handle_view_posture_deleted(const string& name)
+    void Skeleton::handleViewPostureDeleted(const string& name)
     {
         deletePosture(name);
     }
 
-    void Skeleton::handle_view_posture_renamed(const string& oldName, const string& newName)
+    void Skeleton::handleViewPostureRenamed(const string& oldName, const string& newName)
     {
         renamePosture(oldName, newName);
+    }
+
+    void handleViewPostureSelected(const string&)
+    {
+        cout << " asd " << endl;
     }
 
     void Skeleton::addPosture(const string& name)
@@ -925,7 +932,7 @@ namespace cor3d {
                 _selected_skeleton_id--;
             }
             */
-            emit modelPostureDeleted(get_name(), name);
+            emit modelPostureDeleted(name);
         }
     }
 
@@ -935,7 +942,7 @@ namespace cor3d {
         Posture* posture = getPostureByName(oldName);
         posture->set_name(newName);
 
-        emit modelPostureRenamed(this->get_name(), oldName, newName);
+        emit modelPostureRenamed(oldName, newName);
     }
 
     string Skeleton::nextAutoPostureName() const
@@ -945,6 +952,21 @@ namespace cor3d {
         string name = ss.str();
         //name = append_sequence_number(name);
         return name;
+    }
+
+    void Skeleton::handleViewPostureSelected(const string& name)
+    {
+        cout << "posture select a skeletonban " << name << endl;
+        Posture* posture = getPostureByName(name);
+        if (posture)
+        {
+            _selectedPosture = posture->get_id();
+            emit modelPostureSelected(this, posture);
+        }
+        else
+        {
+            emit modelPostureSelected(this, 0);
+        }
     }
 
     Posture* Skeleton::getPostureByName(const string& name) const
@@ -974,6 +996,21 @@ namespace cor3d {
     {
         set_model_offset(offset);
         emit modelSkeletonDataChanged(this);
+    }
+
+    Posture* Skeleton::getPostureById(int id)
+    {
+        if (id >= 0 && id < _postures.size())
+        {
+            return _postures[id];
+        }
+
+        return 0;
+    }
+
+    unsigned int Skeleton::postureCount() const
+    {
+        return _postures.size();
     }
 }
 

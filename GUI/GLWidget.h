@@ -64,13 +64,11 @@ private:
     cagd::DCoordinate3 _drag_offset;
     cagd::DCoordinate3 _initial_normal;
 
-    Skeleton*               _skeleton;
-
     GLuint _dl_grid;
 
-
-
 protected:
+    Skeleton*               _skeleton;
+
     virtual void specificPaintGL() = 0;
 
     void render_move_arrows(RenderingOptions* rendering_options, const DCoordinate3 *position, int id = 0, bool glLoad = false);

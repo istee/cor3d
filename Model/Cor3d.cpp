@@ -90,7 +90,6 @@ namespace cor3d {
     {
         Skeleton* sk = new Skeleton(_skeletons.size(), "asd");
         stream >> *sk;
-        cout << *sk << endl << endl;
         _skeletons.push_back(sk);
         emit modelSkeletonAdded(sk);
 
@@ -171,7 +170,6 @@ namespace cor3d {
             oldSelectionName = oldSelection->get_name();
         }
 
-        cout << "new " << newSelectionName << " old " << oldSelectionName << endl;
         if (newSelectionName != oldSelectionName)
         {
             _selected_skeleton_id = newSelection->get_id();

@@ -17,61 +17,54 @@ PostureEditorTab::PostureEditorTab(QWidget *parent): IMainWindowTab(parent)
     glwidget->updateGL();
     glwidgetHolderLayout->layout()->addWidget(glwidget);
 
+
     Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
+
     connect(glwidget, SIGNAL(glwidgetTranslationChanged(DCoordinate3)), cor3dApp->cor3d, SLOT(handle_view_translation_changed(DCoordinate3)));
     connect(glwidget, SIGNAL(glwidgetRotationChanged(DCoordinate3)), cor3dApp->cor3d, SLOT(handle_view_rotation_changed(DCoordinate3)));
     connect(glwidget, SIGNAL(glwidgetZoomChanged(double)), cor3dApp->cor3d, SLOT(handle_view_zoom_changed(double)));
 
-    connect(cor3dApp->cor3d, SIGNAL(modelSkeletonAdded(Skeleton*)), this, SLOT(handleModelSkeletonAdded(Skeleton*)));
-    connect(cor3dApp->cor3d, SIGNAL(modelSkeletonDeleted(string)), this, SLOT(handleModelSkeletonDeleted(string)));
-    connect(cor3dApp->cor3d, SIGNAL(modelSkeletonRenamed(string,string)), this, SLOT(handleModelSkeletonRenamed(string,string)));
-    //connect(cor3dApp->cor3d, SIGNAL(model_skeleton_selection_changed(string,string)), this, SLOT(handle_model_skeleton_selection_changed(string,string)));
-
-    //connect(managePostures, SIGNAL(viewSkeletonSelected(string)), cor3dApp->cor3d, SLOT(handle_view_skeleton_selected(string)));
+    connect(cor3dApp->cor3d, SIGNAL(modelSkeletonSelected(Skeleton*,Skeleton*)), this, SLOT(handleModelSkeletonSelected(Skeleton*,Skeleton*)));
+    //connect(cor3dApp->cor3d, SIGNAL(modelPostureSelected(Skeleton*,Posture*,Skeleton*,Posture*)), this, SLOT(handleModelPostureSelected(Skeleton*,Posture*,Skeleton*,Posture*)));
 }
 
-void PostureEditorTab::handleModelSkeletonAdded(Skeleton* skeleton)
+void PostureEditorTab::handleModelSkeletonSelected(Skeleton* selectedSkeleton, Skeleton* previousSkeleton)
 {
-    managePostures->addSkeleton(skeleton->get_name());
-    connect(skeleton, SIGNAL(modelPostureRenamed(string,string,string)), this, SLOT(handleModelPostureRenamed(string,string,string)));
-    connect(skeleton, SIGNAL(modelPostureDeleted(string,string)), this, SLOT(handleModelPostureDeleted(string,string)));
-}
-
-void PostureEditorTab::handleModelSkeletonDeleted(const string& name)
-{
-    managePostures->deleteSkeleton(name);
-}
-
-void PostureEditorTab::handleModelSkeletonRenamed(const string& oldName, const string& newName)
-{
-    managePostures->renameSkeleton(oldName, newName);
-}
-
-void PostureEditorTab::handle_model_skeleton_selection_changed(const string& oldSelectionName, const string& newSelectionName)
-{
-    managePostures->selectSkeleton(newSelectionName);
-
-    Skeleton* oldSelection = cor3dApp->cor3d->getSkeletonByName(oldSelectionName);
-    if (oldSelection)
+    if (previousSkeleton)
     {
-        disconnect(glwidget, SIGNAL(view_joint_selection_changed(int)), oldSelection, SLOT(handle_view_joint_selection_changed(int)));
-        disconnect(glwidget, SIGNAL(view_joint_absolute_position_changed(DCoordinate3)), oldSelection, SLOT(handle_view_joint_fabrik_moved(DCoordinate3)));
+        //disconnect(glwidget, SIGNAL(view_joint_selection_changed(int)), previous, SLOT(handle_view_joint_selection_changed(int)));
+        //disconnect(glwidget, SIGNAL(view_joint_absolute_position_changed(DCoordinate3)), previous, SLOT(handle_view_joint_fabrik_moved(DCoordinate3)));
 
-        disconnect(managePostures, SIGNAL(viewPostureAdded(string)), oldSelection, SLOT(handle_view_posture_added(string)));
+        disconnect(managePostures, SIGNAL(viewPostureAdded(string)), previousSkeleton, SLOT(handleViewPostureAdded(string)));
+        disconnect(managePostures, SIGNAL(viewPostureDeleted(string)), previousSkeleton, SLOT(handleViewPostureDeleted(string)));
+        disconnect(managePostures, SIGNAL(viewPostureRenamed(string, string)), previousSkeleton, SLOT(handleViewPostureRenamed(string, string)));
+        disconnect(managePostures, SIGNAL(viewPostureSelected(string)), previousSkeleton, SLOT(handleViewPostureSelected(string)));
 
-        disconnect(oldSelection, SIGNAL(modelPostureAdded(Skeleton*, Posture*)), this, SLOT(handleModelPostureAdded(Skeleton*, Posture*)));
+        disconnect(previousSkeleton, SIGNAL(modelPostureAdded(Skeleton*, Posture*)), this, SLOT(handleModelPostureAdded(Skeleton*, Posture*)));
+        disconnect(previousSkeleton, SIGNAL(modelPostureSelected(Posture*)), this, SLOT(handleModelPostureSelected(Posture*)));
     }
 
-    Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
-    Skeleton* skeleton = cor3dApp->cor3d->getSkeletonByName(newSelectionName);
-    connect(glwidget, SIGNAL(view_joint_selection_changed(int)), skeleton, SLOT(handle_view_joint_selection_changed(int)));
-    connect(glwidget, SIGNAL(view_joint_absolute_position_changed(DCoordinate3)), skeleton, SLOT(handle_view_joint_fabrik_moved(DCoordinate3)));
+    if (selectedSkeleton)
+    {
+        managePostures->populatePostureList(selectedSkeleton);
+        editPosture->populatePostureJoints(selectedSkeleton, selectedSkeleton->selectedPosture());
 
-    connect(managePostures, SIGNAL(viewPostureAdded(string)), skeleton, SLOT(handle_view_posture_added(string)));
+        //connect(glwidget, SIGNAL(view_joint_selection_changed(int)), selected, SLOT(handle_view_joint_selection_changed(int)));
+        //connect(glwidget, SIGNAL(view_joint_absolute_position_changed(DCoordinate3)), selected, SLOT(handle_view_joint_fabrik_moved(DCoordinate3)));
 
-    connect(skeleton, SIGNAL(modelPostureAdded(Skeleton*, Posture*)), this, SLOT(handleModelPostureAdded(Skeleton*, Posture*)));
+        connect(managePostures, SIGNAL(viewPostureAdded(string)), selectedSkeleton, SLOT(handleViewPostureAdded(string)));
+        connect(managePostures, SIGNAL(viewPostureDeleted(string)), selectedSkeleton, SLOT(handleViewPostureDeleted(string)));
+        connect(managePostures, SIGNAL(viewPostureRenamed(string, string)), selectedSkeleton, SLOT(handleViewPostureRenamed(string, string)));
+        connect(managePostures, SIGNAL(viewPostureSelected(string)), selectedSkeleton, SLOT(handleViewPostureSelected(string)));
 
-    glwidget->updateGL();
+        connect(selectedSkeleton, SIGNAL(modelPostureAdded(Skeleton*, Posture*)), this, SLOT(handleModelPostureAdded(Skeleton*, Posture*)));
+        connect(selectedSkeleton, SIGNAL(modelPostureDeleted(string)), this, SLOT(handleModelPostureDeleted(string)));
+        connect(selectedSkeleton, SIGNAL(modelPostureRenamed(string, string)), this, SLOT(handleModelPostureRenamed(string, string)));
+        connect(selectedSkeleton, SIGNAL(modelPostureSelected(Skeleton*, Posture*)), this, SLOT(handleModelPostureSelected(Skeleton*, Posture*)));
+    }
+
+    glwidget->setSkeleton(selectedSkeleton);
+    updateGLWidget();
 }
 
 void PostureEditorTab::handleModelPostureAdded(Skeleton* skeleton, Posture* posture)
@@ -79,12 +72,22 @@ void PostureEditorTab::handleModelPostureAdded(Skeleton* skeleton, Posture* post
     managePostures->addPosture(skeleton, posture);
 }
 
-void PostureEditorTab::handleModelPostureDeleted(const string& skeletonName, const string& postureName)
+void PostureEditorTab::handleModelPostureDeleted(const string& postureName)
 {
-    managePostures->deletePosture(skeletonName, postureName);
+    managePostures->deletePosture(postureName);
 }
 
-void PostureEditorTab::handleModelPostureRenamed(const string& skeletonName, const string& oldPostureName, const string& newPostureName)
+void PostureEditorTab::handleModelPostureRenamed(const string& oldPostureName, const string& newPostureName)
 {
-    managePostures->renamePosture(skeletonName, oldPostureName, newPostureName);
+    managePostures->renamePosture(oldPostureName, newPostureName);
+}
+
+void PostureEditorTab::handleModelPostureSelected(Skeleton* selectedSkeleton, Posture* selectedPosture)
+{
+    if (!selectedPosture)
+    {
+        cout << "null a posture" << endl;
+    }
+    cout << "posture selected " << selectedPosture->get_name() << endl;
+    editPosture->populatePostureJoints(selectedSkeleton, selectedPosture);
 }

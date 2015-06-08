@@ -10,37 +10,20 @@
 ManagePostures::ManagePostures(QWidget *parent) : BaseSideWidget(parent), ui(new Ui::ManagePostures)
 {
     ui->setupUi(this);
+}
 
-    Skeleton* skeleton = _cor3d->get_skeleton();
-    if (skeleton)
+void ManagePostures::populatePostureList(Skeleton* skeleton)
+{
+    ui->postureList->clear();
+    for (unsigned int i = 0; i < skeleton->postureCount(); i++)
     {
-        ui->addName->setValue(skeleton->nextAutoPostureName());
+        Posture* posture = skeleton->getPostureById(i);
+        addPosture(skeleton, posture);
     }
-}
-
-void ManagePostures::addSkeleton(const string& name)
-{
-    EditableDeletableListItem* item = new EditableDeletableListItem(name, 0, ui->postureTreeWidget);
-    item->showRename(false);
-    item->showEdit(false);
-    item->showDelete(false);
-    ui->postureTreeWidget->addTopLevelTreeWidgetItem(name, item);
-}
-
-void ManagePostures::deleteSkeleton(const string& name)
-{
-    ui->postureTreeWidget->deleteTopLevelTreeWidgetItemByData(name);
-}
-
-void ManagePostures::renameSkeleton(const string& oldName, const string& newName)
-{
-    ui->postureTreeWidget->renameTreeWidgetItem(oldName, newName);
-}
-
-void ManagePostures::selectSkeleton(const string& skeletonName)
-{
-    ui->postureTreeWidget->selectTreeWidgetItemWithChildren(skeletonName);
-    Skeleton* skeleton = _cor3d->get_skeleton();
+    if (skeleton->selectedPosture())
+    {
+        selectPosture(skeleton, skeleton->selectedPosture());
+    }
     ui->addName->setValue(skeleton->nextAutoPostureName());
 }
 
@@ -49,50 +32,42 @@ ManagePostures::~ManagePostures()
     delete ui;
 }
 
-void ManagePostures::on_postureTreeWidget_currentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous)
-{
-    if (current->parent())
-    {
-        emit viewSkeletonSelected(current->parent()->data(0, Qt::UserRole).toString().toStdString());
-        emit viewPostureSelected(current->data(0, Qt::UserRole).toString().toStdString());
-    }
-    else
-    {
-        emit viewSkeletonSelected(current->data(0, Qt::UserRole).toString().toStdString());
-    }
-}
-
 void ManagePostures::on_toolButtonAdd_clicked()
 {
-    QTreeWidgetItem* item = ui->postureTreeWidget->currentItem();
-    if (item && !item->parent())
-    {
-        emit viewPostureAdded(ui->addName->value());
-    }
+    emit viewPostureAdded(ui->addName->value());
 }
 
 void ManagePostures::addPosture(Skeleton* skeleton, Posture* posture)
 {
-    EditableDeletableListItem* listItem = new EditableDeletableListItem(posture->get_name(), 0, ui->postureTreeWidget);
-    connect(listItem, SIGNAL(view_list_item_renamed(string,string)), skeleton, SLOT(handle_view_posture_renamed(string,string)));
-    connect(listItem, SIGNAL(view_list_item_deleted(string)), skeleton, SLOT(handle_view_posture_deleted(string)));
-
-    ui->postureTreeWidget->addTreeWidgetItem(skeleton->get_name(), posture->get_name(), listItem);
-
-    ui->addName->setValue(_cor3d->get_skeleton()->nextAutoPostureName());
+    EditableDeletableListItem* listItem = new EditableDeletableListItem(posture->get_name(), 0, ui->postureList);
+    connect(listItem, SIGNAL(viewListItemDeleted(string)), skeleton, SLOT(handleViewPostureDeleted(string)));
+    connect(listItem, SIGNAL(viewListItemRenamed(string,string)), skeleton, SLOT(handleViewPostureRenamed(string,string)));
+    listItem->showEdit(false);
+    ui->postureList->addListWigetItem(posture->get_name(), listItem);
+    ui->addName->setValue(skeleton->nextAutoPostureName());
 }
 
-void ManagePostures::deletePosture(const string& skeletonName, const string& postureName)
+void ManagePostures::deletePosture(const string& postureName)
 {
-    QTreeWidgetItem *skeletonItem = ui->postureTreeWidget->getTopLevelTreeWidgetItemByData(skeletonName);
-    QTreeWidgetItem *postureItem = ui->postureTreeWidget->getChildrenTreeWidgetItemByData(skeletonItem, postureName);
-    postureItem = skeletonItem->takeChild(skeletonItem->indexOfChild(postureItem));
-    delete postureItem;
+    ui->postureList->deleteListWidgetItemByData(postureName);
 }
 
-void ManagePostures::renamePosture(const string& skeletonName, const string& oldPostureName, const string& newPostureName)
+void ManagePostures::renamePosture(const string& oldPostureName, const string& newPostureName)
 {
-    QTreeWidgetItem *skeletonItem = ui->postureTreeWidget->getTopLevelTreeWidgetItemByData(skeletonName);
-    QTreeWidgetItem *postureItem = ui->postureTreeWidget->getChildrenTreeWidgetItemByData(skeletonItem, oldPostureName);
-    ui->postureTreeWidget->renameTreeWidgetItem(postureItem, newPostureName);
+    ui->postureList->renameListWidgetItem(oldPostureName, newPostureName);
+}
+
+void ManagePostures::selectPosture(Skeleton* skeleton, Posture* posture)
+{
+    ui->postureList->selectListWidgetItem(posture->get_name());
+}
+
+
+void ManagePostures::on_postureList_currentItemChanged(QListWidgetItem* current, QListWidgetItem* previous)
+{
+    if (current)
+    {
+            cout << "select posture " << current->data(Qt::UserRole).toString().toStdString() << endl;
+        emit viewPostureSelected(current->data(Qt::UserRole).toString().toStdString());
+    }
 }

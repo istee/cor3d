@@ -1,7 +1,9 @@
-#ifndef EDITPOSTURE_H
-#define EDITPOSTURE_H
+#pragma once
 
 #include <QWidget>
+
+#include "Model/Skeleton.h"
+#include "Model/Joint.h"
 
 namespace Ui {
     class EditPosture;
@@ -13,10 +15,13 @@ class EditPosture : public QWidget
 
 public:
     explicit EditPosture(QWidget *parent = 0);
+    void populatePostureJoints(Skeleton* skeleton, Posture* posture);
     ~EditPosture();
 
 private:
     Ui::EditPosture *ui;
-};
+    void populatePostureJoints(Skeleton* skeleton, Joint* joint);
 
-#endif // EDITPOSTURE_H
+private slots:
+    void on_postureJointTreeWidget_itemSelectionChanged();
+};

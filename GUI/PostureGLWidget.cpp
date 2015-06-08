@@ -9,19 +9,23 @@ PostureGLWidget::PostureGLWidget(QWidget *parent, const QGLFormat &format): GLWi
 
 void PostureGLWidget::specificPaintGL()
 {
-    Skeleton* skeleton = cor3dApp->cor3d->get_skeleton();
-    if (skeleton)
+    if (_skeleton)
     {
-        RenderingOptions* rendering_options = cor3dApp->cor3d->get_rendering_options();
-        skeleton->render_joints(rendering_options);
-        skeleton->render_links(rendering_options);
-        MatFBRuby.Apply();
-        skeleton->render_chains(rendering_options);
-        if (skeleton->is_joint_selected())
+        if (_skeleton->selectedPosture())
         {
-            unsigned int joint_id = skeleton->get_selected_joint_id();
-            DCoordinate3 position = skeleton->get_joint(joint_id)->get_coordinates();
-            render_move_arrows(rendering_options, &position);
+            cout << "draw posture " << _skeleton->selectedPosture()->get_name() << endl;
+
+            RenderingOptions* rendering_options = cor3dApp->cor3d->get_rendering_options();
+            _skeleton->render_joints(rendering_options);
+            _skeleton->render_links(rendering_options);
+            MatFBRuby.Apply();
+            _skeleton->render_chains(rendering_options);
+            if (_skeleton->is_joint_selected())
+            {
+                unsigned int joint_id = _skeleton->get_selected_joint_id();
+                DCoordinate3 position = _skeleton->get_joint(joint_id)->get_coordinates();
+                render_move_arrows(rendering_options, &position);
+            }
         }
     }
 }

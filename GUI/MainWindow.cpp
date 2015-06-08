@@ -118,16 +118,19 @@ void MainWindow::on_tabWidget_currentChanged(QWidget* tab)
     mainWindowTab->setGLWidgetTranslation(renderingOptions->getTranslation());
     mainWindowTab->setGLWidgetRotation(renderingOptions->getRotation());
     mainWindowTab->setGLWidgetZoomFactor(renderingOptions->getZoom());
-    mainWindowTab->setSelected(true);
-    mainWindowTab->updateGLWidget();
 
-    for (int i = 0; tabWidget->count(); i++)
+    for (int i = 0; i < tabWidget->count(); i++)
     {
         if (tabWidget->widget(i) != tab)
         {
-            cout << " tab false " << endl;
             IMainWindowTab* t = (IMainWindowTab*) tabWidget->widget(i);
-            t->setSelected(false);
+            if (t)
+            {
+                t->setSelected(false);
+            }
         }
     }
+
+    mainWindowTab->setSelected(true);
+    mainWindowTab->updateGLWidget();
 }

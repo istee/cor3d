@@ -34,7 +34,6 @@ void IMainWindowTab::updateGLWidget() const
 {
     if (_isSelected)
     {
-        cout << "update van" << endl;
         glwidget->updateGL();
     }
 }

@@ -20,17 +20,11 @@
       <string>Manage skeleton postures</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="margin">
+       <number>0</number>
+      </property>
       <item>
-       <widget class="TreeWidgetExtension" name="postureTreeWidget">
-        <property name="headerHidden">
-         <bool>true</bool>
-        </property>
-        <column>
-         <property name="text">
-          <string notr="true">1</string>
-         </property>
-        </column>
-       </widget>
+       <widget class="ListWidgetExtension" name="postureList"/>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
@@ -65,9 +59,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>TreeWidgetExtension</class>
-   <extends>QTreeWidget</extends>
-   <header>GUI/WidgetExtensions/TreeWidgetExtension.h</header>
+   <class>ListWidgetExtension</class>
+   <extends>QListWidget</extends>
+   <header>GUI/WidgetExtensions/ListWidgetExtension.h</header>
   </customwidget>
   <customwidget>
    <class>ToolButtonExtension</class>

@@ -26,7 +26,7 @@ SkeletonEditorTab::SkeletonEditorTab(QWidget *parent):IMainWindowTab(parent)
     connect(cor3dApp->cor3d, SIGNAL(modelSkeletonAdded(Skeleton*)), this, SLOT(handleModelSkeletonAdded(Skeleton*)));
     connect(cor3dApp->cor3d, SIGNAL(modelSkeletonDeleted(string)), this, SLOT(handleModelSkeletonDeleted(string)));
     connect(cor3dApp->cor3d, SIGNAL(modelSkeletonRenamed(string,string)), this, SLOT(handleModelSkeletonRenamed(string,string)));
-    connect(cor3dApp->cor3d, SIGNAL(modelSkeletonSelected(Skeleton*,Skeleton*)), this, SLOT(handleModelSelected(Skeleton*,Skeleton*)));
+    connect(cor3dApp->cor3d, SIGNAL(modelSkeletonSelected(Skeleton*,Skeleton*)), this, SLOT(handleModelSkeletonSelected(Skeleton*,Skeleton*)));
 
     connect(skeleton_list, SIGNAL(viewSkeletonAdded(string)), cor3dApp->cor3d, SLOT(handleViewSkeletonAdded(string)));
     connect(skeleton_list, SIGNAL(viewSkeletonSelected(string)), cor3dApp->cor3d, SLOT(handleViewSkeletonSelected(string)));
@@ -50,7 +50,7 @@ void SkeletonEditorTab::handleModelSkeletonRenamed(const string& oldName, const 
     skeleton_list->renameSkeleton(oldName, newName);
 }
 
-void SkeletonEditorTab::handleModelSelected(Skeleton* selected, Skeleton* previous)
+void SkeletonEditorTab::handleModelSkeletonSelected(Skeleton* selected, Skeleton* previous)
 {
     if (previous)
     {
@@ -61,7 +61,6 @@ void SkeletonEditorTab::handleModelSelected(Skeleton* selected, Skeleton* previo
 
     add_new_joint->populateJoints(selected, previous);
     glwidget->setSkeleton(selected);
-    cout << "select van " << endl;
     updateGLWidget();
 
     if (selected)
@@ -71,7 +70,7 @@ void SkeletonEditorTab::handleModelSelected(Skeleton* selected, Skeleton* previo
         connect(selected, SIGNAL(modelJointAdded(Skeleton*,Joint*,string)), this, SLOT(handleModelJointAdded(Skeleton*,Joint*,string)));
         connect(selected, SIGNAL(modelJointDeleted(string)), this, SLOT(handleModelJointDeleted(string)));
         connect(selected, SIGNAL(modelJointRenamed(string,string)), this, SLOT(handleModelJointRenamed(string,string)));
-
+        connect(selected, SIGNAL(modelJointSelected(string)), this, SLOT(handleModelJointSelected(string)));
         connect(selected, SIGNAL(modelJointDataChanged(Joint*)), this, SLOT(handleModelJointDataChanged(Joint*)));
 
         connect(glwidget, SIGNAL(view_joint_selection_changed(int)), selected, SLOT(handle_view_joint_selection_changed(int)));
@@ -81,7 +80,6 @@ void SkeletonEditorTab::handleModelSelected(Skeleton* selected, Skeleton* previo
 
 void SkeletonEditorTab::handleModelJointAdded(Skeleton* skeleton, Joint* joint, const string& parentName)
 {
-    cout << "joint add " << endl;
     add_new_joint->addJoint(skeleton, joint, parentName);
     updateGLWidget();
 }
@@ -99,7 +97,6 @@ void SkeletonEditorTab::handleModelJointRenamed(const string& oldName, const str
 
 void SkeletonEditorTab::handleModelJointSelected(const string& name)
 {
-    cout << "handleModelJointSelected " << name << endl;
     add_new_joint->selectJoint(name);
     updateGLWidget();
 }

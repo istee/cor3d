@@ -105,8 +105,7 @@ void TreeWidgetExtension::selectTreeWidgetItem(const string dataValue)
     QTreeWidgetItem* item = getTreeWidgetItemByData(dataValue);
     if (item)
     {
-        setSelectionMode(QAbstractItemView::SingleSelection);
-        item->setSelected(true);
+        this->setCurrentItem(item);
     }
     blockSignals(false);
 }
@@ -123,6 +122,18 @@ void TreeWidgetExtension::selectTreeWidgetItemWithChildren(const string dataValu
         {
             item->child(r)->setSelected(true);
         }
+    }
+    blockSignals(false);
+}
+
+void TreeWidgetExtension::selectTreeWidgetItem(QTreeWidgetItem* parentItem, const string& dataValue)
+{
+    blockSignals(true);
+    this->clearSelection();
+    QTreeWidgetItem* item = getChildrenTreeWidgetItemByData(parentItem, dataValue);
+    if (item)
+    {
+        this->setCurrentItem(item);
     }
     blockSignals(false);
 }

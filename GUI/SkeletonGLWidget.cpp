@@ -10,7 +10,7 @@ SkeletonGLWidget::SkeletonGLWidget(QWidget *parent, const QGLFormat &format): GL
 
 void SkeletonGLWidget::specificPaintGL()
 {
-    Skeleton* skeleton = cor3dApp->cor3d->get_skeleton();
+    Skeleton* skeleton = _skeleton;
     if (skeleton)
     {
         skeleton->render(cor3dApp->cor3d->get_rendering_options());

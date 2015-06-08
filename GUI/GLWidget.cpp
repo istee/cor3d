@@ -16,11 +16,12 @@ using namespace std;
 //--------------------------------
 GLWidget::GLWidget(QWidget *parent, const QGLFormat &format): QGLWidget(format, parent)
 {
-
+    _skeleton = 0;
 }
 
 GLWidget::~GLWidget()
 {
+    _skeleton = 0;
 }
 
 //--------------------------------------------------------------------------------------
