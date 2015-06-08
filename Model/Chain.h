@@ -14,6 +14,7 @@ namespace cor3d {
         int _parent_id;
         bool _forward;
         vector<DCoordinate3> _joints_coordinates;
+        vector<unsigned int> _jointIds;
     public:
         vector<int>  ids;
         Chain(int id, int parent_id, bool forward)
@@ -31,22 +32,34 @@ namespace cor3d {
             return _forward ? _joints_coordinates[_joints_coordinates.size() - 1] : _joints_coordinates[0];
         }
 
-        void add_joint(DCoordinate3 coordinates)
+        bool isForward() const
+        {
+            return _forward;
+        }
+
+        void add_joint(DCoordinate3 coordinates, unsigned int jointId)
         {
             _joints_coordinates.push_back(coordinates);
+            _jointIds.push_back(jointId);
         }
 
-        void add_joint_to_front(DCoordinate3 coordinates)
+        void add_joint_to_front(DCoordinate3 coordinates, unsigned int jointId)
         {
             _joints_coordinates.insert(_joints_coordinates.begin(), coordinates);
+            _jointIds.insert(_jointIds.begin(), jointId);
         }
 
-        const DCoordinate3 get_joint_coordinates(int index) const
+        DCoordinate3 get_joint_coordinates(int index) const
         {
             return _joints_coordinates[index];
         }
 
-        void set_joint_coodinates(const DCoordinate3& coordinates, int index)
+        unsigned int getJointId(int index) const
+        {
+            return _jointIds[index];
+        }
+
+        void set_joint_coordinates(const DCoordinate3& coordinates, int index)
         {
             _joints_coordinates[index] = coordinates;
         }
@@ -54,6 +67,11 @@ namespace cor3d {
         int get_chain_size() const
         {
             return _joints_coordinates.size();
+        }
+
+        int getChainParent() const
+        {
+            return _parent_id;
         }
 
         friend std::ostream& operator <<(std::ostream& lhs, const Chain& rhs)

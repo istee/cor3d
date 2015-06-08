@@ -19,3 +19,8 @@ void SceneGLWidget::specificPaintGL()
         }
     }
 }
+
+void SceneGLWidget::specificPick()
+{
+
+}

@@ -537,7 +537,10 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 void GLWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     event->accept();
-    this->drag_finished();
+    if (is_drag)
+    {
+        this->drag_finished();
+    }
 }
 
 void GLWidget::wheelEvent(QWheelEvent *event)

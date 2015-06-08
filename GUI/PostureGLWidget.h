@@ -6,6 +6,7 @@ class PostureGLWidget : public GLWidget {
     Q_OBJECT
 protected:
     virtual void specificPaintGL();
+    virtual void specificPick();
 
 public:
     // special and default constructor

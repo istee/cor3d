@@ -5,6 +5,7 @@
 class SceneGLWidget : public GLWidget {
 protected:
     virtual void specificPaintGL();
+    virtual void specificPick();
 
 public:
     // special and default constructor

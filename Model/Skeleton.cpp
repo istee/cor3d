@@ -139,127 +139,6 @@ namespace cor3d {
         return 0;
     }
 
-    int Skeleton::construct_chains_(int joint_id, int chain_index, int parent_chain_index)
-    {
-
-        Chain chain = Chain(chain_index, parent_chain_index, false);
-        chain.add_joint_to_front(get_joint(get_joint(joint_id)->get_parent())->get_coordinates());
-        while(get_joint(joint_id)->get_children().size() == 1)
-        {
-            chain.add_joint_to_front(get_joint(joint_id)->get_coordinates());
-            joint_id = get_joint(joint_id)->get_children()[0];
-        }
-        chain.add_joint_to_front(get_joint(joint_id)->get_coordinates());
-        _chains.push_back(chain);
-        vector<unsigned int> children = get_joint(joint_id)->get_children();
-        int chain_number = 1;
-        for (vector<unsigned int>::iterator it = children.begin(); it != children.end(); it++)
-        {
-            chain_number += construct_chains_(*it, chain_index + chain_number, chain_index);
-        }
-        return chain_number;
-    }
-
-    void Skeleton::construct_chains()
-    {
-        //update_joint_coordinates();
-        if (_selected_joint >= 0)
-        {
-            Chain chain = Chain(0, -1, true);
-            forward_chain(chain, _selected_joint);
-            _chains.push_back(chain);
-            vector<unsigned int> children = get_joint(_selected_joint)->get_children();
-            int chain_number = 1;
-            for (vector<unsigned int>::iterator it = children.begin(); it != children.end(); it++)
-            {
-                chain_number += construct_chains_(*it, chain_number, 0);
-            }
-        }
-    }
-
-    void Skeleton::forward_chain(Chain& chain, int joint_id)
-    {
-        int index = joint_id;
-        while(get_joint(index)->get_parent() != -1 && get_joint(get_joint(index)->get_parent())->get_children().size() == 1)
-        {
-            index = get_joint(index)->get_parent();
-        }
-        if (get_joint(index)->get_parent() != -1)
-        {
-            chain.add_joint(get_joint(get_joint(index)->get_parent())->get_coordinates());
-        }
-        while (index != joint_id)
-        {
-            chain.add_joint(get_joint(index)->get_coordinates());
-            index = get_joint(index)->get_children()[0];
-        }
-        chain.add_joint(get_joint(joint_id)->get_coordinates());
-    }
-
-    void Skeleton::MoveSelected(double x, double y, double z)
-    {
-        DCoordinate3 target(x, y, z);
-        FABRIK(_chains[0], target, 1e-10);
-//        for (unsigned int i = 1; i < _chains.size(); i++)
-//        {
-//            SimpleForwardFABRIK(&_chains[i], _chains[_chains[i]._parent_id].GetChainEnding(), 1e-10);
-//        }
-//        for (vector<Chain>::iterator it = _chains.begin(); it != _chains.end(); it++)
-//            for(int i = 0; i )
-    }
-    void Skeleton::FABRIK(Chain& chain, DCoordinate3 target, double tolerance)
-        {
-            double *lengths = new double[chain.get_chain_size()];
-            double total_length = 0.0;
-            for (int i = 0; i < chain.get_chain_size() - 1; i++)
-            {
-                lengths[i] = (chain.get_joint_coordinates(i) - chain.get_joint_coordinates(i + 1)).length();
-                total_length += lengths[i];
-            }
-            double distance = (target - chain.get_joint_coordinates(chain.get_chain_size() - 1)).length();
-            if (distance > total_length)
-            {
-                for (int i = 0; i < chain.get_chain_size() - 1; i++)
-                {
-                    double r = (target - chain.get_joint_coordinates(i)).length();
-                    double lambda = lengths[i] / r;
-
-                    // innen folytatni
-                    chain.set_joint_coodinates(DCoordinate3((1 - lambda) * chain.get_joint_coordinates(i) + lambda * target), i + 1);
-                }
-            }
-            else
-            {
-                DCoordinate3 b = DCoordinate3(chain.get_joint_coordinates(0));
-                double dif_A = (target - chain.get_joint_coordinates(chain.get_chain_size() - 1)).length();
-                unsigned int iteration_count = 0, max_iteration = 10;
-                while (dif_A > tolerance && iteration_count < max_iteration)
-                {
-                    iteration_count++;
-                    chain.set_joint_coodinates(DCoordinate3(target), chain.get_chain_size() - 1);
-                    for (int i = chain.get_chain_size() - 2; i >= 0; i--)
-                    {
-                        double r = (chain.get_joint_coordinates(i + 1) - chain.get_joint_coordinates(i)).length();
-                        double lambda = lengths[i] / r;
-                        chain.set_joint_coodinates((1 - lambda) * chain.get_joint_coordinates(i + 1) + lambda * chain.get_joint_coordinates(i), i);
-                    }
-                    chain.set_joint_coodinates(b, 0);
-                    for (int i = 0; i < chain.get_chain_size() - 1; i++)
-                    {
-                        double r = (chain.get_joint_coordinates(i + 1) - chain.get_joint_coordinates(i)).length();
-                        double lambda = lengths[i] / r;
-                        chain.set_joint_coodinates( DCoordinate3((1 - lambda) * chain.get_joint_coordinates(i) + lambda * chain.get_joint_coordinates(i + 1)), i + 1);
-                    }
-                    dif_A = (target - chain.get_joint_coordinates(chain.get_chain_size() - 1)).length();
-                }
-            }
-        }
-
-    void Skeleton::clear_chains()
-    {
-        _chains.clear();
-    }
-
     void Skeleton::deleteJoint(unsigned int jointId)
     {
         vector<unsigned int> deleteJoints = vector<unsigned int>();
@@ -507,67 +386,7 @@ namespace cor3d {
         }
     }
 
-    void Skeleton::render_chains(RenderingOptions* rendering_options, bool glLoad) const
-    {
-        const TriangulatedMesh3* link_model = rendering_options->get_link_model();
-        for(vector<Chain>::const_iterator it = _chains.begin(); it != _chains.end(); it++)
-        {
-            for (int i = 1; i < (*it).get_chain_size(); i++)
-            {
-                    DCoordinate3 start =  (*it).get_joint_coordinates(i - 1);
-                    DCoordinate3 end = (*it).get_joint_coordinates(i);
-                    DCoordinate3 k_prime = end - start;
 
-                    float length = k_prime.length();
-
-                    k_prime /= length;
-
-                    DCoordinate3 j_prime;
-
-                    while (j_prime.length() < EPS)
-                    {
-                        j_prime =  k_prime;
-                        j_prime ^= DCoordinate3((double)rand() / (double)RAND_MAX , (double)rand() / (double)RAND_MAX, (double)rand() / (double)RAND_MAX);
-                    }
-
-                    DCoordinate3 i_prime = j_prime;
-                    i_prime ^= k_prime;
-
-                    float matrix[16];
-
-                    k_prime.normalize();
-                    j_prime.normalize();
-                    i_prime.normalize();
-
-                    matrix[0] = i_prime[0];
-                    matrix[1] = i_prime[1];
-                    matrix[2] = i_prime[2];
-                    matrix[3] = 0.0;
-
-                    matrix[4] = j_prime[0];
-                    matrix[5] = j_prime[1];
-                    matrix[6] = j_prime[2];
-                    matrix[7] = 0.0;
-
-                    matrix[ 8] = k_prime[0];
-                    matrix[ 9] = k_prime[1];
-                    matrix[10] = k_prime[2];
-                    matrix[11] = 0.0;
-
-                    matrix[12] = start[0];
-                    matrix[13] = start[1];
-                    matrix[14] = start[2];
-                    matrix[15] = 1.0;
-
-                    glPushMatrix();
-                        glMultMatrixf(matrix);
-                        glScalef(0.1, 0.1, length);
-                        link_model->Render();
-                    glPopMatrix();
-                }
-        }
-
-    }
 
     void Skeleton::render_axis(RenderingOptions* rendering_options, bool glLoad) const
     {
@@ -880,10 +699,7 @@ namespace cor3d {
         //emit model_joint_data_changed(_joints[_selected_joint]->get_name());
     }
 
-    void Skeleton::handle_view_joint_fabrik_moved(const DCoordinate3& target)
-    {
-        MoveSelected(target.x(), target.y(), target.z());
-    }
+
 
     void Skeleton::handleViewPostureAdded(const string& name)
     {
@@ -907,7 +723,7 @@ namespace cor3d {
 
     void Skeleton::addPosture(const string& name)
     {
-        Posture* posture = new Posture(_postures.size(), name);
+        Posture* posture = new Posture(_postures.size(), name, _joints);
         _postures.push_back(posture);
 
         emit modelPostureAdded(this, posture);
@@ -956,10 +772,10 @@ namespace cor3d {
 
     void Skeleton::handleViewPostureSelected(const string& name)
     {
-        cout << "posture select a skeletonban " << name << endl;
         Posture* posture = getPostureByName(name);
         if (posture)
         {
+            cout << "posture select a skeletonban " << name << endl;
             _selectedPosture = posture->get_id();
             emit modelPostureSelected(this, posture);
         }

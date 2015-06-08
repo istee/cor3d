@@ -32,8 +32,8 @@ void PostureEditorTab::handleModelSkeletonSelected(Skeleton* selectedSkeleton, S
 {
     if (previousSkeleton)
     {
-        //disconnect(glwidget, SIGNAL(view_joint_selection_changed(int)), previous, SLOT(handle_view_joint_selection_changed(int)));
-        //disconnect(glwidget, SIGNAL(view_joint_absolute_position_changed(DCoordinate3)), previous, SLOT(handle_view_joint_fabrik_moved(DCoordinate3)));
+        disconnect(glwidget, SIGNAL(view_joint_selection_changed(int)), previousSkeleton, SLOT(handle_view_joint_selection_changed(int)));
+        disconnect(glwidget, SIGNAL(view_joint_absolute_position_changed(DCoordinate3)), previousSkeleton, SLOT(handle_view_joint_fabrik_moved(DCoordinate3)));
 
         disconnect(managePostures, SIGNAL(viewPostureAdded(string)), previousSkeleton, SLOT(handleViewPostureAdded(string)));
         disconnect(managePostures, SIGNAL(viewPostureDeleted(string)), previousSkeleton, SLOT(handleViewPostureDeleted(string)));
@@ -41,7 +41,7 @@ void PostureEditorTab::handleModelSkeletonSelected(Skeleton* selectedSkeleton, S
         disconnect(managePostures, SIGNAL(viewPostureSelected(string)), previousSkeleton, SLOT(handleViewPostureSelected(string)));
 
         disconnect(previousSkeleton, SIGNAL(modelPostureAdded(Skeleton*, Posture*)), this, SLOT(handleModelPostureAdded(Skeleton*, Posture*)));
-        disconnect(previousSkeleton, SIGNAL(modelPostureSelected(Posture*)), this, SLOT(handleModelPostureSelected(Posture*)));
+        disconnect(previousSkeleton, SIGNAL(modelPostureSelected(Skeleton*, Posture*)), this, SLOT(handleModelPostureSelected(Skeleton*, Posture*)));
     }
 
     if (selectedSkeleton)
@@ -49,8 +49,8 @@ void PostureEditorTab::handleModelSkeletonSelected(Skeleton* selectedSkeleton, S
         managePostures->populatePostureList(selectedSkeleton);
         editPosture->populatePostureJoints(selectedSkeleton, selectedSkeleton->selectedPosture());
 
-        //connect(glwidget, SIGNAL(view_joint_selection_changed(int)), selected, SLOT(handle_view_joint_selection_changed(int)));
-        //connect(glwidget, SIGNAL(view_joint_absolute_position_changed(DCoordinate3)), selected, SLOT(handle_view_joint_fabrik_moved(DCoordinate3)));
+        connect(glwidget, SIGNAL(view_joint_selection_changed(int)), selectedSkeleton, SLOT(handle_view_joint_selection_changed(int)));
+        connect(glwidget, SIGNAL(view_joint_absolute_position_changed(DCoordinate3)), selectedSkeleton, SLOT(handle_view_joint_fabrik_moved(DCoordinate3)));
 
         connect(managePostures, SIGNAL(viewPostureAdded(string)), selectedSkeleton, SLOT(handleViewPostureAdded(string)));
         connect(managePostures, SIGNAL(viewPostureDeleted(string)), selectedSkeleton, SLOT(handleViewPostureDeleted(string)));
@@ -90,4 +90,5 @@ void PostureEditorTab::handleModelPostureSelected(Skeleton* selectedSkeleton, Po
     }
     cout << "posture selected " << selectedPosture->get_name() << endl;
     editPosture->populatePostureJoints(selectedSkeleton, selectedPosture);
+    updateGLWidget();
 }

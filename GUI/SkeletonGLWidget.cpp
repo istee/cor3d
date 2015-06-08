@@ -22,3 +22,7 @@ void SkeletonGLWidget::specificPaintGL()
         }
     }
 }
+void SkeletonGLWidget::specificPick()
+{
+
+}

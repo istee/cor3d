@@ -33,7 +33,6 @@ namespace cor3d
 
         vector<Posture*>         _postures;
         vector<DCoordinate3>    _current_posture;
-        vector<Chain>           _chains;
         vector<Joint*>          _joints;
         bool                    _chains_moved;
         int                     _selected_joint;
@@ -51,14 +50,7 @@ namespace cor3d
         //int construct_chains_(int joint_id, int chain_index, int parent_chain_index);
         //void construct_chains();
 
-       void forward_chain(Chain& chain, int joint_id);
-        void construct_chains();
-        int construct_chains_(int joint_id, int chain_index, int parent_chain_index);
-
-        void clear_chains();
-
         void addJoint(const string& parentName, const string& jointName);
-
 
         void addPosture(const string& name);
         void deletePosture(const string& name);
@@ -108,7 +100,6 @@ namespace cor3d
         void render_joints(RenderingOptions* rendering_options, bool glLoad = false) const;
         void render_links(RenderingOptions* rendering_options, bool glLoad = false) const;
         void render_axis(RenderingOptions* rendering_options, bool glLoad = false) const;
-        void render_chains(RenderingOptions* rendering_options, bool glLoad = false) const;
 
         string nextAutoPostureName() const;
         Posture* getPostureByName(const string& name) const;
@@ -119,8 +110,6 @@ namespace cor3d
     private:
         //void update_joint_coordinates_(unsigned int joint_id, const DCoordinate3& parent_coordinates);
         bool validate_joint_index_(int joint_id) const;
-        void MoveSelected(double x, double y, double z);
-        void FABRIK(Chain& chain, DCoordinate3 target, double tolerance);
         void deleteJoint(unsigned int jointId);
         void prepareDeleteJoints(unsigned int jointId, vector<unsigned int>& result);
         void handle_view_joint_coordinates_changed_(unsigned int jointId);
@@ -147,7 +136,6 @@ namespace cor3d
         void handle_view_joint_axis_changed(const DCoordinate3&);
         void handle_view_joint_configuration_changed(const DCoordinate3&);
         void handle_view_joint_absolute_position_changed(const DCoordinate3&);
-        void handle_view_joint_fabrik_moved(const DCoordinate3&);
 
         void handleViewPostureAdded(const string&);
         void handleViewPostureDeleted(const string&);
@@ -232,9 +220,10 @@ namespace cor3d
 
     inline Posture* Skeleton::selectedPosture() const
     {
+        cout << "selected posture id " << _selectedPosture << " " << _postures.size() << endl;
         if (_selectedPosture >=0 && _selectedPosture < _postures.size())
         {
-            _postures[_selectedPosture];
+            return _postures[_selectedPosture];
         }
 
         return 0;

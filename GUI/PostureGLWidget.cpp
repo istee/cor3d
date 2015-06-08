@@ -9,17 +9,16 @@ PostureGLWidget::PostureGLWidget(QWidget *parent, const QGLFormat &format): GLWi
 
 void PostureGLWidget::specificPaintGL()
 {
+    cout << "paint " << endl;
     if (_skeleton)
     {
+        cout << "paint skeleton" << endl;
         if (_skeleton->selectedPosture())
         {
-            cout << "draw posture " << _skeleton->selectedPosture()->get_name() << endl;
+            cout << "paint posture " << _skeleton->selectedPosture()->get_name() << endl;
 
             RenderingOptions* rendering_options = cor3dApp->cor3d->get_rendering_options();
-            _skeleton->render_joints(rendering_options);
-            _skeleton->render_links(rendering_options);
-            MatFBRuby.Apply();
-            _skeleton->render_chains(rendering_options);
+            _skeleton->selectedPosture()->renderPosture(rendering_options, true);
             if (_skeleton->is_joint_selected())
             {
                 unsigned int joint_id = _skeleton->get_selected_joint_id();
@@ -30,19 +29,26 @@ void PostureGLWidget::specificPaintGL()
     }
 }
 
+void PostureGLWidget::specificPick()
+{
+
+}
+
 void PostureGLWidget::drag(double x, double y, double z)
 {
-    emit view_joint_fabrik_moved(DCoordinate3(x, y, z));
+    cout << "drag van " << x << " " << y << " " << z << endl;
+    _skeleton->selectedPosture()->MoveSelected(x, y, z);
 }
 
 void PostureGLWidget::drag_starting()
 {
-    cor3dApp->cor3d->get_skeleton()->construct_chains();
+    _skeleton->selectedPosture()->constructChains(_skeleton->get_selected_joint_id());
     GLWidget::drag_starting();
 }
 
 void PostureGLWidget::drag_finished()
 {
-    cor3dApp->cor3d->get_skeleton()->clear_chains();
+    _skeleton->selectedPosture()->FinalizeMove();
+    _skeleton->selectedPosture()->clearChains();
     GLWidget::drag_finished();
 }

@@ -70,6 +70,7 @@ protected:
     Skeleton*               _skeleton;
 
     virtual void specificPaintGL() = 0;
+    virtual void specificPick() = 0;
 
     void render_move_arrows(RenderingOptions* rendering_options, const DCoordinate3 *position, int id = 0, bool glLoad = false);
     virtual void drag_starting() {  }
