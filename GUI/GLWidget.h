@@ -117,7 +117,7 @@ signals:
     void glwidgetRotationChanged(const DCoordinate3& rotation);
     void glwidgetZoomChanged(double zoom);
     void selected_joint(double x, double y, double z);
-    void view_joint_selection_changed(int);
+    void view_joint_selectionChanged(int);
     void view_joint_absolute_position_changed(DCoordinate3);
 
 public slots:

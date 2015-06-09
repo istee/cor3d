@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>NameLineEdit</class>
- <widget class="QWidget" name="NameLineEdit">
+ <class>BaseEntityNameEdit</class>
+ <widget class="QWidget" name="BaseEntityNameEdit">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -32,6 +32,17 @@
     <number>3</number>
    </property>
    <item>
+    <widget class="ToolButtonExtension" name="toolButton">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../Resources.qrc">
+       <normaloff>:/icons/Resources/addIcon.png</normaloff>:/icons/Resources/addIcon.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QLabel" name="label">
      <property name="text">
       <string>TextLabel</string>
@@ -43,6 +54,15 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <customwidgets>
+  <customwidget>
+   <class>ToolButtonExtension</class>
+   <extends>QToolButton</extends>
+   <header>GUI/WidgetExtensions/ToolButtonExtension.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../../Resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

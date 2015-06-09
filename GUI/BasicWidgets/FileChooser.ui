@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>FileDisplayAndChooser</class>
- <widget class="QWidget" name="FileDisplayAndChooser">
+ <class>FileChooser</class>
+ <widget class="QWidget" name="FileChooser">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -38,14 +38,14 @@
     <number>3</number>
    </property>
    <item>
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="entityPropertyLabel">
      <property name="text">
       <string>Name</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="fileLabel">
+    <widget class="QLabel" name="fileNameLabel">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -58,9 +58,9 @@
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="browseFilePushButton">
      <property name="text">
-      <string>Change</string>
+      <string>Browse</string>
      </property>
     </widget>
    </item>

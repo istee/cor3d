@@ -23,11 +23,11 @@ signals:
     void view_skeleton_render_toggled(bool on);
     void view_skeleton_material_changed(int material_id);
     void view_joint_render_toggled(bool on);
-    void view_joint_model_file_changed(const string& file);
+    void view_joint_model_fileChanged(const string& file);
     void view_joint_material_changed(int material_id);
     void view_selected_joint_material_changed(int material_id);
     void view_link_render_toggled(bool on);
-    void view_link_model_file_changed(const string& file);
+    void view_link_model_fileChanged(const string& file);
     void view_link_material_changed(int material_id);
 
 private slots:

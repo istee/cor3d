@@ -1,5 +1,5 @@
 #include "GUI/WidgetExtensions/TreeWidgetExtension.h"
-#include "GUI/BasicWidgets/EditableDeletableListItem.h"
+#include "GUI/BasicWidgets/BaseEntityListItem.h"
 
 TreeWidgetExtension::TreeWidgetExtension(QWidget* parent = 0) : QTreeWidget(parent)
 {
@@ -80,21 +80,21 @@ void TreeWidgetExtension::renameTreeWidgetItem(const string& oldName, const stri
 {
     QTreeWidgetItem* item = getTreeWidgetItemByData(oldName);
     item->setData(0, Qt::UserRole, QVariant(QString::fromStdString(newName)));
-    EditableDeletableListItem* itemWidget = (EditableDeletableListItem*) this->itemWidget(item, 0);
-    itemWidget->setLabelText(newName);
+    BaseEntityListItem* itemWidget = (BaseEntityListItem*) this->itemWidget(item, 0);
+    itemWidget->setBaseEntityNameLabelText(newName);
 }
 
 void TreeWidgetExtension::renameTreeWidgetItem(QTreeWidgetItem* item, const string& newName)
 {
     item->setData(0, Qt::UserRole, QVariant(QString::fromStdString(newName)));
-    EditableDeletableListItem* itemWidget = (EditableDeletableListItem*) this->itemWidget(item, 0);
-    itemWidget->setLabelText(newName);
+    BaseEntityListItem* itemWidget = (BaseEntityListItem*) this->itemWidget(item, 0);
+    itemWidget->setBaseEntityNameLabelText(newName);
 }
 
 void TreeWidgetExtension::updateEditWidget(BaseEntity* baseEntity)
 {
     QTreeWidgetItem* item = getTreeWidgetItemByData(baseEntity->get_name());
-    EditableDeletableListItem* itemWidget = (EditableDeletableListItem*) this->itemWidget(item, 0);
+    BaseEntityListItem* itemWidget = (BaseEntityListItem*) this->itemWidget(item, 0);
     itemWidget->editWidget()->updateContent(baseEntity);
 }
 
@@ -141,7 +141,7 @@ void TreeWidgetExtension::selectTreeWidgetItem(QTreeWidgetItem* parentItem, cons
 void TreeWidgetExtension::toggleEditWidget(const string& dataValue)
 {
     QTreeWidgetItem* item = getTreeWidgetItemByData(dataValue);
-    EditableDeletableListItem* listItem = (EditableDeletableListItem*) this->itemWidget(item, 0);
+    BaseEntityListItem* listItem = (BaseEntityListItem*) this->itemWidget(item, 0);
     listItem->showEditWidget(!listItem->isEditWidgetVisible());
     item->setSizeHint(0, listItem->sizeHint());
     bool isExpanded = item->isExpanded();

@@ -36,11 +36,11 @@ signals:
     void viewJointSelected(string name);
 
 
-    void view_joint_coordinates_changed(const string& name, const DCoordinate3& coordinates);
+    void view_joint_CoordinatesChanged(const string& name, const DCoordinate3& coordinates);
     void view_joint_scale_changed(const string& name, const DCoordinate3& scale);
 
 private slots:
     void on_treeViewJoints_itemSelectionChanged();
-    void on_toolButtonAdd_clicked();
+    void handleViewJointAdded(const string& name);
     void handleViewJointEdited(const string& name);
 };

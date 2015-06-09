@@ -32,7 +32,7 @@ void PostureEditorTab::handleModelSkeletonSelected(Skeleton* selectedSkeleton, S
 {
     if (previousSkeleton)
     {
-        disconnect(glwidget, SIGNAL(view_joint_selection_changed(int)), previousSkeleton, SLOT(handle_view_joint_selection_changed(int)));
+        disconnect(glwidget, SIGNAL(view_joint_selectionChanged(int)), previousSkeleton, SLOT(handle_view_joint_selectionChanged(int)));
         disconnect(glwidget, SIGNAL(view_joint_absolute_position_changed(DCoordinate3)), previousSkeleton, SLOT(handle_view_joint_fabrik_moved(DCoordinate3)));
 
         disconnect(managePostures, SIGNAL(viewPostureAdded(string)), previousSkeleton, SLOT(handleViewPostureAdded(string)));
@@ -49,7 +49,7 @@ void PostureEditorTab::handleModelSkeletonSelected(Skeleton* selectedSkeleton, S
         managePostures->populatePostureList(selectedSkeleton);
         editPosture->populatePostureJoints(selectedSkeleton, selectedSkeleton->selectedPosture());
 
-        connect(glwidget, SIGNAL(view_joint_selection_changed(int)), selectedSkeleton, SLOT(handle_view_joint_selection_changed(int)));
+        connect(glwidget, SIGNAL(view_joint_selectionChanged(int)), selectedSkeleton, SLOT(handle_view_joint_selectionChanged(int)));
         connect(glwidget, SIGNAL(view_joint_absolute_position_changed(DCoordinate3)), selectedSkeleton, SLOT(handle_view_joint_fabrik_moved(DCoordinate3)));
 
         connect(managePostures, SIGNAL(viewPostureAdded(string)), selectedSkeleton, SLOT(handleViewPostureAdded(string)));
@@ -58,7 +58,7 @@ void PostureEditorTab::handleModelSkeletonSelected(Skeleton* selectedSkeleton, S
         connect(managePostures, SIGNAL(viewPostureSelected(string)), selectedSkeleton, SLOT(handleViewPostureSelected(string)));
 
         connect(selectedSkeleton, SIGNAL(modelPostureAdded(Skeleton*, Posture*)), this, SLOT(handleModelPostureAdded(Skeleton*, Posture*)));
-        connect(selectedSkeleton, SIGNAL(modelPostureDeleted(string)), this, SLOT(handleModelPostureDeleted(string)));
+        connect(selectedSkeleton, SIGNAL(modelPostureDeleted(Skeleton*, string)), this, SLOT(handleModelPostureDeleted(Skeleton*, string)));
         connect(selectedSkeleton, SIGNAL(modelPostureRenamed(string, string)), this, SLOT(handleModelPostureRenamed(string, string)));
         connect(selectedSkeleton, SIGNAL(modelPostureSelected(Skeleton*, Posture*)), this, SLOT(handleModelPostureSelected(Skeleton*, Posture*)));
     }
@@ -72,9 +72,9 @@ void PostureEditorTab::handleModelPostureAdded(Skeleton* skeleton, Posture* post
     managePostures->addPosture(skeleton, posture);
 }
 
-void PostureEditorTab::handleModelPostureDeleted(const string& postureName)
+void PostureEditorTab::handleModelPostureDeleted(Skeleton* skeleton, const string& postureName)
 {
-    managePostures->deletePosture(postureName);
+    managePostures->deletePosture(skeleton, postureName);
 }
 
 void PostureEditorTab::handleModelPostureRenamed(const string& oldPostureName, const string& newPostureName)

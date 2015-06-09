@@ -20,14 +20,14 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="baseEntityNameLabel">
      <property name="text">
       <string>label</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QComboBox" name="comboBox">
+    <widget class="QComboBox" name="baseEntityComboBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>

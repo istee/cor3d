@@ -37,7 +37,7 @@ Export::Export(QWidget *parent) : QWidget(parent)
     }
     treeView->setModel(model);
 
-    connect(exportFile, SIGNAL(file_changed(string)), this, SLOT(on_exportFile_changed(string)));
+    connect(exportFile, SIGNAL(fileChanged(string)), this, SLOT(on_exportFile_changed(string)));
 }
 
 void Export::AddItemToModel(QStandardItem *item)
@@ -51,7 +51,7 @@ void Export::on_exportButton_clicked()
 {
     Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
     ofstream file;
-    file.open(exportFile->fileLabel->text().toAscii(), ios::out);
+    file.open(exportFile->value().data(), ios::out);
     if (file.is_open())
     {
         int skeletonCount = treeView->model()->rowCount();

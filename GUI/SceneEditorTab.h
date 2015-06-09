@@ -14,13 +14,13 @@ public:
     //inherited slots
     void skeleton_list_changed();
     void skeleton_selected();
-    void selected_skeleton_name_changed();
+    void selected_skeleton_nameChanged();
     void selected_skeleton_data_changed();
     void selected_skeleton_joint_list_changed();
     void selected_skeleton_joint_selected_changed();
-    void selected_skeleton_joint_name_changed();
+    void selected_skeleton_joint_nameChanged();
     void selected_skeleton_joint_data_changed();
-    void selected_skeleton_joint_selection_changed();
+    void selected_skeleton_joint_selectionChanged();
     void transformations_changed();
     void rendering_options_changed();
 

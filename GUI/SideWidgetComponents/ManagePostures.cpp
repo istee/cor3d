@@ -3,13 +3,16 @@
 #include "ManagePostures.h"
 #include "ui_ManagePostures.h"
 
-#include "GUI/BasicWidgets/EditableDeletableListItem.h"
+#include "GUI/BasicWidgets/BaseEntityListItem.h"
 
 #include "GUI/SideWidgetComponents/EditJoint.h"
 
 ManagePostures::ManagePostures(QWidget *parent) : BaseSideWidget(parent), ui(new Ui::ManagePostures)
 {
     ui->setupUi(this);
+    ui->addName->setLabel("Name");
+
+    connect(ui->addName, SIGNAL(baseEntityAdded(string)), this, SLOT(handleViewPostureAdded(string)));
 }
 
 void ManagePostures::populatePostureList(Skeleton* skeleton)
@@ -32,14 +35,14 @@ ManagePostures::~ManagePostures()
     delete ui;
 }
 
-void ManagePostures::on_toolButtonAdd_clicked()
+void ManagePostures::handleViewPostureAdded(const string& name)
 {
-    emit viewPostureAdded(ui->addName->value());
+    emit viewPostureAdded(name);
 }
 
 void ManagePostures::addPosture(Skeleton* skeleton, Posture* posture)
 {
-    EditableDeletableListItem* listItem = new EditableDeletableListItem(posture->get_name(), 0, ui->postureList);
+    BaseEntityListItem* listItem = new BaseEntityListItem(posture->get_name(), 0, ui->postureList);
     connect(listItem, SIGNAL(viewListItemDeleted(string)), skeleton, SLOT(handleViewPostureDeleted(string)));
     connect(listItem, SIGNAL(viewListItemRenamed(string,string)), skeleton, SLOT(handleViewPostureRenamed(string,string)));
     listItem->showEdit(false);
@@ -47,9 +50,10 @@ void ManagePostures::addPosture(Skeleton* skeleton, Posture* posture)
     ui->addName->setValue(skeleton->nextAutoPostureName());
 }
 
-void ManagePostures::deletePosture(const string& postureName)
+void ManagePostures::deletePosture(Skeleton* skeleton, const string& postureName)
 {
     ui->postureList->deleteListWidgetItemByData(postureName);
+    ui->addName->setValue(skeleton->nextAutoPostureName());
 }
 
 void ManagePostures::renamePosture(const string& oldPostureName, const string& newPostureName)

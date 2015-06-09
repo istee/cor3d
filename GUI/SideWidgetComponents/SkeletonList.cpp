@@ -12,7 +12,7 @@
 
 #include "Model/Cor3d.h"
 #include "Model/BaseEntity.h"
-#include "GUI/BasicWidgets/EditableDeletableListItem.h"
+#include "GUI/BasicWidgets/BaseEntityListItem.h"
 #include "GUI/SideWidgetComponents/EditSkeleton.h"
 
 using namespace std;
@@ -27,6 +27,7 @@ SkeletonList::SkeletonList(QWidget *parent): BaseSideWidget(parent)
     _skeletonDisplayProperties = QHash<string,BaseEntityDisplayProperties>();
 
     connect(groupBox, SIGNAL(groupbox_toggled(bool)), this, SLOT(handle_groupbox_toggled(bool)));
+    connect(addName, SIGNAL(baseEntityAdded(string)), this, SLOT(handleViewSkeletonAdded(string)));
 
     addName->setValue(_cor3d->next_name());
 }
@@ -39,7 +40,7 @@ void SkeletonList::addSkeleton(Skeleton* skeleton)
     connect(listItemWidget, SIGNAL(viewSkeletonModelScaleChanged(DCoordinate3)), skeleton, SLOT(handleViewSkeletonModelScaleChanged(DCoordinate3)));
     listItemWidget->updateContent(skeleton);
 
-    EditableDeletableListItem* listItem = new EditableDeletableListItem(skeleton->get_name(), listItemWidget, skeleton_listview);
+    BaseEntityListItem* listItem = new BaseEntityListItem(skeleton->get_name(), listItemWidget, skeleton_listview);
     connect(listItem, SIGNAL(viewListItemDeleted(string)), this, SIGNAL(viewSkeletonDeleted(const string&)));
     connect(listItem, SIGNAL(viewListItemRenamed(string,string)), this, SIGNAL(viewSkeletonRenamed(string,string)));
     connect(listItem, SIGNAL(viewListItemEdited(string)), this, SLOT(handleViewSkeletonEdited(string)));
@@ -75,9 +76,9 @@ void SkeletonList::handleViewSkeletonEdited(const string& name)
     skeleton_listview->toggleEditWidget(name);
 }
 
-void SkeletonList::on_toolButtonAdd_clicked()
+void SkeletonList::handleViewSkeletonAdded(const string& name)
 {
-    emit viewSkeletonAdded(addName->value());
+    emit viewSkeletonAdded(name);
 }
 
 void SkeletonList::on_skeleton_listview_currentItemChanged(QListWidgetItem* current, QListWidgetItem* previous)

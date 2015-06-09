@@ -53,7 +53,7 @@
        <number>3</number>
       </property>
       <item>
-       <widget class="QWidget" name="containerWidgetX" native="true">
+       <widget class="QWidget" name="xContainerWidget" native="true">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <property name="spacing">
           <number>6</number>
@@ -62,7 +62,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QLabel" name="x_label">
+          <widget class="QLabel" name="xLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
              <horstretch>0</horstretch>
@@ -75,13 +75,13 @@
           </widget>
          </item>
          <item>
-          <widget class="SpinboxExtension" name="x_doubleSpinBox"/>
+          <widget class="SpinboxExtension" name="xDoubleSpinBox"/>
          </item>
         </layout>
        </widget>
       </item>
       <item>
-       <spacer name="horizontalSpacer">
+       <spacer name="horizontalSpacerXY">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -94,7 +94,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QWidget" name="containerWidgetY" native="true">
+       <widget class="QWidget" name="yContainerWidget" native="true">
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <property name="spacing">
           <number>6</number>
@@ -103,7 +103,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QLabel" name="y_label">
+          <widget class="QLabel" name="yLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
              <horstretch>0</horstretch>
@@ -116,13 +116,13 @@
           </widget>
          </item>
          <item>
-          <widget class="SpinboxExtension" name="y_doubleSpinBox"/>
+          <widget class="SpinboxExtension" name="yDoubleSpinBox"/>
          </item>
         </layout>
        </widget>
       </item>
       <item>
-       <spacer name="horizontalSpacer_2">
+       <spacer name="horizontalSpacerYZ">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -135,7 +135,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QWidget" name="containerWidgetZ" native="true">
+       <widget class="QWidget" name="zContainerWidget" native="true">
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <property name="spacing">
           <number>6</number>
@@ -144,7 +144,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QLabel" name="z_label">
+          <widget class="QLabel" name="zLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
              <horstretch>0</horstretch>
@@ -157,7 +157,7 @@
           </widget>
          </item>
          <item>
-          <widget class="SpinboxExtension" name="z_doubleSpinBox"/>
+          <widget class="SpinboxExtension" name="zDoubleSpinBox"/>
          </item>
         </layout>
        </widget>

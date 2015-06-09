@@ -55,6 +55,6 @@ void SkeletonGLWidget::specificPick(unsigned int closestSelected)
     }
     else
     {
-        emit view_joint_selection_changed(closestSelected - 6);
+        emit view_joint_selectionChanged(closestSelected - 6);
     }
 }

@@ -53,7 +53,7 @@ void SceneEditorTab::skeleton_selected()
 //    glwidget->updateGL();
 }
 
-void SceneEditorTab::selected_skeleton_name_changed()
+void SceneEditorTab::selected_skeleton_nameChanged()
 {
 //    skeleton_list->update_content();
 //    add_new_skeleton->update_content();
@@ -73,13 +73,13 @@ void SceneEditorTab::selected_skeleton_joint_list_changed()
 //    glwidget->updateGL();
 }
 
-void SceneEditorTab::selected_skeleton_joint_selection_changed()
+void SceneEditorTab::selected_skeleton_joint_selectionChanged()
 {
 //    edit_joint->update_content();
 //    glwidget->updateGL();
 }
 
-void SceneEditorTab::selected_skeleton_joint_name_changed()
+void SceneEditorTab::selected_skeleton_joint_nameChanged()
 {
 
 }
@@ -149,7 +149,7 @@ void SceneEditorTab::rendering_options_changed()
 //    cor3dApp->cor3d->get_skeleton(skeleton_id)->select_joint(joint_id);
 //}
 
-//void SkeletonEditorTab::selected_skeleton_joint_name_changed() { }
+//void SkeletonEditorTab::selected_skeleton_joint_nameChanged() { }
 
 //void SkeletonEditorTab::joint_parent_edited(int skeleton_id, int joint_id, int parent_id)
 //{

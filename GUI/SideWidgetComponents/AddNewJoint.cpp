@@ -5,7 +5,7 @@
 #include "Cor3dApplication.h"
 #include "Model/Cor3d.h"
 #include "StdExtension.h"
-#include "GUI/BasicWidgets/EditableDeletableListItem.h"
+#include "GUI/BasicWidgets/BaseEntityListItem.h"
 #include "GUI/SideWidgetComponents/EditJoint.h"
 
 using namespace std;
@@ -18,12 +18,13 @@ AddNewJoint::AddNewJoint(QWidget *parent): BaseSideWidget(parent)
     _jointsDisplayProperties = QHash<string,BaseEntityDisplayProperties>();
 
     connect(groupBox, SIGNAL(groupbox_toggled(bool)), this, SLOT(handle_groupbox_toggled(bool)));
+    connect(addName, SIGNAL(baseEntityAdded(string)), this, SLOT(handleViewJointAdded(string)));
 }
 
 void AddNewJoint::addJoint(Skeleton* skeleton, Joint* joint, const string& parentName)
 {
     EditJoint* editJoint = new EditJoint(skeleton, joint, treeViewJoints);
-    EditableDeletableListItem* listItem = new EditableDeletableListItem(joint->get_name(), editJoint, treeViewJoints);
+    BaseEntityListItem* listItem = new BaseEntityListItem(joint->get_name(), editJoint, treeViewJoints);
     connect(listItem, SIGNAL(viewListItemDeleted(string)), skeleton, SLOT(handleViewJointDeleted(string)));
     connect(listItem, SIGNAL(viewListItemRenamed(string,string)), skeleton, SLOT(handleViewJointRenamed(string, string)));
     connect(listItem, SIGNAL(viewListItemEdited(string)), this, SLOT(handleViewJointEdited(string)));
@@ -80,7 +81,7 @@ void AddNewJoint::populateJoints(Skeleton* skeleton, Skeleton* previous)
     {
         Joint* root = skeleton->get_joint(0);
         EditJoint* editJoint = new EditJoint(skeleton, root, treeViewJoints);
-        EditableDeletableListItem* listItem = new EditableDeletableListItem(root->get_name(), editJoint, treeViewJoints);
+        BaseEntityListItem* listItem = new BaseEntityListItem(root->get_name(), editJoint, treeViewJoints);
 
         connect(this, SIGNAL(viewJointAdded(string, string)), skeleton, SLOT(handleViewJointAdded(string,string)));
         connect(this, SIGNAL(viewJointSelected(string)), skeleton, SLOT(handleViewJointSelected(string)));
@@ -103,12 +104,12 @@ void AddNewJoint::selectJoint(const string& name)
     treeViewJoints->selectTreeWidgetItem(name);
 }
 
-void AddNewJoint::on_toolButtonAdd_clicked()
+void AddNewJoint::handleViewJointAdded(const string& name)
 {
     QTreeWidgetItem* item = treeViewJoints->currentItem();
     if (item)
     {
-        emit viewJointAdded(addName->value(), item->data(0, Qt::UserRole).toString().toStdString());
+        emit viewJointAdded(name, item->data(0, Qt::UserRole).toString().toStdString());
     }
 }
 

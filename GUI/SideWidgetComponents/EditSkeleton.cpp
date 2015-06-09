@@ -20,9 +20,9 @@ EditSkeleton::EditSkeleton(QWidget *parent): BaseEditWidget(parent)
     model_scale->setSettings(DCoordinate3(0.1, 0.1, 10));
     model_offset->setSettings(DCoordinate3(-100, 0.1, 100));
 
-    connect(model_file, SIGNAL(file_changed(string)), this, SLOT(handleSkeletonModelChanged(string)));
-    connect(model_scale, SIGNAL(coordinates_changed(DCoordinate3)), this, SLOT(handleSkeletonModelScaleChanged(DCoordinate3)));
-    connect(model_offset, SIGNAL(coordinates_changed(DCoordinate3)), this, SLOT(handleSkeletonModelOffsetChanged(DCoordinate3)));
+    connect(model_file, SIGNAL(fileChanged(string)), this, SLOT(handleSkeletonModelChanged(string)));
+    connect(model_scale, SIGNAL(CoordinatesChanged(DCoordinate3)), this, SLOT(handleSkeletonModelScaleChanged(DCoordinate3)));
+    connect(model_offset, SIGNAL(CoordinatesChanged(DCoordinate3)), this, SLOT(handleSkeletonModelOffsetChanged(DCoordinate3)));
 }
 
 void EditSkeleton::update_content()

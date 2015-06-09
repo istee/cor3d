@@ -282,7 +282,7 @@ void GLWidget::pick(double x, double y)
         else
         {
             is_drag = false;
-            emit view_joint_selection_changed(-1);
+            emit view_joint_selectionChanged(-1);
         }
 
         delete pick_buffer, pick_buffer = 0;

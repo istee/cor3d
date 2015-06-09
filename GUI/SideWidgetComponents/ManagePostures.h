@@ -21,7 +21,7 @@ public:
     explicit ManagePostures(QWidget *parent = 0);
     void populatePostureList(Skeleton* skeleton);
     void addPosture(Skeleton* skeleton, Posture* posture);
-    void deletePosture(const string& postureName);
+    void deletePosture(Skeleton* skeleton, const string& postureName);
     void renamePosture(const string& oldPostureName, const string& newPostureName);
     void selectPosture(Skeleton* skeleton, Posture* posture);
     ~ManagePostures();
@@ -35,6 +35,6 @@ signals:
 
 private slots:
     void on_postureList_currentItemChanged(QListWidgetItem* current, QListWidgetItem* previous);
-    void on_toolButtonAdd_clicked();
+    void handleViewPostureAdded(const string& name);
 };
 

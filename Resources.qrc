@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>Resources/addIcon.png</file>
+        <file>Resources/deleteIcon.png</file>
+        <file>Resources/editIcon.png</file>
+        <file>Resources/exportIcon.png</file>
+        <file>Resources/eyeIcon.png</file>
+        <file>Resources/iconRotate.png</file>
+        <file>Resources/importIcon.png</file>
+        <file>Resources/openIcon.png</file>
+        <file>Resources/renameIcon.png</file>
+        <file>Resources/saveIcon.png</file>
+        <file>Resources/translateIcon.png</file>
+        <file>Resources/zoomIcon.png</file>
+    </qresource>
+</RCC>

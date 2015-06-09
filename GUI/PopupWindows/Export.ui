@@ -17,7 +17,7 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="FileDisplayAndChooser" name="exportFile" native="true"/>
+      <widget class="FileChooser" name="exportFile" native="true"/>
      </item>
     </layout>
    </item>
@@ -116,9 +116,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>FileDisplayAndChooser</class>
+   <class>FileChooser</class>
    <extends>QWidget</extends>
-   <header>GUI/BasicWidgets/FileDisplayAndChooser.h</header>
+   <header>GUI/BasicWidgets/FileChooser.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

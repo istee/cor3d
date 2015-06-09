@@ -8,30 +8,30 @@ DCoordinate3GroupBox::DCoordinate3GroupBox(QWidget *parent): QWidget(parent)
     groupBox->setPalette(palette);
 }
 
-void DCoordinate3GroupBox::on_editingFinished()
+void DCoordinate3GroupBox::editingFinished()
 {
-    emit coordinates_changed(value());
+    emit CoordinatesChanged(value());
 }
 
 const DCoordinate3 DCoordinate3GroupBox::value() const
 {
-    return DCoordinate3(x_doubleSpinBox->value(), y_doubleSpinBox->value(), z_doubleSpinBox->value());
+    return DCoordinate3(xDoubleSpinBox->value(), yDoubleSpinBox->value(), zDoubleSpinBox->value());
 }
 
 void DCoordinate3GroupBox::setValue(const DCoordinate3& dcoordinate3)
 {
     blockSignals(true);
-    x_doubleSpinBox->setValue(dcoordinate3.x());
-    y_doubleSpinBox->setValue(dcoordinate3.y());
-    z_doubleSpinBox->setValue(dcoordinate3.z());
+    xDoubleSpinBox->setValue(dcoordinate3.x());
+    yDoubleSpinBox->setValue(dcoordinate3.y());
+    zDoubleSpinBox->setValue(dcoordinate3.z());
     blockSignals(false);
 }
 
-void DCoordinate3GroupBox::setLabels(const string& x_label_string, const string& y_label_string, const string& z_label_string)
+void DCoordinate3GroupBox::setLabels(const string& xLabel_string, const string& yLabel_string, const string& zLabel_string)
 {
-    x_label->setText(QString::fromStdString(x_label_string));
-    y_label->setText(QString::fromStdString(y_label_string));
-    z_label->setText(QString::fromStdString(z_label_string));
+    xLabel->setText(QString::fromStdString(xLabel_string));
+    yLabel->setText(QString::fromStdString(yLabel_string));
+    zLabel->setText(QString::fromStdString(zLabel_string));
 }
 
 void DCoordinate3GroupBox::setTitle(const string& title)
@@ -52,61 +52,61 @@ void DCoordinate3GroupBox::setSettings(const DCoordinate3& settings, unsigned in
     {
     case 0:
         {
-            x_doubleSpinBox->setMaximum(settings[0]);
-            x_doubleSpinBox->setSingleStep(settings[1]);
-            x_doubleSpinBox->setMaximum(settings[2]);
+            xDoubleSpinBox->setMaximum(settings[0]);
+            xDoubleSpinBox->setSingleStep(settings[1]);
+            xDoubleSpinBox->setMaximum(settings[2]);
             break;
         }
     case 1:
         {
-            y_doubleSpinBox->setMaximum(settings[0]);
-            y_doubleSpinBox->setSingleStep(settings[1]);
-            y_doubleSpinBox->setMaximum(settings[2]);
+            yDoubleSpinBox->setMaximum(settings[0]);
+            yDoubleSpinBox->setSingleStep(settings[1]);
+            yDoubleSpinBox->setMaximum(settings[2]);
             break;
         }
     case 2:
         {
-            z_doubleSpinBox->setMaximum(settings[0]);
-            z_doubleSpinBox->setSingleStep(settings[1]);
-            z_doubleSpinBox->setMaximum(settings[2]);
+            zDoubleSpinBox->setMaximum(settings[0]);
+            zDoubleSpinBox->setSingleStep(settings[1]);
+            zDoubleSpinBox->setMaximum(settings[2]);
             break;
         }
     default: {}
     }
 }
 
-void DCoordinate3GroupBox::on_x_doubleSpinBox_editingFinished()
+void DCoordinate3GroupBox::on_xDoubleSpinBox_editingFinished()
 {
-    emit x_coordinate_changed(x_doubleSpinBox->value());
-    on_editingFinished();
+    emit xCoordinateChanged(xDoubleSpinBox->value());
+    editingFinished();
 }
 
-void DCoordinate3GroupBox::on_y_doubleSpinBox_editingFinished()
+void DCoordinate3GroupBox::on_yDoubleSpinBox_editingFinished()
 {
-    emit y_coordinate_changed(y_doubleSpinBox->value());
-    on_editingFinished();
+    emit yCoordinateChanged(yDoubleSpinBox->value());
+    editingFinished();
 }
 
-void DCoordinate3GroupBox::on_z_doubleSpinBox_editingFinished()
+void DCoordinate3GroupBox::on_zDoubleSpinBox_editingFinished()
 {
-    emit z_coordinate_changed(z_doubleSpinBox->value());
-    on_editingFinished();
+    emit zCoordinateChanged(zDoubleSpinBox->value());
+    editingFinished();
 }
 
-void DCoordinate3GroupBox::on_x_doubleSpinBox_valueChanged(double value)
+void DCoordinate3GroupBox::on_xDoubleSpinBox_valueChanged(double value)
 {
-    emit x_coordinate_changed(value);
-    on_editingFinished();
+    emit xCoordinateChanged(value);
+    editingFinished();
 }
 
-void DCoordinate3GroupBox::on_y_doubleSpinBox_valueChanged(double value)
+void DCoordinate3GroupBox::on_yDoubleSpinBox_valueChanged(double value)
 {
-    emit y_coordinate_changed(value);
-    on_editingFinished();
+    emit yCoordinateChanged(value);
+    editingFinished();
 }
 
-void DCoordinate3GroupBox::on_z_doubleSpinBox_valueChanged(double value)
+void DCoordinate3GroupBox::on_zDoubleSpinBox_valueChanged(double value)
 {
-    emit z_coordinate_changed(value);
-    on_editingFinished();
+    emit zCoordinateChanged(value);
+    editingFinished();
 }

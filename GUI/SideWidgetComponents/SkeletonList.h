@@ -5,7 +5,7 @@
 #include <string>
 #include "ui_SkeletonList.h"
 #include "BaseSideWidget.h"
-#include "GUI/BasicWidgets/EditableDeletableListItem.h"
+#include "GUI/BasicWidgets/BaseEntityListItem.h"
 #include "GUI/WidgetExtensions/BaseEntityDisplayProperties.h"
 
 using namespace std;
@@ -33,7 +33,7 @@ signals:
     void viewSkeletonRenamed(const string& oldName, const string& newName);
 private slots:
     void on_skeleton_listview_currentItemChanged(QListWidgetItem* current, QListWidgetItem* previous);
-    void on_toolButtonAdd_clicked();
+    void handleViewSkeletonAdded(const string& name);
 
     void handleViewSkeletonEdited(const string& name);
     void handleModelSkeletonDataChanged(Skeleton* skeleton);

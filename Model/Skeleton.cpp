@@ -518,11 +518,11 @@ namespace cor3d {
 
             emit modelJointSelected(name);
 
-            emit model_joint_selection_changed();
+            emit model_joint_selectionChanged();
         }
     }
 
-    void Skeleton::handle_view_joint_selection_changed(int joint_id)
+    void Skeleton::handle_view_joint_selectionChanged(int joint_id)
     {
         if ((unsigned int) joint_id > _joints.size())
         {
@@ -588,14 +588,14 @@ namespace cor3d {
         emit modelJointDeleted(jointName);
     }
 
-    void Skeleton::handle_view_joint_coordinates_changed_(unsigned int jointId)
+    void Skeleton::handle_view_joint_CoordinatesChanged_(unsigned int jointId)
     {
         /*
         vector<unsigned int> children = get_joint(jointId)->get_children();
         for (unsigned int i = 0; i < children.size(); i++)
         {
             emit (model_joint_data_changed(get_joint(children[i])->get_name()));
-            handle_view_joint_coordinates_changed_(children[i]);
+            handle_view_joint_CoordinatesChanged_(children[i]);
         }
         */
     }
@@ -610,7 +610,7 @@ namespace cor3d {
             joint->set_orientation(absoluteCoordinates - parent->get_coordinates());
             emit modelJointDataChanged(joint);
 
-            handle_view_joint_coordinates_changed_(joint->get_id());
+            handle_view_joint_CoordinatesChanged_(joint->get_id());
         }
     }
 
@@ -626,7 +626,7 @@ namespace cor3d {
             joint->set_orientation(relativeCoordinates);
             emit modelJointDataChanged(joint);
 
-            handle_view_joint_coordinates_changed_(joint->get_id());
+            handle_view_joint_CoordinatesChanged_(joint->get_id());
         }
     }
 
@@ -716,6 +716,13 @@ namespace cor3d {
     void Skeleton::handleViewPostureDeleted(const string& name)
     {
         deletePosture(name);
+
+        if (_postures.size() == _selectedPosture)
+        {
+            _selectedPosture--;
+            Posture* posture = getPostureById(_selectedPosture);
+            emit modelPostureSelected(this, posture);
+        }
     }
 
     void Skeleton::handleViewPostureRenamed(const string& oldName, const string& newName)
@@ -755,7 +762,7 @@ namespace cor3d {
                 _selected_skeleton_id--;
             }
             */
-            emit modelPostureDeleted(name);
+            emit modelPostureDeleted(this, name);
         }
     }
 
@@ -773,7 +780,7 @@ namespace cor3d {
         stringstream ss;
         ss << "Posture " << (_postures.size() + 1);
         string name = ss.str();
-        //name = append_sequence_number(name);
+        name = append_sequence_number(name);
         return name;
     }
 

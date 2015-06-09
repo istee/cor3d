@@ -73,7 +73,7 @@ void SkeletonEditorTab::handleModelSkeletonSelected(Skeleton* selected, Skeleton
         connect(selected, SIGNAL(modelJointSelected(string)), this, SLOT(handleModelJointSelected(string)));
         connect(selected, SIGNAL(modelJointDataChanged(Joint*)), this, SLOT(handleModelJointDataChanged(Joint*)));
 
-        connect(glwidget, SIGNAL(view_joint_selection_changed(int)), selected, SLOT(handle_view_joint_selection_changed(int)));
+        connect(glwidget, SIGNAL(view_joint_selectionChanged(int)), selected, SLOT(handle_view_joint_selectionChanged(int)));
         connect(glwidget, SIGNAL(view_joint_absolute_position_changed(DCoordinate3)), selected, SLOT(handle_view_joint_absolute_position_changed(DCoordinate3)));
     }
 }

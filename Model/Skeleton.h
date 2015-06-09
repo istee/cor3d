@@ -112,7 +112,7 @@ namespace cor3d
         bool validate_joint_index_(int joint_id) const;
         void deleteJoint(unsigned int jointId);
         void prepareDeleteJoints(unsigned int jointId, vector<unsigned int>& result);
-        void handle_view_joint_coordinates_changed_(unsigned int jointId);
+        void handle_view_joint_CoordinatesChanged_(unsigned int jointId);
 
     public slots:
 
@@ -121,7 +121,7 @@ namespace cor3d
         void handleViewJointRenamed(const string&, const string&);
         void handleViewJointSelected(const string&);
 
-        void handle_view_joint_selection_changed(int);
+        void handle_view_joint_selectionChanged(int);
 
         void handleViewJointAbsoluteCoordinatesChanged(const string& name, const DCoordinate3& absoluteCoordinates);
         void handleViewJointRelativeCoordinatesChanged(const string& name, const DCoordinate3& relativeCoordinates);
@@ -149,7 +149,7 @@ namespace cor3d
     signals:
         void modelSkeletonDataChanged(Skeleton* skeleton);
 
-        void model_joint_selection_changed();
+        void model_joint_selectionChanged();
 
         void modelJointAdded(Skeleton* skeleton, Joint* joint, const string& parentName);
         void modelJointRenamed(const string& oldName, const string& newName);
@@ -159,7 +159,7 @@ namespace cor3d
         void modelJointDataChanged(Joint* joint);
 
         void modelPostureAdded(Skeleton* skeleton, Posture* posture);
-        void modelPostureDeleted(const string& postureName);
+        void modelPostureDeleted(Skeleton* skeleton, const string& postureName);
         void modelPostureRenamed(const string& oldPostureName, const string& newPostureName);
         void modelPostureSelected(Skeleton* skeleton, Posture* posture);
     };

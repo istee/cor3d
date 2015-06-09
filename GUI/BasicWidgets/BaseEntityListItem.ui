@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>EditableDeletableListItem</class>
- <widget class="QWidget" name="EditableDeletableListItem">
+ <class>BaseEntityListItem</class>
+ <widget class="QWidget" name="BaseEntityListItem">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -44,7 +44,7 @@
       <number>6</number>
      </property>
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="baseEntityNameLabel">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -57,10 +57,10 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit"/>
+      <widget class="QLineEdit" name="baseEntityBaseEntityNameEdit"/>
      </item>
      <item>
-      <widget class="QToolButton" name="toolButtonRename">
+      <widget class="ToolButtonExtension" name="renameToolButton">
        <property name="minimumSize">
         <size>
          <width>30</width>
@@ -77,10 +77,14 @@ p, li { white-space: pre-wrap; }
        <property name="text">
         <string/>
        </property>
+       <property name="icon">
+        <iconset resource="../../Resources.qrc">
+         <normaloff>:/icons/Resources/renameIcon.png</normaloff>:/icons/Resources/renameIcon.png</iconset>
+       </property>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="toolButtonEdit">
+      <widget class="ToolButtonExtension" name="editToolButton">
        <property name="minimumSize">
         <size>
          <width>30</width>
@@ -90,10 +94,14 @@ p, li { white-space: pre-wrap; }
        <property name="text">
         <string/>
        </property>
+       <property name="icon">
+        <iconset resource="../../Resources.qrc">
+         <normaloff>:/icons/Resources/editIcon.png</normaloff>:/icons/Resources/editIcon.png</iconset>
+       </property>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="toolButtonDelete">
+      <widget class="ToolButtonExtension" name="deleteToolButton">
        <property name="minimumSize">
         <size>
          <width>30</width>
@@ -110,12 +118,25 @@ p, li { white-space: pre-wrap; }
        <property name="text">
         <string/>
        </property>
+       <property name="icon">
+        <iconset resource="../../Resources.qrc">
+         <normaloff>:/icons/Resources/deleteIcon.png</normaloff>:/icons/Resources/deleteIcon.png</iconset>
+       </property>
       </widget>
      </item>
     </layout>
    </item>
   </layout>
  </widget>
- <resources/>
+ <customwidgets>
+  <customwidget>
+   <class>ToolButtonExtension</class>
+   <extends>QToolButton</extends>
+   <header>GUI\WIdgetExtensions\ToolButtonExtension.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../../Resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

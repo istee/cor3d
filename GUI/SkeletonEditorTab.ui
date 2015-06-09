@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>403</width>
+    <width>600</width>
     <height>320</height>
    </rect>
   </property>
@@ -65,7 +65,7 @@
       </property>
       <property name="minimumSize">
        <size>
-        <width>300</width>
+        <width>400</width>
         <height>0</height>
        </size>
       </property>
@@ -84,7 +84,6 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <zorder>add_new_joint</zorder>
         </widget>
        </item>
        <item>

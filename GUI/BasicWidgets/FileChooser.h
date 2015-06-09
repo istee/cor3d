@@ -2,12 +2,12 @@
 
 #include <QWidget>
 #include <QFileDialog>
-#include "ui_FileDisplayAndChooser.h"
+#include "ui_FileChooser.h"
 
 
 using namespace std;
 
-class FileDisplayAndChooser: public QWidget, public Ui::FileDisplayAndChooser
+class FileChooser: public QWidget, protected Ui::FileChooser
 {
     Q_OBJECT
     string                  _caption;
@@ -17,8 +17,8 @@ class FileDisplayAndChooser: public QWidget, public Ui::FileDisplayAndChooser
     QFileDialog::AcceptMode _acceptMode;
 public:
     // special and default constructor
-    FileDisplayAndChooser(QWidget *parent = 0);
-    string value() const;
+    FileChooser(QWidget *parent = 0);
+    const string& value() const;
     void setValue(const string& value);
     void setLabel(const string& label_string);
     void setCaption(const string& caption);
@@ -28,8 +28,8 @@ public:
     void setAcceptMode(const QFileDialog::AcceptMode acceptMode);
 
 signals:
-    void file_changed(string);
+    void fileChanged(string);
 
 private slots:
-    void on_pushButton_released();
+    void on_browseFilePushButton_released();
 };

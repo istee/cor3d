@@ -1,6 +1,6 @@
 #include "ListWidgetExtension.h"
 
-#include "GUI/BasicWidgets/EditableDeletableListItem.h"
+#include "GUI/BasicWidgets/BaseEntityListItem.h"
 
 ListWidgetExtension::ListWidgetExtension(QWidget* parent = 0) : QListWidget(parent)
 {
@@ -26,14 +26,14 @@ void ListWidgetExtension::renameListWidgetItem(const string& oldName, const stri
 {
     QListWidgetItem* item = getListWidgetItemByData(oldName);
     item->setData(Qt::UserRole, QString::fromStdString(newName));
-    EditableDeletableListItem* itemWidget = (EditableDeletableListItem*) this->itemWidget(item);
-    itemWidget->setLabelText(newName);
+    BaseEntityListItem* itemWidget = (BaseEntityListItem*) this->itemWidget(item);
+    itemWidget->setBaseEntityNameLabelText(newName);
 }
 
 void ListWidgetExtension::updateEditWidget(BaseEntity* baseEntity)
 {
     QListWidgetItem* item = getListWidgetItemByData(baseEntity->get_name());
-    EditableDeletableListItem* itemWidget = (EditableDeletableListItem*) this->itemWidget(item);
+    BaseEntityListItem* itemWidget = (BaseEntityListItem*) this->itemWidget(item);
     itemWidget->editWidget()->updateContent(baseEntity);;
 }
 
@@ -57,7 +57,7 @@ void ListWidgetExtension::toggleEditWidget(const string& dataValue)
     QListWidgetItem* item = getListWidgetItemByData(dataValue);
     if (item)
     {
-        EditableDeletableListItem* listItem = (EditableDeletableListItem*) itemWidget(item);
+        BaseEntityListItem* listItem = (BaseEntityListItem*) itemWidget(item);
         listItem->showEditWidget(!listItem->isEditWidgetVisible());
         item->setSizeHint(listItem->sizeHint());
     }

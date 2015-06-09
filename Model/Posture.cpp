@@ -4,15 +4,28 @@ namespace cor3d
 {
     Posture::Posture(unsigned int id, string name, vector<Joint*>& joints): QObject(), BaseEntity(id, name)
     {
+        _isEdited = false;
         _joints = joints;
+        _selectedJoint = -1;
         for (vector<Joint*>::iterator it = _joints.begin(); it != _joints.end(); it++)
         {
             Joint* j = *it;
             _jointAbsolutePostureCoordinates.push_back(j->get_coordinates());
+            _jointAbsoluteInitialPostureCoordinates.push_back(j->get_coordinates());
         }
     }
 
     //getter functions
+    bool Posture::isEdited() const
+    {
+        return _isEdited;
+    }
+
+    Joint* Posture::selectedJoint() const
+    {
+        return _joints[_selectedJoint];
+    }
+
     const DCoordinate3& Posture::getAbsolutePostureCoordinate(unsigned int jointId) const
     {
         return _jointAbsolutePostureCoordinates[jointId];
@@ -20,15 +33,22 @@ namespace cor3d
 
     void Posture::MoveSelected(double x, double y, double z)
     {
+        if (!_isEdited)
+        {
+            _isEdited = true;
+            emit modelPostureIsEdited(this, _isEdited);
+            constructChains(_selectedJoint);
+        }
+
         DCoordinate3 target(x, y, z);
         FABRIK(_chains[0], target, 1e-10);
-                for (unsigned int i = 1; i < _chains.size(); i++)
-                {
-                    SimpleForwardFABRIK(&_chains[i], _chains[_chains[i].getChainParent()].get_chain_ending(), 1e-10);
-                }
-                //for (vector<Chain>::iterator it = _chains.begin(); it != _chains.end(); it++)
-                    //for(int i = 0; i )
+        for (unsigned int i = 1; i < _chains.size(); i++)
+        {
+            SimpleForwardFABRIK(&_chains[i], _chains[_chains[i].getChainParent()].get_chain_ending(), 1e-10);
+        }
+        FinalizeMove();
     }
+
     void Posture::FABRIK(Chain& chain, DCoordinate3 target, double tolerance)
     {
         double *lengths = new double[chain.get_chain_size()];
@@ -208,11 +228,11 @@ namespace cor3d
         {
             renderingOptions->get_material(renderingOptions->get_link_material())->Apply();
 
-            for(unsigned int i = 1; i < _jointAbsolutePostureCoordinates.size(); i++)
+            for(unsigned int i = 1; i < _jointAbsoluteInitialPostureCoordinates.size(); i++)
             {
                 Joint* joint = (Joint*) _joints[i];
-                DCoordinate3 start = _jointAbsolutePostureCoordinates[joint->get_parent()];
-                DCoordinate3 end = _jointAbsolutePostureCoordinates[joint->get_id()];
+                DCoordinate3 start = _jointAbsoluteInitialPostureCoordinates[joint->get_parent()];
+                DCoordinate3 end = _jointAbsoluteInitialPostureCoordinates[joint->get_id()];
                 DCoordinate3 k_prime = end - start;
 
                 float length = k_prime.length();
@@ -344,10 +364,32 @@ namespace cor3d
         }
         for (unsigned int i = 1; i < _chains.size(); i++)
         {
-            for (unsigned int j = 1; j < _chains[i].get_chain_size(); j++)
+            for (unsigned int j = 0; j < _chains[i].get_chain_size(); j++)
             {
                 _jointAbsolutePostureCoordinates[_chains[i].getJointId(j)] = _chains[i].get_joint_coordinates(j);
             }
+        }
+    }
+
+    void Posture::handleViewChangesAccepted()
+    {
+        _isEdited = false;
+        clearChains();
+        emit modelPostureIsEdited(this, _isEdited);
+        for (unsigned int i = 0; i < _jointAbsolutePostureCoordinates.size(); i++)
+        {
+            _jointAbsoluteInitialPostureCoordinates[i] = _jointAbsolutePostureCoordinates[i];
+        }
+    }
+
+    void Posture::handleViewChangesCanceled()
+    {
+        _isEdited = false;
+        clearChains();
+        emit modelPostureIsEdited(this, _isEdited);
+        for (unsigned int i = 0; i < _jointAbsolutePostureCoordinates.size(); i++)
+        {
+            _jointAbsolutePostureCoordinates[i] = _jointAbsoluteInitialPostureCoordinates[i];
         }
     }
 }

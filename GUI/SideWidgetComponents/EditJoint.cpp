@@ -35,9 +35,9 @@ EditJoint::EditJoint(Skeleton* skeleton, Joint* joint, QWidget *parent): BaseEdi
         connect(this, SIGNAL(viewJointScaleChanged(string,DCoordinate3)), skeleton, SLOT(handleViewJointScaleChanged(string,DCoordinate3)));
     }
 
-    connect(absolute_position, SIGNAL(coordinates_changed(DCoordinate3)), this, SLOT(handleJointAbsoluteCoordinatesChanged(DCoordinate3)));
-    connect(parent_relative_position, SIGNAL(coordinates_changed(DCoordinate3)), this, SLOT(handleJointRelativeCoordinatesChanged(DCoordinate3)));
-    connect(joint_scale, SIGNAL(coordinates_changed(DCoordinate3)), this, SLOT(handleJointScaleChanged(DCoordinate3)));
+    connect(absolute_position, SIGNAL(CoordinatesChanged(DCoordinate3)), this, SLOT(handleJointAbsoluteCoordinatesChanged(DCoordinate3)));
+    connect(parent_relative_position, SIGNAL(CoordinatesChanged(DCoordinate3)), this, SLOT(handleJointRelativeCoordinatesChanged(DCoordinate3)));
+    connect(joint_scale, SIGNAL(CoordinatesChanged(DCoordinate3)), this, SLOT(handleJointScaleChanged(DCoordinate3)));
 }
 
 void EditJoint::updateContent(BaseEntity* baseEntity)

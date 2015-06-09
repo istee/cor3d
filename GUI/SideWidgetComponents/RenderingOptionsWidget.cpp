@@ -29,14 +29,14 @@ RenderingOptionsWidget::RenderingOptionsWidget(QWidget *parent): QFrame(parent)
     link_render->hide();
 
     connect(skeleton_render, SIGNAL(toggled(bool)), this, SIGNAL(view_skeleton_render_toggled(bool)));
-    connect(skeleton_color, SIGNAL(selection_changed(int)), this, SIGNAL(view_skeleton_material_changed(int)));
+    connect(skeleton_color, SIGNAL(selectionChanged(int)), this, SIGNAL(view_skeleton_material_changed(int)));
     connect(joint_render, SIGNAL(toggled(bool)), this, SIGNAL(view_joint_render_toggled(bool)));
-    connect(joint_model_file, SIGNAL(file_changed(string)), this, SIGNAL(view_joint_model_file_changed(string)));
-    connect(joint_color, SIGNAL(selection_changed(int)), this, SIGNAL(view_joint_material_changed(int)));
-    connect(joint_selected_color, SIGNAL(selection_changed(int)), this, SIGNAL(view_selected_joint_material_changed(int)));
+    connect(joint_model_file, SIGNAL(fileChanged(string)), this, SIGNAL(view_joint_model_fileChanged(string)));
+    connect(joint_color, SIGNAL(selectionChanged(int)), this, SIGNAL(view_joint_material_changed(int)));
+    connect(joint_selected_color, SIGNAL(selectionChanged(int)), this, SIGNAL(view_selected_joint_material_changed(int)));
     connect(link_render, SIGNAL(toggled(bool)), this, SIGNAL(view_link_render_toggled(bool)));
-    connect(link_model_file, SIGNAL(file_changed(string)), this, SIGNAL(view_link_model_file_changed(string)));
-    connect(link_color, SIGNAL(selection_changed(int)), this, SIGNAL(view_link_material_changed(int)));
+    connect(link_model_file, SIGNAL(fileChanged(string)), this, SIGNAL(view_link_model_fileChanged(string)));
+    connect(link_color, SIGNAL(selectionChanged(int)), this, SIGNAL(view_link_material_changed(int)));
 
 }
 

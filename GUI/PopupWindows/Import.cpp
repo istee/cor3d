@@ -28,14 +28,14 @@ Import::Import(QWidget *parent) : QWidget(parent)
     model->setHeaderData(0, Qt::Horizontal, "Select items to import:");
     treeView->setModel(model);
 
-    connect(importFile, SIGNAL(file_changed(string)), this, SLOT(on_importFile_changed(string)));
+    connect(importFile, SIGNAL(fileChanged(string)), this, SLOT(on_importFile_changed(string)));
 }
 
 void Import::on_importButton_clicked()
 {
     Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
     ifstream file;
-    file.open(importFile->fileLabel->text().toAscii(), ios::out);
+    file.open(importFile->value().data(), ios::out);
     if (file.is_open())
     {
         string text;

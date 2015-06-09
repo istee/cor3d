@@ -150,7 +150,7 @@ namespace cor3d {
                 newSelected = get_skeleton()->get_name();
             }
 
-            //emit model_skeleton_selection_changed(oldSelected, newSelected);
+            //emit model_skeleton_selectionChanged(oldSelected, newSelected);
         }
     }
 
