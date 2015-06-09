@@ -67,7 +67,6 @@ void ManagePostures::on_postureList_currentItemChanged(QListWidgetItem* current,
 {
     if (current)
     {
-            cout << "select posture " << current->data(Qt::UserRole).toString().toStdString() << endl;
         emit viewPostureSelected(current->data(Qt::UserRole).toString().toStdString());
     }
 }

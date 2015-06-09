@@ -209,11 +209,7 @@ void GLWidget::pick(double x, double y)
 
         glGetIntegerv(GL_VIEWPORT, viewport);
 
-        GLuint size = 4 * skeleton->get_joint_count();
-        if (skeleton->is_joint_selected())
-        {
-            size += 24;
-        }
+        GLuint size = specificPickCount();
         GLuint *pick_buffer = new GLuint[size];
         if (pick_buffer)
         {
@@ -251,14 +247,7 @@ void GLWidget::pick(double x, double y)
             // scaling
             glScalef(_zoom, _zoom, _zoom);
 
-            skeleton->render_joints(cor3dApp->cor3d->get_rendering_options(), true);
-
-            if (skeleton->is_joint_selected())
-            {
-                DCoordinate3 selected_position = skeleton->get_selected_joint()->get_coordinates();
-
-                render_move_arrows(cor3dApp->cor3d->get_rendering_options(), &selected_position, skeleton->get_joint_count(), true);
-            }
+            specificDrawPickObjects();
         }
 
         glPopMatrix();
@@ -286,16 +275,8 @@ void GLWidget::pick(double x, double y)
                 }
             }
 
-            if (closest_selected < 6)
-            {
-                is_drag = true;
-                _drag_type = closest_selected;
-                this->drag_starting();
-            }
-            else
-            {
-                emit view_joint_selection_changed(closest_selected - 6);
-            }
+            cout << "closest selected " << closest_selected << endl;
+            specificPick(closest_selected);
 
         }
         else

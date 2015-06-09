@@ -178,7 +178,6 @@ namespace cagd
             w += _mat[3 + 4 * j] * rhs[j];
         }
         w += _mat[15];
-        //std::cout << "w: " << w << std::endl;
 
         DCoordinate3 result;
 

@@ -12,6 +12,12 @@ namespace cor3d
         }
     }
 
+    //getter functions
+    const DCoordinate3& Posture::getAbsolutePostureCoordinate(unsigned int jointId) const
+    {
+        return _jointAbsolutePostureCoordinates[jointId];
+    }
+
     void Posture::MoveSelected(double x, double y, double z)
     {
         DCoordinate3 target(x, y, z);
@@ -97,15 +103,14 @@ namespace cor3d
 
     int Posture::construct_chains_(int joint_id, int chain_index, int parent_chain_index)
     {
-
         Chain chain = Chain(chain_index, parent_chain_index, false);
-        chain.add_joint_to_front(get_joint(get_joint(joint_id)->get_parent())->get_coordinates(), get_joint(get_joint(joint_id)->get_parent())->get_id());
+        chain.add_joint_to_front(_jointAbsolutePostureCoordinates[get_joint(joint_id)->get_parent()], get_joint(get_joint(joint_id)->get_parent())->get_id());
         while(get_joint(joint_id)->get_children().size() == 1)
         {
-            chain.add_joint_to_front(get_joint(joint_id)->get_coordinates(), get_joint(joint_id)->get_id());
+            chain.add_joint_to_front(_jointAbsolutePostureCoordinates[joint_id], get_joint(joint_id)->get_id());
             joint_id = get_joint(joint_id)->get_children()[0];
         }
-        chain.add_joint_to_front(get_joint(joint_id)->get_coordinates(), get_joint(joint_id)->get_id());
+        chain.add_joint_to_front(_jointAbsolutePostureCoordinates[joint_id], get_joint(joint_id)->get_id());
         _chains.push_back(chain);
         vector<unsigned int> children = get_joint(joint_id)->get_children();
         int chain_number = 1;
@@ -142,14 +147,14 @@ namespace cor3d
         }
         if (get_joint(index)->get_parent() != -1)
         {
-            chain.add_joint(get_joint(get_joint(index)->get_parent())->get_coordinates(), get_joint(get_joint(index)->get_parent())->get_id());
+            chain.add_joint(_jointAbsolutePostureCoordinates[get_joint(index)->get_parent()], get_joint(get_joint(index)->get_parent())->get_id());
         }
         while (index != joint_id)
         {
-            chain.add_joint(get_joint(index)->get_coordinates(), get_joint(index)->get_id());
+            chain.add_joint(_jointAbsolutePostureCoordinates[index], get_joint(index)->get_id());
             index = get_joint(index)->get_children()[0];
         }
-        chain.add_joint(get_joint(joint_id)->get_coordinates(), get_joint(joint_id)->get_id());
+        chain.add_joint(_jointAbsolutePostureCoordinates[joint_id], get_joint(joint_id)->get_id());
     }
 
     void Posture::clearChains()

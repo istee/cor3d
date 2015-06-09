@@ -5,7 +5,9 @@
 class SkeletonGLWidget : public GLWidget {
 protected:
     virtual void specificPaintGL();
-    virtual void specificPick();
+    virtual void specificDrawPickObjects();
+    virtual int specificPickCount();
+    virtual void specificPick(unsigned int closestSelected);
 
 public:
     // special and default constructor

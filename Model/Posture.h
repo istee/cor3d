@@ -21,6 +21,9 @@ namespace cor3d{
         vector<Joint*>          _joints;
 
     public:
+        //getter functions
+        const DCoordinate3& getAbsolutePostureCoordinate(unsigned int jointId) const;
+
         Posture(unsigned int id, string name, vector<Joint*>& joints);
         void constructChains(unsigned int selectedJoint);
         void clearChains();

@@ -20,7 +20,17 @@ void SceneGLWidget::specificPaintGL()
     }
 }
 
-void SceneGLWidget::specificPick()
+void SceneGLWidget::specificDrawPickObjects()
+{
+
+}
+
+int SceneGLWidget::specificPickCount()
+{
+
+}
+
+void SceneGLWidget::specificPick(unsigned int closestSelected)
 {
 
 }

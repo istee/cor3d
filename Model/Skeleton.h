@@ -220,7 +220,6 @@ namespace cor3d
 
     inline Posture* Skeleton::selectedPosture() const
     {
-        cout << "selected posture id " << _selectedPosture << " " << _postures.size() << endl;
         if (_selectedPosture >=0 && _selectedPosture < _postures.size())
         {
             return _postures[_selectedPosture];

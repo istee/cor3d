@@ -38,6 +38,7 @@ private:
     double      _zoom;
     double      _trans_x, _trans_y, _trans_z;
 
+protected:
     int               _point_count;
     std::vector<float> _x, _y, _z;
 
@@ -66,11 +67,13 @@ private:
 
     GLuint _dl_grid;
 
-protected:
+
     Skeleton*               _skeleton;
 
     virtual void specificPaintGL() = 0;
-    virtual void specificPick() = 0;
+    virtual void specificDrawPickObjects() = 0;
+    virtual int specificPickCount() = 0;
+    virtual void specificPick(unsigned int closestSelected) = 0;
 
     void render_move_arrows(RenderingOptions* rendering_options, const DCoordinate3 *position, int id = 0, bool glLoad = false);
     virtual void drag_starting() {  }

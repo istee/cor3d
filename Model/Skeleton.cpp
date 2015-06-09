@@ -704,6 +704,13 @@ namespace cor3d {
     void Skeleton::handleViewPostureAdded(const string& name)
     {
         addPosture(name);
+
+        Posture* posture = getPostureByName(name);
+        if (posture)
+        {
+            _selectedPosture = posture->get_id();
+            emit modelPostureSelected(this, posture);
+        }
     }
 
     void Skeleton::handleViewPostureDeleted(const string& name)
@@ -718,7 +725,7 @@ namespace cor3d {
 
     void handleViewPostureSelected(const string&)
     {
-        cout << " asd " << endl;
+
     }
 
     void Skeleton::addPosture(const string& name)
@@ -775,7 +782,6 @@ namespace cor3d {
         Posture* posture = getPostureByName(name);
         if (posture)
         {
-            cout << "posture select a skeletonban " << name << endl;
             _selectedPosture = posture->get_id();
             emit modelPostureSelected(this, posture);
         }

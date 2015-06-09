@@ -84,11 +84,7 @@ void PostureEditorTab::handleModelPostureRenamed(const string& oldPostureName, c
 
 void PostureEditorTab::handleModelPostureSelected(Skeleton* selectedSkeleton, Posture* selectedPosture)
 {
-    if (!selectedPosture)
-    {
-        cout << "null a posture" << endl;
-    }
-    cout << "posture selected " << selectedPosture->get_name() << endl;
+    managePostures->selectPosture(selectedSkeleton, selectedPosture);
     editPosture->populatePostureJoints(selectedSkeleton, selectedPosture);
     updateGLWidget();
 }
