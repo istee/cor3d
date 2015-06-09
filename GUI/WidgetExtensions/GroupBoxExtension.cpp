@@ -1,42 +1,44 @@
 #include <QTreeWidget>
 
-#include "SideWidgetGroupBox.h"
+#include "GroupBoxExtension.h"
 
-SideWidgetGroupBox::SideWidgetGroupBox(QWidget* parent = 0): QGroupBox(parent)
+GroupBoxExtension::GroupBoxExtension(QWidget* parent = 0): QGroupBox(parent)
 {
     this->setCheckable(true);
-    _check_box_state = true;
+    _checkBoxState = true;
     _sizeHint = QSize(250, 50);
     _sizePolicy = QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    connect(this, SIGNAL(toggled(bool)), this, SLOT(my_toggled(bool)));
+    connect(this, SIGNAL(toggled(bool)), this, SLOT(handleToggle(bool)));
 }
 
-bool SideWidgetGroupBox::event(QEvent *e)
+bool GroupBoxExtension::event(QEvent *e)
 {
     switch (e->type()) {
     case QEvent::KeyRelease:
         return myKeyReleaseHandler((QKeyEvent*)e);
     case QEvent::MouseButtonRelease:
-        myHandler((QMouseEvent*)e);
+        myMouseHandler((QMouseEvent*)e);
         return true;
     default:
         return QGroupBox::event(e);
     }
 }
 
-bool SideWidgetGroupBox::myKeyReleaseHandler(QKeyEvent *event)
+bool GroupBoxExtension::myKeyReleaseHandler(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Space)
+    {
+        toggled();
         return true;
+    }
     return QGroupBox::event(event);
 }
 
-void SideWidgetGroupBox::myHandler(QMouseEvent *event)
+void GroupBoxExtension::myMouseHandler(QMouseEvent *event)
 {
     QStyleOptionGroupBox box;
     initStyleOption(&box);
-    QStyle::SubControl released = style()->hitTestComplexControl(QStyle::CC_GroupBox, &box,
-                                                                 event->pos(), this);
+    QStyle::SubControl released = style()->hitTestComplexControl(QStyle::CC_GroupBox, &box, event->pos(), this);
     bool toggle = released == QStyle::SC_GroupBoxLabel || released == QStyle::SC_GroupBoxCheckBox;
     if (toggle)
     {
@@ -44,25 +46,25 @@ void SideWidgetGroupBox::myHandler(QMouseEvent *event)
     }
 }
 
-void SideWidgetGroupBox::toggled()
+void GroupBoxExtension::toggled()
 {
-    _check_box_state = !_check_box_state;
-    set_content_visibility(_check_box_state);
-    emit (groupbox_toggled(_check_box_state));
+    _checkBoxState = !_checkBoxState;
+    setContentVisibility(_checkBoxState);
+    emit (groupboxToggled(_checkBoxState));
 }
 
-void SideWidgetGroupBox::initStyleOption(QStyleOptionGroupBox *option) const
+void GroupBoxExtension::initStyleOption(QStyleOptionGroupBox *option) const
 {
     QGroupBox::initStyleOption(option);
-    QStyle::State flagToSet = _check_box_state ? QStyle::State_On : QStyle::State_Off;
-    QStyle::State flagToRemove = _check_box_state ? QStyle::State_Off : QStyle::State_On;
+    QStyle::State flagToSet = _checkBoxState ? QStyle::State_On : QStyle::State_Off;
+    QStyle::State flagToRemove = _checkBoxState ? QStyle::State_Off : QStyle::State_On;
 
     option->state |= flagToSet;
     option->state &= ~flagToRemove;
     option->state &= ~QStyle::State_Sunken;
 }
 
-void SideWidgetGroupBox::paintEvent(QPaintEvent *)
+void GroupBoxExtension::paintEvent(QPaintEvent *)
 {
     QStylePainter paint(this);
     QStyleOptionGroupBox option;
@@ -70,7 +72,7 @@ void SideWidgetGroupBox::paintEvent(QPaintEvent *)
     paint.drawComplexControl(QStyle::CC_GroupBox, option);
 }
 
-void SideWidgetGroupBox::set_content_visibility(bool visible)
+void GroupBoxExtension::setContentVisibility(bool visible)
 {
     QList<QWidget*> list = this->findChildren<QWidget*>();
     for (QList<QWidget*>::iterator it = list.begin(); it != list.end(); it++)
@@ -84,7 +86,7 @@ void SideWidgetGroupBox::set_content_visibility(bool visible)
     }
 }
 
-void SideWidgetGroupBox::my_toggled(bool on)
+void GroupBoxExtension::handleToggle(bool on)
 {
     toggled();
 }

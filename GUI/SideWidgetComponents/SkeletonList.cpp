@@ -24,9 +24,7 @@ SkeletonList::SkeletonList(QWidget *parent): BaseSideWidget(parent)
     addName->setLabel("Name");
     //skeleton_listview->setSelectionBehavior(QAbstractItemView::SelectItems);
 
-    _skeletonDisplayProperties = QHash<string,BaseEntityDisplayProperties>();
-
-    connect(groupBox, SIGNAL(groupbox_toggled(bool)), this, SLOT(handle_groupbox_toggled(bool)));
+    connect(groupBox, SIGNAL(groupboxToggled(bool)), this, SLOT(handle_groupboxToggled(bool)));
     connect(addName, SIGNAL(baseEntityAdded(string)), this, SLOT(handleViewSkeletonAdded(string)));
 
     addName->setValue(_cor3d->next_name());

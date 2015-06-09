@@ -8,12 +8,12 @@ BaseEntityComboBox::BaseEntityComboBox(QWidget *parent): QWidget(parent)
     setupUi(this);
 }
 
-const BaseEntity BaseEntityComboBox::value() const
+const BaseEntity BaseEntityComboBox::getValue() const
 {
     return BaseEntity((baseEntityComboBox->itemData(baseEntityComboBox->currentIndex())).toInt(0), baseEntityComboBox->currentText().toStdString());
 }
 
-int BaseEntityComboBox::key() const
+int BaseEntityComboBox::getKey() const
 {
     if (baseEntityComboBox->currentIndex() >= 0)
     {
@@ -22,7 +22,7 @@ int BaseEntityComboBox::key() const
     return -1;
 }
 
-const string& BaseEntityComboBox::text() const
+const string& BaseEntityComboBox::getText() const
 {
     return baseEntityComboBox->currentText().toStdString();
 }

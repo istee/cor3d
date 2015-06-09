@@ -2,7 +2,7 @@
 
 #include "Cor3dApplication.h"
 #include "GUI/SideWidgetComponents/BaseSideWidget.h"
-#include "GUI/SideWidgetComponents/SideWidgetGroupBox.h"
+#include "GUI/WidgetExtensions/GroupBoxExtension.h"
 #include "GUI/SceneGLWidget.h"
 
 SceneEditorTab::SceneEditorTab(QWidget *parent): IMainWindowTab(parent)
@@ -21,8 +21,8 @@ SceneEditorTab::SceneEditorTab(QWidget *parent): IMainWindowTab(parent)
 void SceneEditorTab::initialize()
 {
     /*
-    QList<SideWidgetGroupBox*> groupbox_list = this->scrollAreaWidgetContents->findChildren<SideWidgetGroupBox*>();
-    for (QList<SideWidgetGroupBox*>::iterator it = groupbox_list.begin(); it != groupbox_list.end(); it++)
+    QList<GroupBoxExtension*> groupbox_list = this->scrollAreaWidgetContents->findChildren<GroupBoxExtension*>();
+    for (QList<GroupBoxExtension*>::iterator it = groupbox_list.begin(); it != groupbox_list.end(); it++)
     {
         (*it)->toggled();
     }

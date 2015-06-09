@@ -30,7 +30,7 @@ private slots:
     void on_actionRendering_options_activated();
     void on_action_Quit_triggered();
 
-    void handle_model_translation_changed(const DCoordinate3&);
-    void handle_model_rotation_changed(const DCoordinate3&);
-    void handle_model_zoom_changed(double);
+    void handle_modelTranslationChanged(const DCoordinate3&);
+    void handle_modelRotationChanged(const DCoordinate3&);
+    void handle_modelZoomChanged(double);
 };

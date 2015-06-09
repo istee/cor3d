@@ -33,20 +33,26 @@ namespace cor3d
 
     void Posture::MoveSelected(double x, double y, double z)
     {
+        cout << "move " << endl;
         if (!_isEdited)
         {
             _isEdited = true;
+            cout << "before chains " << _selectedJoint << endl;
             emit modelPostureIsEdited(this, _isEdited);
             constructChains(_selectedJoint);
         }
 
-        DCoordinate3 target(x, y, z);
-        FABRIK(_chains[0], target, 1e-10);
-        for (unsigned int i = 1; i < _chains.size(); i++)
+        cout << "after chains " << endl;
+        if (_chains.size() > 0)
         {
-            SimpleForwardFABRIK(&_chains[i], _chains[_chains[i].getChainParent()].get_chain_ending(), 1e-10);
+            DCoordinate3 target(x, y, z);
+            FABRIK(_chains[0], target, 1e-10);
+            for (unsigned int i = 1; i < _chains.size(); i++)
+            {
+                SimpleForwardFABRIK(&_chains[i], _chains[_chains[i].getChainParent()].get_chain_ending(), 1e-10);
+            }
+            FinalizeMove();
         }
-        FinalizeMove();
     }
 
     void Posture::FABRIK(Chain& chain, DCoordinate3 target, double tolerance)
@@ -144,7 +150,7 @@ namespace cor3d
     void Posture::constructChains(unsigned int selectedJoint)
     {
         //update_joint_coordinates();
-        if (selectedJoint >= 0)
+        if (selectedJoint > 0)
         {
             Chain chain = Chain(0, -1, true);
             forward_chain(chain, selectedJoint);
@@ -373,6 +379,7 @@ namespace cor3d
 
     void Posture::handleViewChangesAccepted()
     {
+        cout << "accepted " << endl;
         _isEdited = false;
         clearChains();
         emit modelPostureIsEdited(this, _isEdited);
@@ -384,6 +391,7 @@ namespace cor3d
 
     void Posture::handleViewChangesCanceled()
     {
+        cout << "canceled " << endl;
         _isEdited = false;
         clearChains();
         emit modelPostureIsEdited(this, _isEdited);

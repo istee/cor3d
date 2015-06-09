@@ -27,7 +27,6 @@ public:
     void updateEditWidget(BaseEntity* baseEntity);
     void selectTreeWidgetItem(const string dataValue);
     void selectTreeWidgetItem(QTreeWidgetItem* parentItem, const string& dataValue);
-    void selectTreeWidgetItemWithChildren(const string dataValue);
     void toggleEditWidget(const string& dataValue);
 
 private:

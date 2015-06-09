@@ -13,25 +13,25 @@ void SkeletonGLWidget::specificPaintGL()
     Skeleton* skeleton = _skeleton;
     if (skeleton)
     {
-        skeleton->render(cor3dApp->cor3d->get_rendering_options());
+        skeleton->render(cor3dApp->cor3d->getRenderingOptions());
         if (skeleton && skeleton->is_joint_selected())
         {
-            unsigned int joint_id = skeleton->get_selected_joint_id();
+            unsigned int joint_id = skeleton->get_selectedJoint_id();
             DCoordinate3 position = skeleton->get_joint(joint_id)->get_coordinates();
-            render_move_arrows(cor3dApp->cor3d->get_rendering_options(), &position);
+            render_move_arrows(cor3dApp->cor3d->getRenderingOptions(), &position);
         }
     }
 }
 
 void SkeletonGLWidget::specificDrawPickObjects()
 {
-    _skeleton->render_joints(cor3dApp->cor3d->get_rendering_options(), true);
+    _skeleton->render_joints(cor3dApp->cor3d->getRenderingOptions(), true);
 
     if (_skeleton->is_joint_selected())
     {
-        DCoordinate3 selected_position = _skeleton->get_selected_joint()->get_coordinates();
+        DCoordinate3 selected_position = _skeleton->get_selectedJoint()->get_coordinates();
 
-        render_move_arrows(cor3dApp->cor3d->get_rendering_options(), &selected_position, _skeleton->get_joint_count(), true);
+        render_move_arrows(cor3dApp->cor3d->getRenderingOptions(), &selected_position, _skeleton->get_joint_count(), true);
     }
 }
 

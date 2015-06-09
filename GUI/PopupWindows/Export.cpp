@@ -23,7 +23,7 @@ Export::Export(QWidget *parent) : QWidget(parent)
     exportFile->setFilePath(QDir::currentPath().toStdString() + "/cor3d export " + QDateTime::currentDateTime().toString(QString::fromStdString("yyyy-MM-dd-hhmmss")).toStdString() + ".c3data");
 
     Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
-    const vector<BaseEntity*> skeleton_list = cor3dApp->cor3d->get_skeleton_list();
+    const vector<BaseEntity*> skeleton_list = cor3dApp->cor3d->getSkeletonList();
     model = new QStandardItemModel();
     model->setColumnCount(1);
     model->setHeaderData(0, Qt::Horizontal, "Select items to export:");
@@ -51,7 +51,7 @@ void Export::on_exportButton_clicked()
 {
     Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
     ofstream file;
-    file.open(exportFile->value().data(), ios::out);
+    file.open(exportFile->getValue().data(), ios::out);
     if (file.is_open())
     {
         int skeletonCount = treeView->model()->rowCount();
@@ -59,8 +59,7 @@ void Export::on_exportButton_clicked()
         for (int i = 0; i < skeletonCount; i++)
         {
             string skeletonName = treeView->model()->index(i,0).data().toString().toStdString();
-            int skeletonId = cor3dApp->cor3d->get_skeleton_id_by_name(skeletonName);
-            Skeleton *skeleton = cor3dApp->cor3d->getSkeletonById(skeletonId);
+            Skeleton *skeleton = cor3dApp->cor3d->getSkeletonByName(skeletonName);
             if (skeleton)
             {
                 file << *skeleton << endl;

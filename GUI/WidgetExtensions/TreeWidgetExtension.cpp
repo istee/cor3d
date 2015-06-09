@@ -110,22 +110,6 @@ void TreeWidgetExtension::selectTreeWidgetItem(const string dataValue)
     blockSignals(false);
 }
 
-void TreeWidgetExtension::selectTreeWidgetItemWithChildren(const string dataValue)
-{
-    blockSignals(true);
-    this->clearSelection();
-    QTreeWidgetItem* item = getTreeWidgetItemByData(dataValue);
-    if (item)
-    {
-        item->setSelected(true);
-        for (int r = 0; r < item->childCount(); r++)
-        {
-            item->child(r)->setSelected(true);
-        }
-    }
-    blockSignals(false);
-}
-
 void TreeWidgetExtension::selectTreeWidgetItem(QTreeWidgetItem* parentItem, const string& dataValue)
 {
     blockSignals(true);

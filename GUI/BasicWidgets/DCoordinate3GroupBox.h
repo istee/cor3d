@@ -15,7 +15,7 @@ class DCoordinate3GroupBox: public QWidget, protected Ui::DCoordinate3GroupBox
 public:
     // special and default constructor
     DCoordinate3GroupBox(QWidget *parent = 0);
-    const DCoordinate3 value() const;
+    const DCoordinate3 getValue() const;
     void setValue(const DCoordinate3& dcoordinate3);
     void setLabels(const string& xLabel, const string& yLabel, const string& zLabel);
     void setTitle(const string& title);

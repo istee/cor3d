@@ -10,10 +10,10 @@ DCoordinate3GroupBox::DCoordinate3GroupBox(QWidget *parent): QWidget(parent)
 
 void DCoordinate3GroupBox::editingFinished()
 {
-    emit CoordinatesChanged(value());
+    emit CoordinatesChanged(getValue());
 }
 
-const DCoordinate3 DCoordinate3GroupBox::value() const
+const DCoordinate3 DCoordinate3GroupBox::getValue() const
 {
     return DCoordinate3(xDoubleSpinBox->value(), yDoubleSpinBox->value(), zDoubleSpinBox->value());
 }

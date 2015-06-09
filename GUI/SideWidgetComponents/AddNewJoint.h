@@ -7,7 +7,6 @@
 
 #include "ui_AddNewJoint.h"
 #include "BaseSideWidget.h"
-#include "GUI/WidgetExtensions/BaseEntityDisplayProperties.h"
 #include "GUI/WidgetExtensions/TreeWidgetExtension.h"
 
 using namespace std;
@@ -28,9 +27,7 @@ public:
 private:
     void populateJointTreeView(Skeleton* skeleton, Joint* parent, QTreeWidgetItem* item);
     void addWidgetToTreeWidgetItems(QTreeWidgetItem* item);
-    QHash<string,BaseEntityDisplayProperties>  _jointsDisplayProperties;
     void populateTreeViewJoints(Skeleton* skeleton, Joint* joint);
-
 signals:
     void viewJointAdded(const string& name, const string& parentName);
     void viewJointSelected(string name);

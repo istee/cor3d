@@ -6,7 +6,6 @@
 #include "ui_SkeletonList.h"
 #include "BaseSideWidget.h"
 #include "GUI/BasicWidgets/BaseEntityListItem.h"
-#include "GUI/WidgetExtensions/BaseEntityDisplayProperties.h"
 
 using namespace std;
 
@@ -22,9 +21,6 @@ public:
     void renameSkeleton(const string& oldName, const string& newName);
     void updateSkeletonModel(Skeleton* skeleton);
     void selectSkeleton(const string& name);
-
-private:
-    QHash<string,BaseEntityDisplayProperties>  _skeletonDisplayProperties;
 
 signals:
     void viewSkeletonSelected(const string& name);

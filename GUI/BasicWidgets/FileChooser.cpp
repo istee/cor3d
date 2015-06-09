@@ -11,7 +11,7 @@ FileChooser::FileChooser(QWidget *parent): QWidget(parent)
     setupUi(this);
 }
 
-const string& FileChooser::value() const
+const string& FileChooser::getValue() const
 {
     return fileNameLabel->text().toStdString();
 }

@@ -20,7 +20,7 @@ void AddNewSkeleton::update_content()
 
 void AddNewSkeleton::on_add_new_skeleton_button_released()
 {
-    emit view_skeleton_added(name->value());
+    emit view_skeleton_added(name->getValue());
 }
 
 void AddNewSkeleton::on_pushButton_released()

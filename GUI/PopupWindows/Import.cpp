@@ -35,7 +35,7 @@ void Import::on_importButton_clicked()
 {
     Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
     ifstream file;
-    file.open(importFile->value().data(), ios::out);
+    file.open(importFile->getValue().data(), ios::out);
     if (file.is_open())
     {
         string text;

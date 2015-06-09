@@ -2,7 +2,7 @@
 
 #include "Cor3dApplication.h"
 #include "GUI/SideWidgetComponents/BaseSideWidget.h"
-#include "GUI/SideWidgetComponents/SideWidgetGroupBox.h"
+#include "GUI/WidgetExtensions/GroupBoxExtension.h"
 #include "GUI/PostureGLWidget.h"
 
 PostureEditorTab::PostureEditorTab(QWidget *parent): IMainWindowTab(parent)
@@ -20,9 +20,9 @@ PostureEditorTab::PostureEditorTab(QWidget *parent): IMainWindowTab(parent)
 
     Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
 
-    connect(glwidget, SIGNAL(glwidgetTranslationChanged(DCoordinate3)), cor3dApp->cor3d, SLOT(handle_view_translation_changed(DCoordinate3)));
-    connect(glwidget, SIGNAL(glwidgetRotationChanged(DCoordinate3)), cor3dApp->cor3d, SLOT(handle_view_rotation_changed(DCoordinate3)));
-    connect(glwidget, SIGNAL(glwidgetZoomChanged(double)), cor3dApp->cor3d, SLOT(handle_view_zoom_changed(double)));
+    connect(glwidget, SIGNAL(glwidgetTranslationChanged(DCoordinate3)), cor3dApp->cor3d, SLOT(handleViewTranslationChanged(DCoordinate3)));
+    connect(glwidget, SIGNAL(glwidgetRotationChanged(DCoordinate3)), cor3dApp->cor3d, SLOT(handleViewRotationChanged(DCoordinate3)));
+    connect(glwidget, SIGNAL(glwidgetZoomChanged(double)), cor3dApp->cor3d, SLOT(handleViewZoomChanged(double)));
 
     connect(cor3dApp->cor3d, SIGNAL(modelSkeletonSelected(Skeleton*,Skeleton*)), this, SLOT(handleModelSkeletonSelected(Skeleton*,Skeleton*)));
     //connect(cor3dApp->cor3d, SIGNAL(modelPostureSelected(Skeleton*,Posture*,Skeleton*,Posture*)), this, SLOT(handleModelPostureSelected(Skeleton*,Posture*,Skeleton*,Posture*)));

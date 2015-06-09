@@ -3,7 +3,7 @@
 
 #include "Cor3dApplication.h"
 #include "GUI/SideWidgetComponents/BaseSideWidget.h"
-#include "GUI/SideWidgetComponents/SideWidgetGroupBox.h"
+#include "GUI/WidgetExtensions/GroupBoxExtension.h"
 
 SkeletonEditorTab::SkeletonEditorTab(QWidget *parent):IMainWindowTab(parent)
 {
@@ -19,9 +19,9 @@ SkeletonEditorTab::SkeletonEditorTab(QWidget *parent):IMainWindowTab(parent)
 
     Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
 
-    connect(glwidget, SIGNAL(glwidgetTranslationChanged(DCoordinate3)), cor3dApp->cor3d, SLOT(handle_view_translation_changed(DCoordinate3)));
-    connect(glwidget, SIGNAL(glwidgetRotationChanged(DCoordinate3)), cor3dApp->cor3d, SLOT(handle_view_rotation_changed(DCoordinate3)));
-    connect(glwidget, SIGNAL(glwidgetZoomChanged(double)), cor3dApp->cor3d, SLOT(handle_view_zoom_changed(double)));
+    connect(glwidget, SIGNAL(glwidgetTranslationChanged(DCoordinate3)), cor3dApp->cor3d, SLOT(handleViewTranslationChanged(DCoordinate3)));
+    connect(glwidget, SIGNAL(glwidgetRotationChanged(DCoordinate3)), cor3dApp->cor3d, SLOT(handleViewRotationChanged(DCoordinate3)));
+    connect(glwidget, SIGNAL(glwidgetZoomChanged(double)), cor3dApp->cor3d, SLOT(handleViewZoomChanged(double)));
 
     connect(cor3dApp->cor3d, SIGNAL(modelSkeletonAdded(Skeleton*)), this, SLOT(handleModelSkeletonAdded(Skeleton*)));
     connect(cor3dApp->cor3d, SIGNAL(modelSkeletonDeleted(string)), this, SLOT(handleModelSkeletonDeleted(string)));

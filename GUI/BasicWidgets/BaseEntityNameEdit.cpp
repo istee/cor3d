@@ -19,7 +19,7 @@ BaseEntityNameEdit::BaseEntityNameEdit(QWidget *parent): QWidget(parent)
          return QObject::eventFilter(obj, event);
      }
  }
-string BaseEntityNameEdit::value() const
+string BaseEntityNameEdit::getValue() const
 {
     return lineEdit->text().toStdString();
 }
@@ -36,10 +36,10 @@ void BaseEntityNameEdit::setLabel(const string& label_string)
 
 void BaseEntityNameEdit::on_lineEdit_editingFinished()
 {
-    emit nameChanged(value());
+    emit nameChanged(getValue());
 }
 
 void BaseEntityNameEdit::on_toolButton_clicked()
 {
-    emit baseEntityAdded(value());
+    emit baseEntityAdded(getValue());
 }

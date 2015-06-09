@@ -14,9 +14,9 @@ class BaseEntityComboBox: public QWidget, protected Ui::BaseEntityComboBox
 public:
     // special and default constructor
     BaseEntityComboBox(QWidget *parent = 0);
-    const BaseEntity value() const;
-    int key() const;
-    const string& text() const;
+    const BaseEntity getValue() const;
+    int getKey() const;
+    const string& getText() const;
     void setValue(const BaseEntity& baseEntity);
     void setIndex(int index);
     void setLabel(const string& label_string);

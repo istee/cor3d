@@ -29,7 +29,7 @@ public:
     }
 
 protected slots:
-    void handle_groupbox_toggled(bool show)
+    void handle_groupboxToggled(bool show)
     {
         if (show)
         {

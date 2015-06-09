@@ -34,12 +34,12 @@ void BaseEntityListItem::setBaseEntityNameLabelText(const string& text)
     }
 }
 
-string BaseEntityListItem::baseEntityNameLabelText() const
+string BaseEntityListItem::getBaseEntityNameLabelText() const
 {
     return baseEntityNameLabel->text().toStdString();
 }
 
-string BaseEntityListItem::baseEntityBaseEntityNameEditText() const
+string BaseEntityListItem::getBaseEntityBaseEntityNameEditText() const
 {
     return baseEntityBaseEntityNameEdit->text().toStdString();
 }

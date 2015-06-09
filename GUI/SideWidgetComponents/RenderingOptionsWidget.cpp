@@ -33,7 +33,7 @@ RenderingOptionsWidget::RenderingOptionsWidget(QWidget *parent): QFrame(parent)
     connect(joint_render, SIGNAL(toggled(bool)), this, SIGNAL(view_joint_render_toggled(bool)));
     connect(joint_model_file, SIGNAL(fileChanged(string)), this, SIGNAL(view_joint_model_fileChanged(string)));
     connect(joint_color, SIGNAL(selectionChanged(int)), this, SIGNAL(view_joint_material_changed(int)));
-    connect(joint_selected_color, SIGNAL(selectionChanged(int)), this, SIGNAL(view_selected_joint_material_changed(int)));
+    connect(joint_selected_color, SIGNAL(selectionChanged(int)), this, SIGNAL(view_selectedJoint_material_changed(int)));
     connect(link_render, SIGNAL(toggled(bool)), this, SIGNAL(view_link_render_toggled(bool)));
     connect(link_model_file, SIGNAL(fileChanged(string)), this, SIGNAL(view_link_model_fileChanged(string)));
     connect(link_color, SIGNAL(selectionChanged(int)), this, SIGNAL(view_link_material_changed(int)));
@@ -54,7 +54,7 @@ void RenderingOptionsWidget::update_content()
         joint_color->populate(rendering_options->get_materials());
         joint_color->setIndex(rendering_options->get_joint_material());
         joint_selected_color->populate(rendering_options->get_materials());
-        joint_selected_color->setIndex(rendering_options->get_selected_joint_material());
+        joint_selected_color->setIndex(rendering_options->get_selectedJoint_material());
         link_render->setChecked(rendering_options->get_render_links());
         link_color->populate(rendering_options->get_materials());
         link_color->setIndex(rendering_options->get_link_material());

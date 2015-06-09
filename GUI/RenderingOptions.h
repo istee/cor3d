@@ -18,7 +18,7 @@ class RenderingOptions {
 
     unsigned int _model_material;
     unsigned int _joint_material;
-    unsigned int _selected_joint_material;
+    unsigned int _selectedJoint_material;
     unsigned int _link_material;
 
     double model_opacity;
@@ -68,7 +68,7 @@ public:
 
         _model_material = 4;
         _joint_material = 2;
-        _selected_joint_material = 0;
+        _selectedJoint_material = 0;
         _link_material = 1;
 
         is_initialized = false;
@@ -154,9 +154,9 @@ public:
         return _joint_material;
     }
 
-    unsigned int get_selected_joint_material() const
+    unsigned int get_selectedJoint_material() const
     {
-        return _selected_joint_material;
+        return _selectedJoint_material;
     }
 
     unsigned int get_link_material() const
@@ -232,9 +232,9 @@ public:
         _joint_material = joint_material;
     }
 
-    void set_selected_joint_material(unsigned int selected_joint_material)
+    void set_selectedJoint_material(unsigned int selected_joint_material)
     {
-        _selected_joint_material = selected_joint_material;
+        _selectedJoint_material = selected_joint_material;
     }
 
     void set_link_material(unsigned int link_material)

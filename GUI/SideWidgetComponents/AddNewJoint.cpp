@@ -15,9 +15,8 @@ AddNewJoint::AddNewJoint(QWidget *parent): BaseSideWidget(parent)
 {
     setupUi(this);
     addName->setLabel("Name");
-    _jointsDisplayProperties = QHash<string,BaseEntityDisplayProperties>();
 
-    connect(groupBox, SIGNAL(groupbox_toggled(bool)), this, SLOT(handle_groupbox_toggled(bool)));
+    connect(groupBox, SIGNAL(groupboxToggled(bool)), this, SLOT(handle_groupboxToggled(bool)));
     connect(addName, SIGNAL(baseEntityAdded(string)), this, SLOT(handleViewJointAdded(string)));
 }
 
@@ -31,7 +30,7 @@ void AddNewJoint::addJoint(Skeleton* skeleton, Joint* joint, const string& paren
 
     treeViewJoints->addTreeWidgetItem(parentName, joint->get_name(), listItem);
 
-    addName->setValue(_cor3d->get_skeleton()->next_joint_name());
+    addName->setValue(_cor3d->getSelectedSkeleton()->next_joint_name());
 }
 
 void AddNewJoint::deleteJoint(const string& name)

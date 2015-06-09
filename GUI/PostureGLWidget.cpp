@@ -13,11 +13,11 @@ void PostureGLWidget::specificPaintGL()
     {
         if (_skeleton->selectedPosture())
         {
-            RenderingOptions* rendering_options = cor3dApp->cor3d->get_rendering_options();
+            RenderingOptions* rendering_options = cor3dApp->cor3d->getRenderingOptions();
             _skeleton->selectedPosture()->renderPosture(rendering_options, true);
             if (_skeleton->is_joint_selected())
             {
-                DCoordinate3 position = _skeleton->selectedPosture()->getAbsolutePostureCoordinate(_skeleton->get_selected_joint_id());
+                DCoordinate3 position = _skeleton->selectedPosture()->getAbsolutePostureCoordinate(_skeleton->get_selectedJoint_id());
                 render_move_arrows(rendering_options, &position);
             }
         }
@@ -26,13 +26,13 @@ void PostureGLWidget::specificPaintGL()
 
 void PostureGLWidget::specificDrawPickObjects()
 {
-    _skeleton->selectedPosture()->renderPostureJoints(cor3dApp->cor3d->get_rendering_options(), true);
+    _skeleton->selectedPosture()->renderPostureJoints(cor3dApp->cor3d->getRenderingOptions(), true);
 
     if (_skeleton->is_joint_selected() && _skeleton->selectedPosture())
     {
-        DCoordinate3 selected_position = _skeleton->selectedPosture()->getAbsolutePostureCoordinate(_skeleton->get_selected_joint_id());
+        DCoordinate3 selected_position = _skeleton->selectedPosture()->getAbsolutePostureCoordinate(_skeleton->get_selectedJoint_id());
 
-        render_move_arrows(cor3dApp->cor3d->get_rendering_options(), &selected_position, _skeleton->get_joint_count(), true);
+        render_move_arrows(cor3dApp->cor3d->getRenderingOptions(), &selected_position, _skeleton->get_joint_count(), true);
     }
 }
 
@@ -67,7 +67,7 @@ void PostureGLWidget::drag(double x, double y, double z)
 
 void PostureGLWidget::drag_starting()
 {
-    _skeleton->selectedPosture()->constructChains(_skeleton->get_selected_joint_id());
+    //_skeleton->selectedPosture()->constructChains(_skeleton->get_selectedJoint_id());
     GLWidget::drag_starting();
 }
 

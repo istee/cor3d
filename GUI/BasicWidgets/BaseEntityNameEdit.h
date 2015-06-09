@@ -9,11 +9,14 @@ using namespace std;
 class BaseEntityNameEdit: public QWidget, protected Ui::BaseEntityNameEdit
 {
     Q_OBJECT
+private:
+    bool eventFilter(QObject *obj, QEvent *event);
+
 public:
     // special and default constructor
     BaseEntityNameEdit(QWidget *parent = 0);
-    bool eventFilter(QObject *obj, QEvent *event);
-    string value() const;
+
+    string getValue() const;
     void setValue(const string& value);
     void setLabel(const string& label_string);
 

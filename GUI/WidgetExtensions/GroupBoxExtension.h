@@ -13,28 +13,26 @@
 
 using namespace std;
 
-class SideWidgetGroupBox: public QGroupBox
+class GroupBoxExtension: public QGroupBox
 {
     Q_OBJECT
 
     QSize           _sizeHint;
     QSizePolicy     _sizePolicy;
-
-protected:
-    bool            _check_box_state;
+    bool            _checkBoxState;
 
 public:
-    SideWidgetGroupBox(QWidget* parent);
+    GroupBoxExtension(QWidget* parent);
     bool event(QEvent *e);
     bool myKeyReleaseHandler(QKeyEvent *event);
-    void myHandler(QMouseEvent *event);
+    void myMouseHandler(QMouseEvent *event);
     void toggled();
     void initStyleOption(QStyleOptionGroupBox *option) const;
     void paintEvent(QPaintEvent *);
-    void set_content_visibility(bool visible);
+    void setContentVisibility(bool visible);
 private slots:
-    void my_toggled(bool on);
+    void handleToggle(bool on);
 
 signals:
-    void groupbox_toggled(bool showContent);
+    void groupboxToggled(bool showContent);
 };

@@ -9,10 +9,10 @@
 namespace cor3d {
     Cor3d::Cor3d(): QObject()
     {
-        _selected_skeleton_id = -1;
-        _rendering_options = new RenderingOptions();
+        _selectedSkeletonId = -1;
+        _renderingOptions = new RenderingOptions();
 
-        emit modelRenderingOptionsChanged(_rendering_options);
+        emit modelRenderingOptionsChanged(_renderingOptions);
     }
 
     string Cor3d::next_name() const
@@ -20,23 +20,13 @@ namespace cor3d {
         return cor3d::next_name<Skeleton>("Skeleton ", _skeletons);
     }
 
-    int Cor3d::get_skeleton_id_by_name(const string& name) const
+    Skeleton* Cor3d::getSelectedSkeleton()
     {
-        return get_id_by_name<Skeleton>(name, _skeletons);
-    }
-
-    Skeleton* Cor3d::get_skeleton()
-    {
-        if (is_skeleton_selected())
+        if (_selectedSkeletonId >= 0 && _selectedSkeletonId < _skeletons.size())
         {
-            return _skeletons[_selected_skeleton_id];
+            return _skeletons[_selectedSkeletonId];
         }
         return 0;
-    }
-
-    unsigned int Cor3d::get_selected_skeleton_id() const
-    {
-        return _selected_skeleton_id;
     }
 
     Skeleton* Cor3d::getSkeletonById(unsigned int skeletonId)
@@ -50,7 +40,7 @@ namespace cor3d {
 
     Skeleton* Cor3d::getSkeletonByName(const string& skeletonName)
     {
-        int skeletonId = get_skeleton_id_by_name(skeletonName);
+        int skeletonId = get_id_by_name<Skeleton>(skeletonName, _skeletons);
         if (skeletonId >= 0 && skeletonId < _skeletons.size())
         {
             return _skeletons[skeletonId];
@@ -58,32 +48,14 @@ namespace cor3d {
         return 0;
     }
 
-    vector<BaseEntity*> Cor3d::get_skeleton_list()
+    vector<BaseEntity*> Cor3d::getSkeletonList()
     {
         return get_base_entities<Skeleton>(_skeletons);
     }
 
-    RenderingOptions* Cor3d::get_rendering_options()
+    RenderingOptions* Cor3d::getRenderingOptions() const
     {
-        return _rendering_options;
-    }
-
-    bool Cor3d::is_skeleton_id_valid(int skeleton_id)
-    {
-        if (skeleton_id < 0)
-        {
-            return false;
-        }
-        if ((unsigned int)skeleton_id >= _skeletons.size())
-        {
-            return false;
-        }
-        return true;
-    }
-
-    bool Cor3d::is_skeleton_selected()
-    {
-        return is_skeleton_id_valid(_selected_skeleton_id);
+        return _renderingOptions;
     }
 
     void Cor3d::importSkeleton(ifstream& stream)
@@ -98,56 +70,56 @@ namespace cor3d {
 
     // implementation of public slots
 
-    void Cor3d::handle_view_translation_changed(const DCoordinate3& translation)
+    void Cor3d::handleViewTranslationChanged(const DCoordinate3& translation)
     {
-        _rendering_options->setTranslation(translation);
-        emit model_translation_changed(_rendering_options->getTranslation());
+        _renderingOptions->setTranslation(translation);
+        emit modelTranslationChanged(_renderingOptions->getTranslation());
     }
 
-    void Cor3d::handle_view_rotation_changed(const DCoordinate3& rotation)
+    void Cor3d::handleViewRotationChanged(const DCoordinate3& rotation)
     {
-        _rendering_options->setRotation(rotation);
-        emit model_rotation_changed(_rendering_options->getRotation());
+        _renderingOptions->setRotation(rotation);
+        emit modelRotationChanged(_renderingOptions->getRotation());
     }
 
-    void Cor3d::handle_view_zoom_changed(double zoom)
+    void Cor3d::handleViewZoomChanged(double zoom)
     {
-        _rendering_options->setZoom(zoom);
-        emit model_zoom_changed(_rendering_options->getZoom());
+        _renderingOptions->setZoom(zoom);
+        emit modelZoomChanged(_renderingOptions->getZoom());
     }
 
     void Cor3d::handleViewSkeletonAdded(string name)
     {
-        Skeleton* selected = get_skeleton();
+        Skeleton* selected = getSelectedSkeleton();
 
         Skeleton* skeleton = new Skeleton(_skeletons.size(), append_sequence_number<Skeleton>(name, _skeletons));
         skeleton->addRoot();
         _skeletons.push_back(skeleton);
         emit modelSkeletonAdded(skeleton);
 
-        _selected_skeleton_id = skeleton->get_id();
+        _selectedSkeletonId = skeleton->get_id();
         emit modelSkeletonSelected(skeleton, selected);
     }
 
     void Cor3d::handle_view_skeleton_selected(int id)
     {
-        if (id != _selected_skeleton_id)
+        if (id != _selectedSkeletonId)
         {
             string oldSelected = "", newSelected = "";
-            Skeleton* skeleton = get_skeleton();
+            Skeleton* skeleton = getSelectedSkeleton();
             if (skeleton)
             {
                 oldSelected = skeleton->get_name();
             }
 
-            if (!is_skeleton_id_valid(id))
+            if (!(id >= 0 && id < _skeletons.size()))
             {
-                _selected_skeleton_id = -1;
+                _selectedSkeletonId = -1;
             }
             else
             {
-                _selected_skeleton_id = id;
-                newSelected = get_skeleton()->get_name();
+                _selectedSkeletonId = id;
+                newSelected = getSelectedSkeleton()->get_name();
             }
 
             //emit model_skeleton_selectionChanged(oldSelected, newSelected);
@@ -163,7 +135,7 @@ namespace cor3d {
             newSelectionName = newSelection->get_name();
         }
 
-        Skeleton* oldSelection = getSkeletonById(_selected_skeleton_id);
+        Skeleton* oldSelection = getSkeletonById(_selectedSkeletonId);
         string oldSelectionName = "";
         if (oldSelection)
         {
@@ -172,42 +144,49 @@ namespace cor3d {
 
         if (newSelectionName != oldSelectionName)
         {
-            _selected_skeleton_id = newSelection->get_id();
+            _selectedSkeletonId = newSelection->get_id();
             emit modelSkeletonSelected(newSelection, oldSelection);
         }
     }
 
     void Cor3d::handleViewSkeletonDeleted(const string& name)
     {
-        unsigned int deleteId = get_skeleton_id_by_name(name);
-        Skeleton* deleteSkeleton = _skeletons[deleteId];
-        _skeletons.erase(_skeletons.begin() + deleteId);
-        for (vector<Skeleton*>::iterator it = _skeletons.begin() + deleteId; it != _skeletons.end(); it++)
+        Skeleton* deleteSkeleton = getSkeletonByName(name);
+        if (deleteSkeleton)
         {
-            ((BaseEntity*) *it)->decrease_id();
-        }
+            unsigned int deleteId = deleteSkeleton->get_id();
+            _skeletons.erase(_skeletons.begin() + deleteId);
+            for (vector<Skeleton*>::iterator it = _skeletons.begin() + deleteId; it != _skeletons.end(); it++)
+            {
+                ((BaseEntity*) *it)->decrease_id();
+            }
 
-        if (_selected_skeleton_id == deleteId)
-        {
-            _selected_skeleton_id--;
-            emit modelSkeletonSelected(get_skeleton(), 0);
-        }
+            if (_selectedSkeletonId == deleteId)
+            {
+                _selectedSkeletonId--;
+                emit modelSkeletonSelected(getSelectedSkeleton(), 0);
+            }
 
-        delete deleteSkeleton;
-        emit modelSkeletonDeleted(name);
+            delete deleteSkeleton;
+            emit modelSkeletonDeleted(name);
+        }
     }
 
     void Cor3d::handle_view_skeleton_exported(const string& file_name)
     {
         ofstream file;
         file.open(file_name.c_str());
-        file << *get_skeleton();
+        file << *getSelectedSkeleton();
         file.close();
     }
 
     void Cor3d::handleViewSkeletonRenamed(const string& oldName, const string& newName)
     {
-        ((Skeleton*) _skeletons[get_skeleton_id_by_name(oldName)])->set_name(newName);
-        emit modelSkeletonRenamed(oldName, newName);
+        Skeleton* skeleton = getSkeletonByName(oldName);
+        if (skeleton)
+        {
+            skeleton->set_name(newName);
+            emit modelSkeletonRenamed(oldName, newName);
+        }
     }
 }

@@ -27,7 +27,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0">
-    <widget class="SideWidgetGroupBox" name="groupBox">
+    <widget class="GroupBoxExtension" name="groupBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -108,9 +108,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>SideWidgetGroupBox</class>
+   <class>GroupBoxExtension</class>
    <extends>QGroupBox</extends>
-   <header>GUI/SideWidgetComponents/SideWidgetGroupBox.h</header>
+   <header>GUI/WidgetExtensions/GroupBoxExtension.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

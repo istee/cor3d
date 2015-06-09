@@ -31,14 +31,10 @@ namespace cor3d
         DCoordinate3            _model_offset;
         DCoordinate3            _model_scale;
 
-        vector<Posture*>         _postures;
-        vector<DCoordinate3>    _current_posture;
+        vector<Posture*>        _postures;
         vector<Joint*>          _joints;
-        bool                    _chains_moved;
-        int                     _selected_joint;
+        int                     _selectedJoint;
         int                     _selectedPosture;
-
-        bool                    _coordinates_need_update;
 
 
     public:
@@ -47,8 +43,6 @@ namespace cor3d
 
 
         void addRoot();
-        //int construct_chains_(int joint_id, int chain_index, int parent_chain_index);
-        //void construct_chains();
 
         void addJoint(const string& parentName, const string& jointName);
 
@@ -67,13 +61,13 @@ namespace cor3d
         vector<BaseEntity*> get_joint_list() const;
         vector<BaseEntity*> get_possible_parents(unsigned int id) const;
 
-        int get_selected_joint_id() const;
+        int get_selectedJoint_id() const;
         unsigned int getJointIdByName(const string& name) const;
 
         Joint* get_joint(unsigned int id) const;
         Joint* get_joint(const string& name) const;
         Joint* get_parent_joint(const string& name) const;
-        Joint* get_selected_joint() const;
+        Joint* get_selectedJoint() const;
 
         Posture* selectedPosture() const;
 
@@ -184,9 +178,9 @@ namespace cor3d
         return _joints.size();
     }
 
-    inline int Skeleton::get_selected_joint_id() const
+    inline int Skeleton::get_selectedJoint_id() const
     {
-        return _selected_joint;
+        return _selectedJoint;
     }
 
     inline void Skeleton::set_name(const string &name)
@@ -215,7 +209,7 @@ namespace cor3d
 
     inline bool Skeleton::is_joint_selected() const
     {
-        return _selected_joint >= 0;
+        return _selectedJoint >= 0;
     }
 
     inline Posture* Skeleton::selectedPosture() const

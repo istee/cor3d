@@ -27,8 +27,8 @@ private:
 public:
     explicit BaseEntityListItem(const string& labelText, BaseEditWidget* editWidget, QWidget *parent = 0);
     void setBaseEntityNameLabelText(const string& text);
-    string baseEntityNameLabelText() const;
-    string baseEntityBaseEntityNameEditText() const;
+    string getBaseEntityNameLabelText() const;
+    string getBaseEntityBaseEntityNameEditText() const;
     void showEditWidget(bool show);
     bool isEditWidgetVisible();
     void showRename(bool show);

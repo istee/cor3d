@@ -36,15 +36,14 @@ SOURCES += \
     GUI/IMainWIndowTab.cpp \
     GUI/Toolbars/FileToolbar.cpp \
     GUI/BasicWidgets/BaseEntityListItem.cpp \
-    GUI/WidgetExtensions/BaseEntityListDisplayProperties.cpp \
     GUI/WidgetExtensions/TreeWidgetExtension.cpp \
-    GUI/SideWidgetComponents/SideWidgetGroupBox.cpp \
     GUI/SideWidgetComponents/ManagePostures.cpp \
     GUI/SideWidgetComponents/EditPosture.cpp \
     GUI/EditWidgets/BaseEditWidget.cpp \
     GUI/WidgetExtensions/ListWidgetExtension.cpp \
     Model/Posture.cpp \
-    GUI/EditWidgets/EditPostureJoint.cpp
+    GUI/EditWidgets/EditPostureJoint.cpp \
+    GUI/WidgetExtensions/GroupBoxExtension.cpp
 
 
 HEADERS += \
@@ -88,7 +87,6 @@ HEADERS += \
     GUI/BasicWidgets/FileChooser.h \
     GUI/BasicWidgets/BaseEntityNameEdit.h \
     GUI/SideWidgetComponents/RenderingOptionsWidget.h \
-    GUI/SideWidgetComponents/SideWidgetGroupBox.h \
     GUI/SideWidgetComponents/BaseSideWidget.h \
     Model/MaterialContainer.h \
     GUI/PostureEditorTab.h \
@@ -102,14 +100,14 @@ HEADERS += \
     GUI/WidgetExtensions/SpinboxExtension.h \
     GUI/Toolbars/FileToolbar.h \
     GUI/BasicWidgets/BaseEntityListItem.h \
-    GUI/WidgetExtensions/BaseEntityDisplayProperties.h \
     GUI/WidgetExtensions/TreeWidgetExtension.h \
     GUI/SideWidgetComponents/ManagePostures.h \
     GUI/SideWidgetComponents/EditPosture.h \
     GUI/EditWidgets/BaseEditWidget.h \
     GUI/WidgetExtensions/ListWidgetExtension.h \
     GUI/WidgetExtensions/ToolButtonExtension.h \
-    GUI/EditWidgets/EditPostureJoint.h
+    GUI/EditWidgets/EditPostureJoint.h \
+    GUI/WidgetExtensions/GroupBoxExtension.h
 
 FORMS += \
     GUI/BasicWidgets/DCoordinate3GroupBox.ui \

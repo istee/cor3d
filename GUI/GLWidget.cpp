@@ -85,7 +85,7 @@ void GLWidget::initializeGL()
     is_drag = false;
 
     cor3dApp = (Cor3dApplication*) qApp;
-    cor3dApp->cor3d->get_rendering_options()->initialize();
+    cor3dApp->cor3d->getRenderingOptions()->initialize();
 }
 
 //-----------------------
@@ -365,7 +365,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
             cout << "before normalizing: " << n << " , " << n.length() << endl;
             n.normalize();
 
-            DCoordinate3 p0 = _skeleton->get_selected_joint()->get_coordinates();
+            DCoordinate3 p0 = _skeleton->get_selectedJoint()->get_coordinates();
             //DCoordinate3 p0 = DCoordinate3(p0_const.x(), p0_const.y(), p0_const.z());
 
             double mouseX = event->x();
@@ -409,7 +409,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
                 //                cout << "p0: " << p0 << endl;
                 //                cout << "point: " << result << endl;
 
-                DCoordinate3 new_coord  = _skeleton->get_selected_joint()->get_coordinates();
+                DCoordinate3 new_coord  = _skeleton->get_selectedJoint()->get_coordinates();
                 //DCoordinate3 *new_coord = _skeletons[0].GetSelectedPosition();
 
 

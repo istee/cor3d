@@ -18,7 +18,7 @@ class FileChooser: public QWidget, protected Ui::FileChooser
 public:
     // special and default constructor
     FileChooser(QWidget *parent = 0);
-    const string& value() const;
+    const string& getValue() const;
     void setValue(const string& value);
     void setLabel(const string& label_string);
     void setCaption(const string& caption);
