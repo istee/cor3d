@@ -2,6 +2,8 @@
 
 #include "Cor3dApplication.h"
 
+#include "Core/DCoordinates3.h"
+
 SkeletonGLWidget::SkeletonGLWidget(QWidget *parent, const QGLFormat &format): GLWidget(parent, format)
 {
 
@@ -14,10 +16,10 @@ void SkeletonGLWidget::specificPaintGL()
     if (skeleton)
     {
         skeleton->render(cor3dApp->cor3d->getRenderingOptions());
-        if (skeleton && skeleton->is_joint_selected())
+        if (skeleton && skeleton->getSelectedJoint() && skeleton->getSelectedJoint()->get_parent() >= 0)
         {
-            unsigned int joint_id = skeleton->get_selectedJoint_id();
-            DCoordinate3 position = skeleton->get_joint(joint_id)->get_coordinates();
+            unsigned int joint_id = skeleton->getSelectedJoint()->getId();
+            DCoordinate3 position = skeleton->getJointById(joint_id)->get_coordinates();
             render_move_arrows(cor3dApp->cor3d->getRenderingOptions(), &position);
         }
     }
@@ -25,20 +27,20 @@ void SkeletonGLWidget::specificPaintGL()
 
 void SkeletonGLWidget::specificDrawPickObjects()
 {
-    _skeleton->render_joints(cor3dApp->cor3d->getRenderingOptions(), true);
-
-    if (_skeleton->is_joint_selected())
+    //_skeleton->renderJoints(cor3dApp->cor3d->getRenderingOptions(), true);
+    Joint* selectedJoint = _skeleton->getSelectedJoint();
+    if (selectedJoint && selectedJoint->get_parent() >= 0)
     {
-        DCoordinate3 selected_position = _skeleton->get_selectedJoint()->get_coordinates();
+        DCoordinate3 selected_position = _skeleton->getSelectedJoint()->get_coordinates();
 
-        render_move_arrows(cor3dApp->cor3d->getRenderingOptions(), &selected_position, _skeleton->get_joint_count(), true);
+        render_move_arrows(cor3dApp->cor3d->getRenderingOptions(), &selected_position, _skeleton->getJointCount(), true);
     }
 }
 
 int SkeletonGLWidget::specificPickCount()
 {
-    GLuint size = 4 * _skeleton->get_joint_count();
-    if (_skeleton->is_joint_selected())
+    GLuint size = 4 * _skeleton->getJointCount();
+    if (_skeleton->getSelectedJoint())
     {
         size += 24;
     }
@@ -55,6 +57,11 @@ void SkeletonGLWidget::specificPick(unsigned int closestSelected)
     }
     else
     {
-        emit view_joint_selectionChanged(closestSelected - 6);
+        emit viewJointSelected(closestSelected - 6);
     }
+}
+
+void SkeletonGLWidget::drag(double x, double y, double z)
+{
+    emit viewJointAbsoluteCoordinatesChanged(DCoordinate3(x, y, z));
 }

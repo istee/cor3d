@@ -57,6 +57,11 @@ void SkeletonEditorTab::handleModelSkeletonSelected(Skeleton* selected, Skeleton
         disconnect(previous, SIGNAL(modelJointAdded(Skeleton*,Joint*,string)), this, SLOT(handleModelJointAdded(Skeleton*,Joint*,string)));
         disconnect(previous, SIGNAL(modelJointDeleted(string)), this, SLOT(handleModelJointDeleted(string)));
         disconnect(previous, SIGNAL(modelJointRenamed(string,string)), this, SLOT(handleModelJointRenamed(string,string)));
+        disconnect(previous, SIGNAL(modelJointSelected(string)), this, SLOT(handleModelJointSelected(string)));
+        disconnect(previous, SIGNAL(modelJointDataChanged(Joint*)), this, SLOT(handleModelJointDataChanged(Joint*)));
+
+        disconnect(glwidget, SIGNAL(viewJointAbsoluteCoordinatesChanged(DCoordinate3)), selected, SLOT(handleViewSelectedJointAbsoluteCoordinatesChanged(DCoordinate3)));
+        disconnect(glwidget, SIGNAL(viewJointSelected(int)), selected, SLOT(handleViewJointSelected(int)));
     }
 
     add_new_joint->populateJoints(selected, previous);
@@ -65,7 +70,7 @@ void SkeletonEditorTab::handleModelSkeletonSelected(Skeleton* selected, Skeleton
 
     if (selected)
     {
-        skeleton_list->selectSkeleton(selected->get_name());
+        skeleton_list->selectSkeleton(selected->getName());
 
         connect(selected, SIGNAL(modelJointAdded(Skeleton*,Joint*,string)), this, SLOT(handleModelJointAdded(Skeleton*,Joint*,string)));
         connect(selected, SIGNAL(modelJointDeleted(string)), this, SLOT(handleModelJointDeleted(string)));
@@ -73,8 +78,8 @@ void SkeletonEditorTab::handleModelSkeletonSelected(Skeleton* selected, Skeleton
         connect(selected, SIGNAL(modelJointSelected(string)), this, SLOT(handleModelJointSelected(string)));
         connect(selected, SIGNAL(modelJointDataChanged(Joint*)), this, SLOT(handleModelJointDataChanged(Joint*)));
 
-        connect(glwidget, SIGNAL(view_joint_selectionChanged(int)), selected, SLOT(handle_view_joint_selectionChanged(int)));
-        connect(glwidget, SIGNAL(view_joint_absolute_position_changed(DCoordinate3)), selected, SLOT(handle_view_joint_absolute_position_changed(DCoordinate3)));
+        connect(glwidget, SIGNAL(viewJointAbsoluteCoordinatesChanged(DCoordinate3)), selected, SLOT(handleViewSelectedJointAbsoluteCoordinatesChanged(DCoordinate3)));
+        connect(glwidget, SIGNAL(viewJointSelected(int)), selected, SLOT(handleViewJointSelected(int)));
     }
 }
 

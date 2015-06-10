@@ -15,7 +15,7 @@ AddNewSkeleton::AddNewSkeleton(QWidget *parent): BaseSideWidget(parent)
 void AddNewSkeleton::update_content()
 {
     Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
-    name->setValue(cor3dApp->cor3d->next_name());
+    name->setValue(cor3dApp->cor3d->nextName());
 }
 
 void AddNewSkeleton::on_add_new_skeleton_button_released()

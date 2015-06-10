@@ -9,16 +9,16 @@ namespace cor3d {
 
     std::ostream& operator <<(std::ostream& lhs, const Skeleton& rhs)
     {
-        lhs << "skeleton_name: " << rhs.get_name() << endl;
-        bool hasModelFile = "" != rhs.get_model_file();
-        lhs << "skeleton_has_model_file: " << hasModelFile << endl;
+        lhs << "skeleton_name: " << rhs.getName() << endl;
+        bool hasModelFile = "" != rhs.getMeshFile();
+        lhs << "skeleton_has_meshFile: " << hasModelFile << endl;
         if (hasModelFile)
         {
-            lhs << "skeleton_model_file: " << rhs.get_model_file() << endl;
-            lhs << "skeleton_model_offset: " << rhs.get_model_offset() << endl;
-            lhs << "skeleton_model_scale: " <<rhs.get_model_scale() << endl;
+            lhs << "skeleton_meshFile: " << rhs.getMeshFile() << endl;
+            lhs << "skeleton_meshOffset: " << rhs.getMeshOffset() << endl;
+            lhs << "skeleton_meshScale: " <<rhs.getMeshScale() << endl;
         }
-        lhs << "skeleton_joint_count: " << rhs.get_joint_count() << endl;
+        lhs << "skeleton_joint_count: " << rhs.getJointCount() << endl;
         for (vector<Joint*>::const_iterator it = rhs._joints.begin(); it != rhs._joints.end(); it++)
         {
             lhs << **it;
@@ -35,14 +35,14 @@ namespace cor3d {
 
         lhs >> text;
         lhs.getline(name, 256);
-        rhs.set_name(string(name));
+        rhs.setName(string(name));
         lhs >> text >> boolean;
         if (boolean)
         {
             lhs >> text >> text;
-            rhs.set_model_file(text);
-            lhs >> text >> rhs._model_offset;
-            lhs >> text >> rhs._model_scale;
+            rhs.setMeshFile(text);
+            lhs >> text >> rhs._meshOffset;
+            lhs >> text >> rhs._meshScale;
         }
         lhs >> text >> number;
         for (int i = 0; i < number; i++)
@@ -54,18 +54,53 @@ namespace cor3d {
         return lhs;
     }
 
+    string Skeleton::getMeshFile() const
+    {
+        return _meshFile;
+    }
+    DCoordinate3 Skeleton::getMeshOffset() const
+    {
+        return _meshOffset;
+    }
+    DCoordinate3 Skeleton::getMeshScale() const
+    {
+        return _meshScale;
+    }
+    unsigned int Skeleton::getJointCount() const
+    {
+        return _joints.size();
+    }
+    void Skeleton::setMeshOffset(const DCoordinate3& model_offset)
+    {
+        _meshOffset = model_offset;
+        emit modelSkeletonDataChanged(this);
+    }
+    void Skeleton::setMeshScale(const DCoordinate3& model_scale)
+    {
+        _meshScale = model_scale;
+        emit modelSkeletonDataChanged(this);
+    }
+    Posture* Skeleton::getSelectedPosture() const
+    {
+        if (_selectedPosture >=0 && _selectedPosture < _postures.size())
+        {
+            return _postures[_selectedPosture];
+        }
+        return 0;
+    }
+
     Skeleton::Skeleton(): QObject(), BaseEntity()
     {
-        _model_scale = DCoordinate3(1.0, 1.0, 1.0);
-        _model_offset = DCoordinate3(0, 0, 0);
+        _meshScale = DCoordinate3(1.0, 1.0, 1.0);
+        _meshOffset = DCoordinate3(0, 0, 0);
         _selectedJoint = -1;
         _selectedPosture = -1;
     }
 
     Skeleton::Skeleton(unsigned int id, const string& name): QObject(), BaseEntity(id, name)
     {
-        _model_scale = DCoordinate3(1.0, 1.0, 1.0);
-        _model_offset = DCoordinate3(0, 0, 0);
+        _meshScale = DCoordinate3(1.0, 1.0, 1.0);
+        _meshOffset = DCoordinate3(0, 0, 0);
         _selectedJoint = -1;
         _selectedPosture = -1;
     }
@@ -78,55 +113,52 @@ namespace cor3d {
         }
     }
 
-    unsigned int Skeleton::getJointIdByName(const string& name) const
-    {
-        return get_id_by_name<Joint>(name, _joints);
-    }
-
     void Skeleton::addJoint(const string& parentName, const string& jointName)
     {
-        unsigned int parentId = getJointIdByName(parentName);
-        Joint* parent = get_joint(parentId);
+        Joint* parent = getJointByName(parentName);
         if (parent)
         {
-            Joint* joint = new Joint(_joints.size(), jointName, parentId, parent->get_coordinates());
+            Joint* joint = new Joint(_joints.size(), jointName, parent->getId(), parent->get_coordinates());
             joint->set_coordinate(parent->get_coordinates());
             joint->set_axis(parent->get_axis());
             joint->set_orientation(parent->get_orientation());
             _joints.push_back(joint);
-            parent->add_child(joint->get_id());
+            parent->add_child(joint->getId());
             emit modelJointAdded(this, joint, parentName);
         }
     }
 
-    Joint* Skeleton::get_joint(unsigned int id) const
+    void Skeleton::selectJoint(const string& jointName)
+    {
+        Joint* joint = getJointByName(jointName);
+        if (joint)
+        {
+            _selectedJoint = joint->getId();
+            for (unsigned int i = 0; i < _postures.size(); i++)
+            {
+                getPostureById(i)->selectJoint(_selectedJoint);
+            }
+            emit modelJointSelected(jointName);
+        }
+    }
+
+    Joint* Skeleton::getJointById(unsigned int id) const
     {
         return _joints[id];
     }
 
-    Joint* Skeleton::get_joint(const string& name) const
+    Joint* Skeleton::getJointByName(const string& name) const
     {
-        int id = getJointIdByName(name);
-        if (validate_joint_index_(id))
+        int jointId = getIdByName<Joint>(name, _joints);
+        if (jointId >= 0 && jointId < _joints.size())
         {
-            return _joints[id];
+            return _joints[jointId];
         }
 
         return 0;
     }
 
-    Joint* Skeleton::get_parent_joint(const string& name) const
-    {
-        int parentId = get_joint(name)->get_parent();
-        if (validate_joint_index_(parentId))
-        {
-            return _joints[parentId];
-        }
-
-        return 0;
-    }
-
-    Joint* Skeleton::get_selectedJoint() const
+    Joint* Skeleton::getSelectedJoint() const
     {
         if (_selectedJoint >= 0 && _selectedJoint < _joints.size())
         {
@@ -147,7 +179,7 @@ namespace cor3d {
         }
         cout << endl;
 
-        Joint* parent = get_joint(get_joint(jointId)->get_parent());
+        Joint* parent = getJointById(getJointById(jointId)->get_parent());
         parent->remove_child(jointId);
 
         unsigned offset = 0;
@@ -168,9 +200,9 @@ namespace cor3d {
                         j->set_parent(j->get_parent() - 1);
                     }
 
-                    Joint* parent = get_joint(j->get_parent());
-                    parent->remove_child(j->get_id() + 1);
-                    parent->add_child(j->get_id());
+                    Joint* parent = getJointById(j->get_parent());
+                    parent->remove_child(j->getId() + 1);
+                    parent->add_child(j->getId());
                 }
             }
             offset++;
@@ -187,7 +219,7 @@ namespace cor3d {
         }
     }
 
-    vector<BaseEntity*> Skeleton::get_joint_list() const
+    vector<BaseEntity*> Skeleton::getJointList() const
     {
         vector<BaseEntity*> joint_list = vector<BaseEntity*>();
         for (std::vector<Joint*>::const_iterator it = _joints.begin(); it != _joints.end(); it++)
@@ -198,14 +230,14 @@ namespace cor3d {
         return joint_list;
     }
 
-    vector<BaseEntity*> Skeleton::get_possible_parents(unsigned int id) const
+    vector<BaseEntity*> Skeleton::getPossibleParents(unsigned int id) const
     {
 
         vector<BaseEntity*> possible_parents;
-        if (_joints.size() > 0 && id != get_joint(0)->get_id())
+        if (_joints.size() > 0 && id != getJointById(0)->getId())
         {
             vector<unsigned int> possible_parent_ids;
-            possible_parent_ids.push_back(get_joint(0)->get_id());
+            possible_parent_ids.push_back(getJointById(0)->getId());
             int limit = 0;
             while (possible_parent_ids.size() > 0 && limit < 8)
             {
@@ -215,11 +247,11 @@ namespace cor3d {
                 {
                     if (id != *it)
                     {
-                        possible_parents.push_back((get_joint(*it)));
-                        vector<unsigned int> children_ids = get_joint(*it)->get_children();
+                        possible_parents.push_back((getJointById(*it)));
+                        vector<unsigned int> children_ids = getJointById(*it)->get_children();
                         for (vector<unsigned int>::iterator jt = children_ids.begin(); jt != children_ids.end(); jt++)
                         {
-                            possible_parents.push_back(get_joint(*jt));
+                            possible_parents.push_back(getJointById(*jt));
                             new_possible_parent_ids.push_back(*jt);
                         }
                     }
@@ -233,107 +265,43 @@ namespace cor3d {
     }
 
 
-    void Skeleton::set_model_file(const string& file)
+    void Skeleton::setMeshFile(const string& file)
     {
         if (_model.LoadFromOFF(file))
         {
             _model.UpdateVertexBufferObjects();
-            _model_file = file;
-            //emit data_changed(get_id());
+            _meshFile = file;
+            //emit data_changed(getId());
         }
         else
         {
-            _model.LoadFromOFF(_model_file);
+            _model.LoadFromOFF(_meshFile);
             _model.UpdateVertexBufferObjects();
         }
     }
 
-    string Skeleton::next_joint_name() const
+    string Skeleton::nextAutoJointName() const
     {
-        stringstream ss;
-        ss << "Joint " << (_joints.size() + 1);
-        string name = ss.str();
-        name = append_sequence_number(name);
-        return name;
-    }
-
-    bool Skeleton::is_joint_name_reserved(const string& name) const
-    {
-        for (std::vector<Joint*>::const_iterator it = _joints.begin(); it != _joints.end(); it++)
-        {
-            if (((Joint*)*it)->get_name() == name)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    string Skeleton::append_sequence_number(const string& name) const
-    {
-        unsigned int nr = 2;
-        string new_name = name;
-        while(is_joint_name_reserved(new_name))
-        {
-            stringstream ss;
-            ss << name << "_" << nr++;
-            new_name = ss.str();
-        }
-        return new_name;
-    }
-
-    void Skeleton::remove_joint(unsigned int joint_id)
-    {
-
-    }
-
-/*
-    void Skeleton::update_joint_coordinates_(unsigned int joint_id, const DCoordinate3& parent_coordinates)
-    {
-        get_joint(joint_id)->update_coordinates(parent_coordinates);
-        vector<unsigned int> children_ids = get_joint(joint_id)->get_children();
-        const DCoordinate3& joint_coordinates = get_joint(joint_id)->get_coordinates();
-        for(vector<unsigned int>::iterator it = children_ids.begin(); it != children_ids.end(); it++)
-        {
-            update_joint_coordinates_(*it, joint_coordinates);
-        }
-
-        get_joint(0)->get_parent();
-    }
-
-
-    */
-
-    bool Skeleton::validate_joint_index_(int joint_id) const
-    {
-        if (joint_id < 0)
-        {
-            return false;
-        }
-        if ((unsigned int) joint_id >= _joints.size())
-        {
-            return false;
-        }
-        return true;
+        return nextName<Joint>("Joint ", _joints);
     }
 
     void Skeleton::render(RenderingOptions* rendering_options, bool glLoad)
     {
-        render_joints(rendering_options, glLoad);
+        renderJoints(rendering_options, glLoad);
 
-        render_links(rendering_options);
+        renderLinks(rendering_options);
 
         render_axis(rendering_options);
 
-        if (rendering_options->get_render_model() && !_model_file.empty())
+        if (rendering_options->get_render_model() && !_meshFile.empty())
         {
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE);
             glDepthMask(GL_FALSE);
             rendering_options->get_material(rendering_options->get_model_material())->Apply();
             glPushMatrix();
-            glTranslated(_model_offset.x(), _model_offset.y(), _model_offset.z());
-            glScaled(_model_scale.x(), _model_scale.y(), _model_scale.z());
+            glTranslated(_meshOffset.x(), _meshOffset.y(), _meshOffset.z());
+            glScaled(_meshScale.x(), _meshScale.y(), _meshScale.z());
             _model.Render();
             glPopMatrix();
             glDepthMask(GL_TRUE);
@@ -341,11 +309,11 @@ namespace cor3d {
         }
     }
 
-    void Skeleton::render_joints(RenderingOptions* rendering_options, bool glLoad) const
+    void Skeleton::renderJoints(RenderingOptions* rendering_options, bool glLoad) const
     {
         const TriangulatedMesh3* joint_model = rendering_options->get_joint_model();
 
-        if (rendering_options->get_render_joints() && joint_model)
+        if (rendering_options->get_renderJoints() && joint_model)
         {
             rendering_options->get_material(rendering_options->get_joint_material())->Apply();
 
@@ -359,7 +327,7 @@ namespace cor3d {
                 glScalef(_scale.x() / 10, _scale.y() / 10, _scale.z() / 10);
                 if (glLoad)
                 {
-                    glLoadName((*it)->get_id() + 6);
+                    glLoadName((*it)->getId() + 6);
                 }
                 joint_model->Render();
                 glPopMatrix();
@@ -371,15 +339,15 @@ namespace cor3d {
 
     void Skeleton::render_axis(RenderingOptions* rendering_options, bool glLoad) const
     {
-        if (is_joint_selected())
+        if (getSelectedJoint())
         {
-            int joint_id = get_selectedJoint_id();
+            int joint_id = getSelectedJoint()->getId();
             if (rendering_options->get_render_axis())
             {
-                DCoordinate3 axis = get_joint(joint_id)->get_axis();
+                DCoordinate3 axis = getJointById(joint_id)->get_axis();
                 if (axis.length() > 0)
                 {
-                    DCoordinate3 parent_position = get_joint(get_joint(joint_id)->get_parent())->get_coordinates();
+                    DCoordinate3 parent_position = getJointById(getJointById(joint_id)->get_parent())->get_coordinates();
                     DCoordinate3 p1 = parent_position + 1000 * axis;
                     DCoordinate3 p2 = parent_position - 1000 * axis;
 
@@ -416,17 +384,17 @@ namespace cor3d {
 //        glPopMatrix();
     }
 
-    void Skeleton::render_links(RenderingOptions* rendering_options, bool glLoad) const
+    void Skeleton::renderLinks(RenderingOptions* rendering_options, bool glLoad) const
     {
         const TriangulatedMesh3* link_model = rendering_options->get_link_model();
 
-        if (rendering_options->get_render_links() && link_model &&_joints.size() > 1)
+        if (rendering_options->get_renderLinks() && link_model &&_joints.size() > 1)
         {
             rendering_options->get_material(rendering_options->get_link_material())->Apply();
 
             for(vector<Joint*>::const_iterator it = ++_joints.begin(); it != _joints.end(); it++)
             {
-                DCoordinate3 start = get_joint(((Joint*)*it)->get_parent())->get_coordinates();
+                DCoordinate3 start = getJointById(((Joint*)*it)->get_parent())->get_coordinates();
                 DCoordinate3 end = ((Joint*)*it)->get_coordinates();
                 DCoordinate3 k_prime = end - start;
 
@@ -471,7 +439,7 @@ namespace cor3d {
                 matrix[14] = start[2];
                 matrix[15] = 1.0;
 
-                DCoordinate3 jointScale = get_joint(((Joint*)*it)->get_parent())->get_scale();
+                DCoordinate3 jointScale = getJointById(((Joint*)*it)->get_parent())->get_scale();
                 double scale = min(jointScale.x(), min(jointScale.y(), jointScale.z())) / 10.0;
 
                 glPushMatrix();
@@ -487,23 +455,21 @@ namespace cor3d {
 
     void Skeleton::handleViewJointAdded(const string& name, const string& parentName)
     {
-        Joint* parentJoint = get_joint(parentName);
+        Joint* parentJoint = getJointByName(parentName);
         if (parentJoint)
         {
-            Joint* joint = new Joint(_joints.size(), name, parentJoint->get_id(), parentJoint->get_coordinates());
+            Joint* joint = new Joint(_joints.size(), name, parentJoint->getId(), parentJoint->get_coordinates());
             _joints.push_back(joint);
-            parentJoint->add_child(joint->get_id());
+            parentJoint->add_child(joint->getId());
             emit modelJointAdded(this, joint, parentName);
 
-            _selectedJoint = joint->get_id();
+            _selectedJoint = joint->getId();
 
             emit modelJointSelected(name);
-
-            emit model_joint_selectionChanged();
         }
     }
 
-    void Skeleton::handle_view_joint_selectionChanged(int joint_id)
+    void Skeleton::handleViewJointSelected(int joint_id)
     {
         if ((unsigned int) joint_id > _joints.size())
         {
@@ -513,36 +479,38 @@ namespace cor3d {
         else
         {
             _selectedJoint = joint_id;
-            emit modelJointSelected(_joints[_selectedJoint]->get_name());
+            emit modelJointSelected(_joints[_selectedJoint]->getName());
+        }
+        for (unsigned int i = 0; i < _postures.size(); i++)
+        {
+            getPostureById(i)->selectJoint(joint_id);
         }
     }
 
     void Skeleton::handleViewJointSelected(const string& jointName)
     {
-        _selectedJoint = getJointIdByName(jointName);
-        emit modelJointSelected(jointName);
+        selectJoint(jointName);
     }
 
     void Skeleton::handleViewJointRenamed(const string& oldName, const string& newName)
     {
-        Joint* joint = get_joint(getJointIdByName(oldName));
+        Joint* joint = getJointByName(oldName);
         if (joint)
         {
-            joint->set_name(newName);
+            joint->setName(newName);
             emit modelJointRenamed(oldName, newName);
         }
     }
 
     void Skeleton::handleViewJointDeleted(const string& jointName)
     {
-        unsigned int offset = 0;
-        unsigned int jointId = getJointIdByName(jointName);
+        Joint* joint = getJointByName(jointName);
 
         cout << "initial: " << endl;
         for (vector<Joint*>::iterator it = _joints.begin(); it != _joints.end(); it++)
         {
             Joint* j = *it;
-            cout << "id: " << j->get_id() << ", name: " << j->get_name() << ", parent: " << j->get_parent() << ", children: ";
+            cout << "id: " << j->getId() << ", name: " << j->getName() << ", parent: " << j->get_parent() << ", children: ";
             for (unsigned int i = 0; i < j->get_children().size(); i++)
             {
                 cout << j->get_children()[i] << " ";
@@ -551,13 +519,13 @@ namespace cor3d {
         }
 
         cout << endl;
-        deleteJoint(jointId);
+        deleteJoint(joint->getId());
 
         cout << "final: " << endl;
         for (vector<Joint*>::iterator it = _joints.begin(); it != _joints.end(); it++)
         {
             Joint* j = *it;
-            cout << "id: " << j->get_id() << ", name: " << j->get_name() << ", parent: " << j->get_parent() << ", children: ";
+            cout << "id: " << j->getId() << ", name: " << j->getName() << ", parent: " << j->get_parent() << ", children: ";
             for (unsigned int i = 0; i < j->get_children().size(); i++)
             {
                 cout << j->get_children()[i] << " ";
@@ -569,36 +537,31 @@ namespace cor3d {
         emit modelJointDeleted(jointName);
     }
 
-    void Skeleton::handle_view_joint_CoordinatesChanged_(unsigned int jointId)
-    {
-        /*
-        vector<unsigned int> children = get_joint(jointId)->get_children();
-        for (unsigned int i = 0; i < children.size(); i++)
-        {
-            emit (model_joint_data_changed(get_joint(children[i])->get_name()));
-            handle_view_joint_CoordinatesChanged_(children[i]);
-        }
-        */
-    }
-
     void Skeleton::handleViewJointAbsoluteCoordinatesChanged(const string& name, const DCoordinate3& absoluteCoordinates)
     {
-        Joint* joint = get_joint(getJointIdByName(name));
-        Joint* parent = get_joint(joint->get_parent());
+        Joint* joint = getJointByName(name);
+        Joint* parent = getJointById(joint->get_parent());
         if (joint)
         {
             joint->set_coordinate(absoluteCoordinates);
             joint->set_orientation(absoluteCoordinates - parent->get_coordinates());
             emit modelJointDataChanged(joint);
+        }
+    }
 
-            handle_view_joint_CoordinatesChanged_(joint->get_id());
+    void Skeleton::handleViewSelectedJointAbsoluteCoordinatesChanged(const DCoordinate3 absoluteCoordiantes)
+    {
+        Joint* selected = getSelectedJoint();
+        if (selected)
+        {
+            handleViewJointAbsoluteCoordinatesChanged(selected->getName(), absoluteCoordiantes);
         }
     }
 
     void Skeleton::handleViewJointRelativeCoordinatesChanged(const string& name, const DCoordinate3& relativeCoordinates)
     {
-        Joint* joint = get_joint(getJointIdByName(name));
-        Joint* parent = get_joint(joint->get_parent());
+        Joint* joint = getJointByName(name);
+        Joint* parent = getJointById(joint->get_parent());
         if (joint)
         {
             DCoordinate3 newAbsoluteCoordinates = relativeCoordinates;
@@ -606,24 +569,12 @@ namespace cor3d {
             joint->set_coordinate(newAbsoluteCoordinates);
             joint->set_orientation(relativeCoordinates);
             emit modelJointDataChanged(joint);
-
-            handle_view_joint_CoordinatesChanged_(joint->get_id());
         }
-    }
-
-    void Skeleton::handle_view_joint_rotation_axis_changed(const string&, const DCoordinate3& rotation_axis)
-    {
-
-    }
-
-    void Skeleton::handle_view_joint_rotation_constraint_changed(const string&, const DCoordinate3& rotation_constraint)
-    {
-
     }
 
     void Skeleton::handleViewJointScaleChanged(const string& name, const DCoordinate3& scale)
     {
-        Joint* joint = get_joint(getJointIdByName(name));
+        Joint* joint = getJointByName(name);
         if (joint)
         {
             joint->set_scale(scale);
@@ -631,62 +582,15 @@ namespace cor3d {
         }
     }
 
-    void Skeleton::handle_view_joint_parent_changed(int parent_id)
-    {
-        //_joints[_joints[_selectedJoint].get_parent()].remove_child(_selectedJoint);
-        //_joints[_selectedJoint].set_parent(parent_id);
-        //_joints[parent_id].add_child(_selectedJoint);
-        //emit model_joint_data_changed();
-    }
-
-    void Skeleton::handle_view_joint_type_changed(int type)
-    {
-        //_joints[_selectedJoint].set_type((Type) type);
-        //emit model_joint_data_changed();
-    }
-
-    void Skeleton::handle_view_joint_orientation_changed(const DCoordinate3& orientation)
-    {
-        //_joints[_selectedJoint].set_orientation(orientation);
-        //emit model_joint_data_changed();
-    }
-
-    void Skeleton::handle_view_joint_axis_changed(const DCoordinate3& axis)
-    {
-        /*
-        Joint* joint = get_joint(getJointIdByName(name));
-        if (joint)
-        {
-            joint->set_axis(axis);
-            cout << "model data changed " << name << endl;
-            emit (model_joint_data_changed(name));
-        }
-        */
-    }
-
-    void Skeleton::handle_view_joint_configuration_changed(const DCoordinate3& configuration)
-    {
-        //_joints[_selectedJoint].set_configuration(configuration);
-        //emit model_joint_data_changed();
-    }
-
-    void Skeleton::handle_view_joint_absolute_position_changed(const DCoordinate3& coordinates)
-    {
-        _joints[_selectedJoint]->set_coordinate(coordinates);
-        //emit model_joint_data_changed(_joints[_selectedJoint]->get_name());
-    }
-
-
-
     void Skeleton::handleViewPostureAdded(const string& name)
     {
         addPosture(name);
-
+        Posture* previous = getSelectedPosture();
         Posture* posture = getPostureByName(name);
         if (posture)
         {
-            _selectedPosture = posture->get_id();
-            emit modelPostureSelected(this, posture);
+            _selectedPosture = posture->getId();
+            emit modelPostureSelected(this, posture, previous);
         }
     }
 
@@ -698,7 +602,7 @@ namespace cor3d {
         {
             _selectedPosture--;
             Posture* posture = getPostureById(_selectedPosture);
-            emit modelPostureSelected(this, posture);
+            emit modelPostureSelected(this, posture, 0);
         }
     }
 
@@ -725,7 +629,7 @@ namespace cor3d {
         Posture* posture = getPostureByName(name);
         if (posture)
         {
-            unsigned int postureId = posture->get_id();
+            unsigned int postureId = posture->getId();
             delete _postures[postureId];
             _postures.erase(_postures.begin() + postureId);
             for (vector<Posture*>::iterator it = _postures.begin() + postureId; it != _postures.end(); it++)
@@ -741,37 +645,34 @@ namespace cor3d {
     {
         cout << "renamePosture" << oldName << " " << newName << endl;
         Posture* posture = getPostureByName(oldName);
-        posture->set_name(newName);
+        posture->setName(newName);
 
         emit modelPostureRenamed(oldName, newName);
     }
 
     string Skeleton::nextAutoPostureName() const
     {
-        stringstream ss;
-        ss << "Posture " << (_postures.size() + 1);
-        string name = ss.str();
-        name = append_sequence_number(name);
-        return name;
+        return nextName<Posture>("Posture ", _postures);
     }
 
     void Skeleton::handleViewPostureSelected(const string& name)
     {
+        Posture* previous = getSelectedPosture();
         Posture* posture = getPostureByName(name);
         if (posture)
         {
-            _selectedPosture = posture->get_id();
-            emit modelPostureSelected(this, posture);
+            _selectedPosture = posture->getId();
+            emit modelPostureSelected(this, posture, previous);
         }
         else
         {
-            emit modelPostureSelected(this, 0);
+            emit modelPostureSelected(this, 0, previous);
         }
     }
 
     Posture* Skeleton::getPostureByName(const string& name) const
     {
-        int id = get_id_by_name<Posture>(name, _postures);
+        int id = getIdByName<Posture>(name, _postures);
         if (id >= 0 && id < _postures.size())
         {
             return _postures[id];
@@ -780,21 +681,50 @@ namespace cor3d {
         return 0;
     }
 
+    void Skeleton::handleViewPostureJointAbsoluteCoordinatesChanged(const DCoordinate3 absoluteCoordinates)
+    {
+        Posture* posture = getSelectedPosture();
+        if (posture)
+        {
+            posture->MoveSelected(absoluteCoordinates);
+            emit modelPostureDataChanged(posture);
+        }
+    }
+
+    void Skeleton::handleViewPostureJointAbsoluteCoordinatesChanged(const string& jointName, const DCoordinate3 absoluteCoordinates)
+    {
+        cout << "hello 2 " << endl;
+        Posture* posture = getSelectedPosture();
+        if (posture)
+        {
+            Joint* joint = getSelectedJoint();
+            if (joint->getName() != jointName)
+            {
+                selectJoint(jointName);
+            }
+
+            cout << "move " << jointName << " " << absoluteCoordinates << endl;
+
+            posture->MoveSelected(absoluteCoordinates);
+            emit modelPostureDataChanged(posture);
+        }
+    }
+
     void Skeleton::handleViewSkeletonModelChanged(const string& fileName)
     {
-        set_model_file(fileName);
+        setMeshFile(fileName);
         emit modelSkeletonDataChanged(this);
     }
 
     void Skeleton::handleViewSkeletonModelScaleChanged(const DCoordinate3& scale)
     {
-        set_model_scale(scale);
+        setMeshScale(scale);
         emit modelSkeletonDataChanged(this);
     }
 
     void Skeleton::handleViewSkeletonModelOffsetChanged(const DCoordinate3& offset)
     {
-        set_model_offset(offset);
+        setMeshOffset(offset);
         emit modelSkeletonDataChanged(this);
     }
 
@@ -808,7 +738,7 @@ namespace cor3d {
         return 0;
     }
 
-    unsigned int Skeleton::postureCount() const
+    unsigned int Skeleton::getPostureCount() const
     {
         return _postures.size();
     }

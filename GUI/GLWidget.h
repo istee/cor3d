@@ -117,8 +117,10 @@ signals:
     void glwidgetRotationChanged(const DCoordinate3& rotation);
     void glwidgetZoomChanged(double zoom);
     void selected_joint(double x, double y, double z);
-    void view_joint_selectionChanged(int);
+    void viewJointSelected(int);
     void view_joint_absolute_position_changed(DCoordinate3);
+    void viewJointAbsoluteCoordinatesChanged(const DCoordinate3& absoluteCoordinates);
+    void viewPostureJointAbsoluteCoordinatesChanged(const DCoordinate3& absoluteCoordinates);
 
 public slots:
     // public event handling methods/slots
@@ -127,6 +129,6 @@ public slots:
     void set_zoom_factor(double value);
 
     void set_render_mesh(int skeleton_id, bool value);
-    void set_render_links(int skeleton_id, bool value);
-    void set_render_joints(int skeleton_id, bool value);
+    void set_renderLinks(int skeleton_id, bool value);
+    void set_renderJoints(int skeleton_id, bool value);
 };

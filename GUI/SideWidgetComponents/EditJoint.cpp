@@ -43,7 +43,7 @@ EditJoint::EditJoint(Skeleton* skeleton, Joint* joint, QWidget *parent): BaseEdi
 void EditJoint::updateContent(BaseEntity* baseEntity)
 {
     Joint* joint = (Joint*) baseEntity;
-    _entityName = joint->get_name();
+    _entityName = joint->getName();
     //type->setIndex(joint->get_type());
     absolute_position->setValue(joint->get_coordinates());
     joint_scale->setValue(joint->get_scale());

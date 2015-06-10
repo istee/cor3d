@@ -83,7 +83,7 @@
        </widget>
       </item>
       <item>
-       <widget class="FileChooser" name="joint_model_file" native="true"/>
+       <widget class="FileChooser" name="joint_meshFile" native="true"/>
       </item>
       <item>
        <widget class="BaseEntityComboBox" name="joint_color" native="true"/>
@@ -108,7 +108,7 @@
        </widget>
       </item>
       <item>
-       <widget class="FileChooser" name="link_model_file" native="true"/>
+       <widget class="FileChooser" name="link_meshFile" native="true"/>
       </item>
       <item>
        <widget class="BaseEntityComboBox" name="link_color" native="true"/>

@@ -30,7 +30,7 @@ const string& BaseEntityComboBox::getText() const
 void BaseEntityComboBox::setValue(const BaseEntity& baseEntity)
 {
     baseEntityComboBox->blockSignals(true);
-    baseEntityComboBox->setCurrentIndex(baseEntityComboBox->findData(baseEntity.get_id()));
+    baseEntityComboBox->setCurrentIndex(baseEntityComboBox->findData(baseEntity.getId()));
     baseEntityComboBox->blockSignals(false);
 }
 
@@ -57,7 +57,7 @@ void BaseEntityComboBox::populate(const vector<BaseEntity>& values)
     baseEntityComboBox->clear();
     for (vector<BaseEntity>::const_iterator it = values.begin(); it != values.end(); it++)
     {
-        baseEntityComboBox->addItem(QString::fromStdString((*it).get_name()), QVariant((*it).get_id()));
+        baseEntityComboBox->addItem(QString::fromStdString((*it).getName()), QVariant((*it).getId()));
     }
     baseEntityComboBox->blockSignals(false);
 }
@@ -68,7 +68,7 @@ void BaseEntityComboBox::populateFromPointer(const vector<BaseEntity*>& values)
     baseEntityComboBox->clear();
     for (vector<BaseEntity*>::const_iterator it = values.begin(); it != values.end(); it++)
     {
-        baseEntityComboBox->addItem(QString::fromStdString(((BaseEntity*)*it)->get_name()), QVariant(((BaseEntity*)*it)->get_id()));
+        baseEntityComboBox->addItem(QString::fromStdString(((BaseEntity*)*it)->getName()), QVariant(((BaseEntity*)*it)->getId()));
     }
     baseEntityComboBox->blockSignals(false);
 }

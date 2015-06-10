@@ -20,7 +20,7 @@ namespace cor3d {
 
     public:
         Cor3d();
-        string next_name() const;
+        string nextName() const;
         vector<BaseEntity*> getSkeletonList();
         Skeleton* getSelectedSkeleton();
         Skeleton* getSkeletonById(unsigned int skeletonId);
@@ -46,7 +46,6 @@ namespace cor3d {
         void handleViewZoomChanged(double zoom);
 
         void handleViewSkeletonAdded(string);
-        void handle_view_skeleton_selected(int);
         void handleViewSkeletonSelected(const string&);
         void handleViewSkeletonDeleted(const string&);
         void handle_view_skeleton_exported(const string&);

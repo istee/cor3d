@@ -18,14 +18,14 @@ ManagePostures::ManagePostures(QWidget *parent) : BaseSideWidget(parent), ui(new
 void ManagePostures::populatePostureList(Skeleton* skeleton)
 {
     ui->postureList->clear();
-    for (unsigned int i = 0; i < skeleton->postureCount(); i++)
+    for (unsigned int i = 0; i < skeleton->getPostureCount(); i++)
     {
         Posture* posture = skeleton->getPostureById(i);
         addPosture(skeleton, posture);
     }
-    if (skeleton->selectedPosture())
+    if (skeleton->getSelectedPosture())
     {
-        selectPosture(skeleton, skeleton->selectedPosture());
+        selectPosture(skeleton, skeleton->getSelectedPosture());
     }
     ui->addName->setValue(skeleton->nextAutoPostureName());
 }
@@ -42,11 +42,11 @@ void ManagePostures::handleViewPostureAdded(const string& name)
 
 void ManagePostures::addPosture(Skeleton* skeleton, Posture* posture)
 {
-    BaseEntityListItem* listItem = new BaseEntityListItem(posture->get_name(), 0, ui->postureList);
+    BaseEntityListItem* listItem = new BaseEntityListItem(posture->getName(), 0, ui->postureList);
     connect(listItem, SIGNAL(viewListItemDeleted(string)), skeleton, SLOT(handleViewPostureDeleted(string)));
     connect(listItem, SIGNAL(viewListItemRenamed(string,string)), skeleton, SLOT(handleViewPostureRenamed(string,string)));
     listItem->showEdit(false);
-    ui->postureList->addListWigetItem(posture->get_name(), listItem);
+    ui->postureList->addListWigetItem(posture->getName(), listItem);
     ui->addName->setValue(skeleton->nextAutoPostureName());
 }
 
@@ -63,7 +63,7 @@ void ManagePostures::renamePosture(const string& oldPostureName, const string& n
 
 void ManagePostures::selectPosture(Skeleton* skeleton, Posture* posture)
 {
-    ui->postureList->selectListWidgetItem(posture->get_name());
+    ui->postureList->selectListWidgetItem(posture->getName());
 }
 
 

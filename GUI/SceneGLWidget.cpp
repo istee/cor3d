@@ -11,10 +11,10 @@ void SceneGLWidget::specificPaintGL()
     if (skeleton)
     {
         skeleton->render(cor3dApp->cor3d->getRenderingOptions());
-        if (skeleton->is_joint_selected())
+        if (skeleton->getSelectedJoint())
         {
-            unsigned int joint_id = skeleton->get_selectedJoint_id();
-            DCoordinate3 position = skeleton->get_joint(joint_id)->get_coordinates();
+            unsigned int joint_id = skeleton->getSelectedJoint()->getId();
+            DCoordinate3 position = skeleton->getJointById(joint_id)->get_coordinates();
             render_move_arrows(cor3dApp->cor3d->getRenderingOptions(), &position);
         }
     }

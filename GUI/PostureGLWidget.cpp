@@ -11,13 +11,13 @@ void PostureGLWidget::specificPaintGL()
 {
     if (_skeleton)
     {
-        if (_skeleton->selectedPosture())
+        if (_skeleton->getSelectedPosture())
         {
             RenderingOptions* rendering_options = cor3dApp->cor3d->getRenderingOptions();
-            _skeleton->selectedPosture()->renderPosture(rendering_options, true);
-            if (_skeleton->is_joint_selected())
+            _skeleton->getSelectedPosture()->renderPosture(rendering_options, true);
+            if (_skeleton->getSelectedJoint() && _skeleton->getSelectedJoint()->getId() > 0)
             {
-                DCoordinate3 position = _skeleton->selectedPosture()->getAbsolutePostureCoordinate(_skeleton->get_selectedJoint_id());
+                DCoordinate3 position = _skeleton->getSelectedPosture()->getAbsolutePostureCoordinate(_skeleton->getSelectedJoint()->getId());
                 render_move_arrows(rendering_options, &position);
             }
         }
@@ -26,20 +26,23 @@ void PostureGLWidget::specificPaintGL()
 
 void PostureGLWidget::specificDrawPickObjects()
 {
-    _skeleton->selectedPosture()->renderPostureJoints(cor3dApp->cor3d->getRenderingOptions(), true);
-
-    if (_skeleton->is_joint_selected() && _skeleton->selectedPosture())
+    if (_skeleton->getSelectedPosture())
     {
-        DCoordinate3 selected_position = _skeleton->selectedPosture()->getAbsolutePostureCoordinate(_skeleton->get_selectedJoint_id());
+        _skeleton->getSelectedPosture()->renderPostureJoints(cor3dApp->cor3d->getRenderingOptions(), true);
 
-        render_move_arrows(cor3dApp->cor3d->getRenderingOptions(), &selected_position, _skeleton->get_joint_count(), true);
+        if (_skeleton->getSelectedJoint() && _skeleton->getSelectedJoint()->getId() > 0)
+        {
+            DCoordinate3 selected_position = _skeleton->getSelectedPosture()->getAbsolutePostureCoordinate(_skeleton->getSelectedJoint()->getId());
+
+            render_move_arrows(cor3dApp->cor3d->getRenderingOptions(), &selected_position, _skeleton->getJointCount(), true);
+        }
     }
 }
 
 int PostureGLWidget::specificPickCount()
 {
-    GLuint size = 4 * _skeleton->get_joint_count();
-    if (_skeleton->is_joint_selected())
+    GLuint size = 4 * _skeleton->getJointCount();
+    if (_skeleton->getSelectedJoint())
     {
         size += 24;
     }
@@ -56,24 +59,25 @@ void PostureGLWidget::specificPick(unsigned int closestSelected)
     }
     else
     {
-        emit view_joint_selectionChanged(closestSelected - 6);
+        emit viewJointSelected(closestSelected - 6);
     }
 }
 
 void PostureGLWidget::drag(double x, double y, double z)
 {
-    _skeleton->selectedPosture()->MoveSelected(x, y, z);
+    //_skeleton->getSelectedPosture()->MoveSelected(x, y, z);
+    emit viewPostureJointAbsoluteCoordinatesChanged(DCoordinate3(x, y, z));
 }
 
 void PostureGLWidget::drag_starting()
 {
-    //_skeleton->selectedPosture()->constructChains(_skeleton->get_selectedJoint_id());
+    //_skeleton->getSelectedPosture()->constructChains(_skeleton->get_selectedJoint_id());
     GLWidget::drag_starting();
 }
 
 void PostureGLWidget::drag_finished()
 {
-    _skeleton->selectedPosture()->FinalizeMove();
-    _skeleton->selectedPosture()->clearChains();
+    //_skeleton->getSelectedPosture()->FinalizeMove();
+    //_skeleton->getSelectedPosture()->clearChains();
     GLWidget::drag_finished();
 }

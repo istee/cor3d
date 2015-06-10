@@ -16,5 +16,7 @@ private slots:
     void handleModelPostureAdded(Skeleton* skeleton, Posture* posture);
     void handleModelPostureDeleted(Skeleton* skeleton, const string& postureName);
     void handleModelPostureRenamed(const string& oldPostureName, const string& newPostureName);
-    void handleModelPostureSelected(Skeleton* selectedSkeleton, Posture* selectedPosture);
+    void handleModelPostureSelected(Skeleton* selectedSkeleton, Posture* selectedPosture, Posture* previousPosture);
+    void handleModelPostureDataChanged(Posture* posture);
+    void handleModelJointSelected(const string& jointName);
 };

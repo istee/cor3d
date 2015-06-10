@@ -30,9 +30,9 @@ private slots:
 //    void skeleton_deleted(int id);
 
 //    void skeleton_name_edited(int skeleton_id, const string& name);
-//    void skeleton_model_file_edited(int skeleton_id, const string& file);
-//    void skeleton_model_scale_edited(int skeleton_id, const DCoordinate3& model_scale);
-//    void skeleton_model_offset_edited(int skeleton_id, const DCoordinate3& model_offset);
+//    void skeleton_meshFile_edited(int skeleton_id, const string& file);
+//    void skeleton_meshScale_edited(int skeleton_id, const DCoordinate3& model_scale);
+//    void skeleton_meshOffset_edited(int skeleton_id, const DCoordinate3& model_offset);
 
 //    void joint_added(int skeleton_id, const string& name, int parent_id);
 //    void joint_selected(int skeleton_id, int joint_id);

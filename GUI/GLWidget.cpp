@@ -275,14 +275,13 @@ void GLWidget::pick(double x, double y)
                 }
             }
 
-            cout << "closest selected " << closest_selected << endl;
             specificPick(closest_selected);
 
         }
         else
         {
             is_drag = false;
-            emit view_joint_selectionChanged(-1);
+            emit viewJointSelected(-1);
         }
 
         delete pick_buffer, pick_buffer = 0;
@@ -360,12 +359,12 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
             TIMVT(0,3) = 0;
             TIMVT(1,3) = 0;
             TIMVT(2,3) = 0;
-            cout << TIMVT;
+            //cout << TIMVT;
             DCoordinate3 n = TIMVT * _initial_normal;
-            cout << "before normalizing: " << n << " , " << n.length() << endl;
+            //cout << "before normalizing: " << n << " , " << n.length() << endl;
             n.normalize();
 
-            DCoordinate3 p0 = _skeleton->get_selectedJoint()->get_coordinates();
+            DCoordinate3 p0 = _skeleton->getSelectedJoint()->get_coordinates();
             //DCoordinate3 p0 = DCoordinate3(p0_const.x(), p0_const.y(), p0_const.z());
 
             double mouseX = event->x();
@@ -390,7 +389,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
             gluUnProject(winX, winY, 1.0, matModelView, matProjection, viewport, &x, &y, &z);
             l2 = DCoordinate3(x, y, z);
 
-            cout << l1 << endl << l2 << endl;
+            //cout << l1 << endl << l2 << endl;
 
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
@@ -398,7 +397,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 
             double d = ((p0 - l1) * n) / ((l2 - l1) * n);
 
-            cout << "d: " << d << endl;
+            //cout << "d: " << d << endl;
 
             if (d >= 0.0 && d <= 1.0)
             {
@@ -409,11 +408,11 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
                 //                cout << "p0: " << p0 << endl;
                 //                cout << "point: " << result << endl;
 
-                DCoordinate3 new_coord  = _skeleton->get_selectedJoint()->get_coordinates();
+                DCoordinate3 new_coord  = _skeleton->getSelectedJoint()->get_coordinates();
                 //DCoordinate3 *new_coord = _skeletons[0].GetSelectedPosition();
 
 
-                cout << "drag type " << _drag_type << endl;
+                //cout << "drag type " << _drag_type << endl;
                 switch(_drag_type)
                 {
                 case 0:
@@ -555,7 +554,7 @@ void GLWidget::set_render_mesh(int skeleton_id, bool value)
 //    updateGL();
 }
 
-void GLWidget::set_render_links(int skeleton_id, bool value)
+void GLWidget::set_renderLinks(int skeleton_id, bool value)
 {
 //    if (skeleton_id == -1)
 //    {
@@ -566,7 +565,7 @@ void GLWidget::set_render_links(int skeleton_id, bool value)
 //    updateGL();
 }
 
-void GLWidget::set_render_joints(int skeleton_id, bool value)
+void GLWidget::set_renderJoints(int skeleton_id, bool value)
 {
 //    if (skeleton_id == -1)
 //    {

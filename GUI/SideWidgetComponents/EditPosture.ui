@@ -44,7 +44,10 @@
          <number>6</number>
         </property>
         <item>
-         <widget class="QRadioButton" name="radioButton_2">
+         <widget class="QRadioButton" name="fabrikRadioButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>FABRIK</string>
           </property>
@@ -57,7 +60,10 @@
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="radioButton">
+         <widget class="QRadioButton" name="rigidRadioButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Rigid</string>
           </property>

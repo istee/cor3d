@@ -121,22 +121,22 @@ void SceneEditorTab::rendering_options_changed()
 
 //void SkeletonEditorTab::skeleton_name_edited(int skeleton_id, const string& name)
 //{
-//    cor3dApp->cor3d->get_skeleton(skeleton_id)->set_name(name);
+//    cor3dApp->cor3d->get_skeleton(skeleton_id)->setName(name);
 //}
 
-//void SkeletonEditorTab::skeleton_model_file_edited(int skeleton_id, const string& file)
+//void SkeletonEditorTab::skeleton_meshFile_edited(int skeleton_id, const string& file)
 //{
-//    cor3dApp->cor3d->get_skeleton(skeleton_id)->set_model_file(file);
+//    cor3dApp->cor3d->get_skeleton(skeleton_id)->setMeshFile(file);
 //}
 
-//void SkeletonEditorTab::skeleton_model_scale_edited(int skeleton_id, const DCoordinate3& model_scale)
+//void SkeletonEditorTab::skeleton_meshScale_edited(int skeleton_id, const DCoordinate3& model_scale)
 //{
-//    cor3dApp->cor3d->get_skeleton(skeleton_id)->set_model_scale(model_scale);
+//    cor3dApp->cor3d->get_skeleton(skeleton_id)->setMeshScale(model_scale);
 //}
 
-//void SkeletonEditorTab::skeleton_model_offset_edited(int skeleton_id, const DCoordinate3& model_offset)
+//void SkeletonEditorTab::skeleton_meshOffset_edited(int skeleton_id, const DCoordinate3& model_offset)
 //{
-//    cor3dApp->cor3d->get_skeleton(skeleton_id)->set_model_offset(model_offset);
+//    cor3dApp->cor3d->get_skeleton(skeleton_id)->setMeshOffset(model_offset);
 //}
 
 //void  SkeletonEditorTab::joint_added(int skeleton_id, const string& name, int parent_id)

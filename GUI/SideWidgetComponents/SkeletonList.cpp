@@ -27,7 +27,7 @@ SkeletonList::SkeletonList(QWidget *parent): BaseSideWidget(parent)
     connect(groupBox, SIGNAL(groupboxToggled(bool)), this, SLOT(handle_groupboxToggled(bool)));
     connect(addName, SIGNAL(baseEntityAdded(string)), this, SLOT(handleViewSkeletonAdded(string)));
 
-    addName->setValue(_cor3d->next_name());
+    addName->setValue(_cor3d->nextName());
 }
 
 void SkeletonList::addSkeleton(Skeleton* skeleton)
@@ -38,20 +38,20 @@ void SkeletonList::addSkeleton(Skeleton* skeleton)
     connect(listItemWidget, SIGNAL(viewSkeletonModelScaleChanged(DCoordinate3)), skeleton, SLOT(handleViewSkeletonModelScaleChanged(DCoordinate3)));
     listItemWidget->updateContent(skeleton);
 
-    BaseEntityListItem* listItem = new BaseEntityListItem(skeleton->get_name(), listItemWidget, skeleton_listview);
+    BaseEntityListItem* listItem = new BaseEntityListItem(skeleton->getName(), listItemWidget, skeleton_listview);
     connect(listItem, SIGNAL(viewListItemDeleted(string)), this, SIGNAL(viewSkeletonDeleted(const string&)));
     connect(listItem, SIGNAL(viewListItemRenamed(string,string)), this, SIGNAL(viewSkeletonRenamed(string,string)));
     connect(listItem, SIGNAL(viewListItemEdited(string)), this, SLOT(handleViewSkeletonEdited(string)));
 
-    skeleton_listview->addListWigetItem(skeleton->get_name(), listItem);
+    skeleton_listview->addListWigetItem(skeleton->getName(), listItem);
 
-    addName->setValue(_cor3d->next_name());
+    addName->setValue(_cor3d->nextName());
 }
 
 void SkeletonList::deleteSkeleton(const string& name)
 {
     skeleton_listview->deleteListWidgetItemByData(name);
-    addName->setValue(_cor3d->next_name());
+    addName->setValue(_cor3d->nextName());
 }
 
 void SkeletonList::renameSkeleton(const string& oldName, const string& newName)

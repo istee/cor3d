@@ -15,9 +15,9 @@ namespace cor3d {
         emit modelRenderingOptionsChanged(_renderingOptions);
     }
 
-    string Cor3d::next_name() const
+    string Cor3d::nextName() const
     {
-        return cor3d::next_name<Skeleton>("Skeleton ", _skeletons);
+        return cor3d::nextName<Skeleton>("Skeleton ", _skeletons);
     }
 
     Skeleton* Cor3d::getSelectedSkeleton()
@@ -40,7 +40,7 @@ namespace cor3d {
 
     Skeleton* Cor3d::getSkeletonByName(const string& skeletonName)
     {
-        int skeletonId = get_id_by_name<Skeleton>(skeletonName, _skeletons);
+        int skeletonId = getIdByName<Skeleton>(skeletonName, _skeletons);
         if (skeletonId >= 0 && skeletonId < _skeletons.size())
         {
             return _skeletons[skeletonId];
@@ -50,7 +50,7 @@ namespace cor3d {
 
     vector<BaseEntity*> Cor3d::getSkeletonList()
     {
-        return get_base_entities<Skeleton>(_skeletons);
+        return getBaseEntities<Skeleton>(_skeletons);
     }
 
     RenderingOptions* Cor3d::getRenderingOptions() const
@@ -65,7 +65,7 @@ namespace cor3d {
         _skeletons.push_back(sk);
         emit modelSkeletonAdded(sk);
 
-        emit handleViewSkeletonSelected(sk->get_name());
+        emit handleViewSkeletonSelected(sk->getName());
     }
 
     // implementation of public slots
@@ -92,38 +92,13 @@ namespace cor3d {
     {
         Skeleton* selected = getSelectedSkeleton();
 
-        Skeleton* skeleton = new Skeleton(_skeletons.size(), append_sequence_number<Skeleton>(name, _skeletons));
+        Skeleton* skeleton = new Skeleton(_skeletons.size(), appendSequenceNumber<Skeleton>(name, _skeletons));
         skeleton->addRoot();
         _skeletons.push_back(skeleton);
         emit modelSkeletonAdded(skeleton);
 
-        _selectedSkeletonId = skeleton->get_id();
+        _selectedSkeletonId = skeleton->getId();
         emit modelSkeletonSelected(skeleton, selected);
-    }
-
-    void Cor3d::handle_view_skeleton_selected(int id)
-    {
-        if (id != _selectedSkeletonId)
-        {
-            string oldSelected = "", newSelected = "";
-            Skeleton* skeleton = getSelectedSkeleton();
-            if (skeleton)
-            {
-                oldSelected = skeleton->get_name();
-            }
-
-            if (!(id >= 0 && id < _skeletons.size()))
-            {
-                _selectedSkeletonId = -1;
-            }
-            else
-            {
-                _selectedSkeletonId = id;
-                newSelected = getSelectedSkeleton()->get_name();
-            }
-
-            //emit model_skeleton_selectionChanged(oldSelected, newSelected);
-        }
     }
 
     void Cor3d::handleViewSkeletonSelected(const string& name)
@@ -132,19 +107,19 @@ namespace cor3d {
         string newSelectionName = "";
         if (newSelection)
         {
-            newSelectionName = newSelection->get_name();
+            newSelectionName = newSelection->getName();
         }
 
         Skeleton* oldSelection = getSkeletonById(_selectedSkeletonId);
         string oldSelectionName = "";
         if (oldSelection)
         {
-            oldSelectionName = oldSelection->get_name();
+            oldSelectionName = oldSelection->getName();
         }
 
         if (newSelectionName != oldSelectionName)
         {
-            _selectedSkeletonId = newSelection->get_id();
+            _selectedSkeletonId = newSelection->getId();
             emit modelSkeletonSelected(newSelection, oldSelection);
         }
     }
@@ -154,7 +129,7 @@ namespace cor3d {
         Skeleton* deleteSkeleton = getSkeletonByName(name);
         if (deleteSkeleton)
         {
-            unsigned int deleteId = deleteSkeleton->get_id();
+            unsigned int deleteId = deleteSkeleton->getId();
             _skeletons.erase(_skeletons.begin() + deleteId);
             for (vector<Skeleton*>::iterator it = _skeletons.begin() + deleteId; it != _skeletons.end(); it++)
             {
@@ -185,7 +160,7 @@ namespace cor3d {
         Skeleton* skeleton = getSkeletonByName(oldName);
         if (skeleton)
         {
-            skeleton->set_name(newName);
+            skeleton->setName(newName);
             emit modelSkeletonRenamed(oldName, newName);
         }
     }

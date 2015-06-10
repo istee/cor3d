@@ -32,7 +32,7 @@ void ListWidgetExtension::renameListWidgetItem(const string& oldName, const stri
 
 void ListWidgetExtension::updateEditWidget(BaseEntity* baseEntity)
 {
-    QListWidgetItem* item = getListWidgetItemByData(baseEntity->get_name());
+    QListWidgetItem* item = getListWidgetItemByData(baseEntity->getName());
     BaseEntityListItem* itemWidget = (BaseEntityListItem*) this->itemWidget(item);
     itemWidget->editWidget()->updateContent(baseEntity);;
 }

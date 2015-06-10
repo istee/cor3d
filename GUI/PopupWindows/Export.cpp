@@ -30,7 +30,7 @@ Export::Export(QWidget *parent) : QWidget(parent)
 
     for (vector<BaseEntity*>::const_iterator it = skeleton_list.begin(); it != skeleton_list.end(); it++)
     {
-        QStandardItem *item = new QStandardItem(QString::fromStdString((*it)->get_name()));
+        QStandardItem *item = new QStandardItem(QString::fromStdString((*it)->getName()));
         item->setCheckable(true);
         item->setCheckState(Qt::Checked);
         AddItemToModel(item);

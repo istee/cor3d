@@ -5,6 +5,8 @@ namespace cor3d
     Posture::Posture(unsigned int id, string name, vector<Joint*>& joints): QObject(), BaseEntity(id, name)
     {
         _isEdited = false;
+        _chainsNeedUpdate = false;
+        _postureAlgorithmType = RIGID;
         _joints = joints;
         _selectedJoint = -1;
         for (vector<Joint*>::iterator it = _joints.begin(); it != _joints.end(); it++)
@@ -13,6 +15,11 @@ namespace cor3d
             _jointAbsolutePostureCoordinates.push_back(j->get_coordinates());
             _jointAbsoluteInitialPostureCoordinates.push_back(j->get_coordinates());
         }
+    }
+
+    unsigned int Posture::getAlgorithmType() const
+    {
+        return _postureAlgorithmType;
     }
 
     //getter functions
@@ -26,14 +33,20 @@ namespace cor3d
         return _joints[_selectedJoint];
     }
 
+    void Posture::selectJoint(int jointId)
+    {
+        _selectedJoint = jointId;
+        _chainsNeedUpdate = true;
+    }
+
     const DCoordinate3& Posture::getAbsolutePostureCoordinate(unsigned int jointId) const
     {
         return _jointAbsolutePostureCoordinates[jointId];
     }
 
-    void Posture::MoveSelected(double x, double y, double z)
+    void Posture::MoveSelected(const DCoordinate3& target)
     {
-        cout << "move " << endl;
+        cout << "move " << _isEdited << endl;
         if (!_isEdited)
         {
             _isEdited = true;
@@ -42,20 +55,47 @@ namespace cor3d
             constructChains(_selectedJoint);
         }
 
+        if (_chainsNeedUpdate)
+        {
+            clearChains();
+            constructChains(_selectedJoint);
+        }
+
         cout << "after chains " << endl;
         if (_chains.size() > 0)
         {
-            DCoordinate3 target(x, y, z);
-            FABRIK(_chains[0], target, 1e-10);
-            for (unsigned int i = 1; i < _chains.size(); i++)
+            DCoordinate3 selectedCoordinates = DCoordinate3(_chains[0].get_joint_coordinates(_chains[0].get_chain_size() - 1));
+
+            fabrik(_chains[0], target, 1e-10);
+
+            selectedCoordinates -= DCoordinate3(_chains[0].get_joint_coordinates(_chains[0].get_chain_size() - 1));
+
+            if (FABRIK == _postureAlgorithmType)
             {
-                SimpleForwardFABRIK(&_chains[i], _chains[_chains[i].getChainParent()].get_chain_ending(), 1e-10);
+                for (unsigned int i = 1; i < _chains.size(); i++)
+                {
+                    SimpleForwardFABRIK(&_chains[i], _chains[_chains[i].getChainParent()].get_chain_ending(), 1e-10);
+                }
             }
+            else
+            {
+                for (unsigned int i = 1; i < _chains.size(); i++)
+                {
+                    Chain parentChain = _chains[_chains[i].getChainParent()];
+                    _chains[i].set_joint_coordinates(parentChain.get_chain_ending(), _chains[i].get_chain_size() - 1);
+                    for (unsigned int j = 0; j < _chains[i].get_chain_size() - 1; j++)
+                    {
+
+                        _chains[i].set_joint_coordinates(_chains[i].get_joint_coordinates(j) - selectedCoordinates, j);
+                    }
+                }
+            }
+
             FinalizeMove();
         }
     }
 
-    void Posture::FABRIK(Chain& chain, DCoordinate3 target, double tolerance)
+    void Posture::fabrik(Chain& chain, DCoordinate3 target, double tolerance)
     {
         double *lengths = new double[chain.get_chain_size()];
         double total_length = 0.0;
@@ -130,15 +170,15 @@ namespace cor3d
     int Posture::construct_chains_(int joint_id, int chain_index, int parent_chain_index)
     {
         Chain chain = Chain(chain_index, parent_chain_index, false);
-        chain.add_joint_to_front(_jointAbsolutePostureCoordinates[get_joint(joint_id)->get_parent()], get_joint(get_joint(joint_id)->get_parent())->get_id());
-        while(get_joint(joint_id)->get_children().size() == 1)
+        chain.add_joint_to_front(_jointAbsolutePostureCoordinates[getJointById(joint_id)->get_parent()], getJointById(getJointById(joint_id)->get_parent())->getId());
+        while(getJointById(joint_id)->get_children().size() == 1)
         {
-            chain.add_joint_to_front(_jointAbsolutePostureCoordinates[joint_id], get_joint(joint_id)->get_id());
-            joint_id = get_joint(joint_id)->get_children()[0];
+            chain.add_joint_to_front(_jointAbsolutePostureCoordinates[joint_id], getJointById(joint_id)->getId());
+            joint_id = getJointById(joint_id)->get_children()[0];
         }
-        chain.add_joint_to_front(_jointAbsolutePostureCoordinates[joint_id], get_joint(joint_id)->get_id());
+        chain.add_joint_to_front(_jointAbsolutePostureCoordinates[joint_id], getJointById(joint_id)->getId());
         _chains.push_back(chain);
-        vector<unsigned int> children = get_joint(joint_id)->get_children();
+        vector<unsigned int> children = getJointById(joint_id)->get_children();
         int chain_number = 1;
         for (vector<unsigned int>::iterator it = children.begin(); it != children.end(); it++)
         {
@@ -155,7 +195,7 @@ namespace cor3d
             Chain chain = Chain(0, -1, true);
             forward_chain(chain, selectedJoint);
             _chains.push_back(chain);
-            vector<unsigned int> children = get_joint(selectedJoint)->get_children();
+            vector<unsigned int> children = getJointById(selectedJoint)->get_children();
             int chain_number = 1;
             for (vector<unsigned int>::iterator it = children.begin(); it != children.end(); it++)
             {
@@ -167,20 +207,20 @@ namespace cor3d
     void Posture::forward_chain(Chain& chain, int joint_id)
     {
         int index = joint_id;
-        while(get_joint(index)->get_parent() != -1 && get_joint(get_joint(index)->get_parent())->get_children().size() == 1)
+        while(getJointById(index)->get_parent() != -1 && getJointById(getJointById(index)->get_parent())->get_children().size() == 1)
         {
-            index = get_joint(index)->get_parent();
+            index = getJointById(index)->get_parent();
         }
-        if (get_joint(index)->get_parent() != -1)
+        if (getJointById(index)->get_parent() != -1)
         {
-            chain.add_joint(_jointAbsolutePostureCoordinates[get_joint(index)->get_parent()], get_joint(get_joint(index)->get_parent())->get_id());
+            chain.add_joint(_jointAbsolutePostureCoordinates[getJointById(index)->get_parent()], getJointById(getJointById(index)->get_parent())->getId());
         }
         while (index != joint_id)
         {
-            chain.add_joint(_jointAbsolutePostureCoordinates[index], get_joint(index)->get_id());
-            index = get_joint(index)->get_children()[0];
+            chain.add_joint(_jointAbsolutePostureCoordinates[index], getJointById(index)->getId());
+            index = getJointById(index)->get_children()[0];
         }
-        chain.add_joint(_jointAbsolutePostureCoordinates[joint_id], get_joint(joint_id)->get_id());
+        chain.add_joint(_jointAbsolutePostureCoordinates[joint_id], getJointById(joint_id)->getId());
     }
 
     void Posture::clearChains()
@@ -190,7 +230,7 @@ namespace cor3d
 
     void Posture::handle_view_joint_fabrik_moved(const DCoordinate3& target)
     {
-        MoveSelected(target.x(), target.y(), target.z());
+        //MoveSelected(target.x(), target.y(), target.z());
     }
 
     void Posture::renderPosture(RenderingOptions* renderingOptions, bool glLoad) const
@@ -204,7 +244,7 @@ namespace cor3d
     {
         const TriangulatedMesh3* joint_model = renderingOptions->get_joint_model();
 
-        if (renderingOptions->get_render_joints() && joint_model)
+        if (renderingOptions->get_renderJoints() && joint_model)
         {
             renderingOptions->get_material(renderingOptions->get_joint_material())->Apply();
 
@@ -218,7 +258,7 @@ namespace cor3d
                 glScalef(joint->get_scale().x() / 10, joint->get_scale().y() / 10, joint->get_scale().z() / 10);
                 if (glLoad)
                 {
-                    glLoadName(joint->get_id() + 6);
+                    glLoadName(joint->getId() + 6);
                 }
                 joint_model->Render();
                 glPopMatrix();
@@ -230,7 +270,7 @@ namespace cor3d
     {
         const TriangulatedMesh3* link_model = renderingOptions->get_link_model();
 
-        if (renderingOptions->get_render_links() && link_model &&_joints.size() > 1)
+        if (renderingOptions->get_renderLinks() && link_model &&_joints.size() > 1)
         {
             renderingOptions->get_material(renderingOptions->get_link_material())->Apply();
 
@@ -238,7 +278,7 @@ namespace cor3d
             {
                 Joint* joint = (Joint*) _joints[i];
                 DCoordinate3 start = _jointAbsoluteInitialPostureCoordinates[joint->get_parent()];
-                DCoordinate3 end = _jointAbsoluteInitialPostureCoordinates[joint->get_id()];
+                DCoordinate3 end = _jointAbsoluteInitialPostureCoordinates[joint->getId()];
                 DCoordinate3 k_prime = end - start;
 
                 float length = k_prime.length();
@@ -282,7 +322,7 @@ namespace cor3d
                 matrix[14] = start[2];
                 matrix[15] = 1.0;
 
-                DCoordinate3 jointScale = get_joint(joint->get_parent())->get_scale();
+                DCoordinate3 jointScale = getJointById(joint->get_parent())->get_scale();
                 double scale = min(jointScale.x(), min(jointScale.y(), jointScale.z())) / 10.0;
 
                 glPushMatrix();
@@ -357,7 +397,7 @@ namespace cor3d
 
     }
 
-    Joint* Posture::get_joint(unsigned int index) const
+    Joint* Posture::getJointById(unsigned int index) const
     {
         return _joints[index];
     }
@@ -379,25 +419,40 @@ namespace cor3d
 
     void Posture::handleViewChangesAccepted()
     {
-        cout << "accepted " << endl;
         _isEdited = false;
+        _chainsNeedUpdate = false;
         clearChains();
         emit modelPostureIsEdited(this, _isEdited);
         for (unsigned int i = 0; i < _jointAbsolutePostureCoordinates.size(); i++)
         {
             _jointAbsoluteInitialPostureCoordinates[i] = _jointAbsolutePostureCoordinates[i];
         }
+        emit modelPostureDataChanged(this);
     }
 
     void Posture::handleViewChangesCanceled()
     {
-        cout << "canceled " << endl;
         _isEdited = false;
+        _chainsNeedUpdate = false;
         clearChains();
         emit modelPostureIsEdited(this, _isEdited);
         for (unsigned int i = 0; i < _jointAbsolutePostureCoordinates.size(); i++)
         {
             _jointAbsolutePostureCoordinates[i] = _jointAbsoluteInitialPostureCoordinates[i];
+        }
+        emit modelPostureDataChanged(this);
+    }
+
+    void Posture::handleViewPostureAlgorithmTypeSelected(const string& algorithmName)
+    {
+        cout << "algorithm changed " << algorithmName << endl;
+        if ("FABRIK" == algorithmName)// && FABRIK =! _postureAlgorithmType)
+        {
+            _postureAlgorithmType = FABRIK;
+        }
+        if ("RIGID" == algorithmName)// && RIGID =! _postureAlgorithmType)
+        {
+            _postureAlgorithmType = RIGID;
         }
     }
 }

@@ -23,14 +23,14 @@ AddNewJoint::AddNewJoint(QWidget *parent): BaseSideWidget(parent)
 void AddNewJoint::addJoint(Skeleton* skeleton, Joint* joint, const string& parentName)
 {
     EditJoint* editJoint = new EditJoint(skeleton, joint, treeViewJoints);
-    BaseEntityListItem* listItem = new BaseEntityListItem(joint->get_name(), editJoint, treeViewJoints);
+    BaseEntityListItem* listItem = new BaseEntityListItem(joint->getName(), editJoint, treeViewJoints);
     connect(listItem, SIGNAL(viewListItemDeleted(string)), skeleton, SLOT(handleViewJointDeleted(string)));
     connect(listItem, SIGNAL(viewListItemRenamed(string,string)), skeleton, SLOT(handleViewJointRenamed(string, string)));
     connect(listItem, SIGNAL(viewListItemEdited(string)), this, SLOT(handleViewJointEdited(string)));
 
-    treeViewJoints->addTreeWidgetItem(parentName, joint->get_name(), listItem);
+    treeViewJoints->addTreeWidgetItem(parentName, joint->getName(), listItem);
 
-    addName->setValue(_cor3d->getSelectedSkeleton()->next_joint_name());
+    addName->setValue(_cor3d->getSelectedSkeleton()->nextAutoJointName());
 }
 
 void AddNewJoint::deleteJoint(const string& name)
@@ -60,8 +60,8 @@ void AddNewJoint::populateTreeViewJoints(Skeleton* skeleton, Joint* parent)
 {
     for (unsigned int i = 0; i < parent->get_children().size(); i++)
     {
-        Joint* joint = skeleton->get_joint(parent->get_children()[i]);
-        addJoint(skeleton, joint, parent->get_name());
+        Joint* joint = skeleton->getJointById(parent->get_children()[i]);
+        addJoint(skeleton, joint, parent->getName());
         populateTreeViewJoints(skeleton, joint);
     }
 }
@@ -78,9 +78,9 @@ void AddNewJoint::populateJoints(Skeleton* skeleton, Skeleton* previous)
 
     if (skeleton)
     {
-        Joint* root = skeleton->get_joint(0);
+        Joint* root = skeleton->getJointById(0);
         EditJoint* editJoint = new EditJoint(skeleton, root, treeViewJoints);
-        BaseEntityListItem* listItem = new BaseEntityListItem(root->get_name(), editJoint, treeViewJoints);
+        BaseEntityListItem* listItem = new BaseEntityListItem(root->getName(), editJoint, treeViewJoints);
 
         connect(this, SIGNAL(viewJointAdded(string, string)), skeleton, SLOT(handleViewJointAdded(string,string)));
         connect(this, SIGNAL(viewJointSelected(string)), skeleton, SLOT(handleViewJointSelected(string)));
@@ -90,11 +90,11 @@ void AddNewJoint::populateJoints(Skeleton* skeleton, Skeleton* previous)
 
         listItem->showEdit(false);
         listItem->showDelete(false);
-        treeViewJoints->addTopLevelTreeWidgetItem(root->get_name(), listItem);
+        treeViewJoints->addTopLevelTreeWidgetItem(root->getName(), listItem);
 
         populateTreeViewJoints(skeleton, root);
 
-        addName->setValue(skeleton->next_joint_name());
+        addName->setValue(skeleton->nextAutoJointName());
     }
 }
 

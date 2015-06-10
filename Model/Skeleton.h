@@ -26,10 +26,10 @@ namespace cor3d
         friend std::ostream& operator <<(std::ostream& lhs, const Skeleton& rhs);
         friend std::istream& operator >>(std::istream& lhs, Skeleton& rhs);
 
-        string                  _model_file;
+        string                  _meshFile;
         TriangulatedMesh3       _model;
-        DCoordinate3            _model_offset;
-        DCoordinate3            _model_scale;
+        DCoordinate3            _meshOffset;
+        DCoordinate3            _meshScale;
 
         vector<Posture*>        _postures;
         vector<Joint*>          _joints;
@@ -45,6 +45,7 @@ namespace cor3d
         void addRoot();
 
         void addJoint(const string& parentName, const string& jointName);
+        void selectJoint(const string& jointName);
 
         void addPosture(const string& name);
         void deletePosture(const string& name);
@@ -54,59 +55,40 @@ namespace cor3d
         ///////////////////////////
         // getter methods        //
         ///////////////////////////
-        string get_model_file() const;
-        DCoordinate3 get_model_offset() const;
-        DCoordinate3 get_model_scale() const;
-        unsigned int get_joint_count() const;
-        vector<BaseEntity*> get_joint_list() const;
-        vector<BaseEntity*> get_possible_parents(unsigned int id) const;
+        string getMeshFile() const;
+        DCoordinate3 getMeshOffset() const;
+        DCoordinate3 getMeshScale() const;
 
-        int get_selectedJoint_id() const;
-        unsigned int getJointIdByName(const string& name) const;
+        unsigned int getJointCount() const;
+        string nextAutoJointName() const;
+        vector<BaseEntity*> getJointList() const;
+        vector<BaseEntity*> getPossibleParents(unsigned int id) const;
+        Joint* getJointById(unsigned int id) const;
+        Joint* getJointByName(const string& name) const;
+        Joint* getSelectedJoint() const;
 
-        Joint* get_joint(unsigned int id) const;
-        Joint* get_joint(const string& name) const;
-        Joint* get_parent_joint(const string& name) const;
-        Joint* get_selectedJoint() const;
-
-        Posture* selectedPosture() const;
+        unsigned int getPostureCount() const;
+        string nextAutoPostureName() const;
+        Posture* getPostureByName(const string& name) const;
+        Posture* getPostureById(int id);
+        Posture* getSelectedPosture() const;
 
 
         ///////////////////////////
         // setter methods        //
         ///////////////////////////
-        void set_name(const string &name);
-        void set_model_file(const string& file_name);
-        void set_model_offset(const DCoordinate3& model_offset);
-        void set_model_scale(const DCoordinate3& model_scale);
+        void setMeshFile(const string& file_name);
+        void setMeshOffset(const DCoordinate3& model_offset);
+        void setMeshScale(const DCoordinate3& model_scale);
 
-        bool is_joint_selected() const;
-        void select_joint(int id);
-
-        string next_joint_name() const;
-        bool is_joint_name_reserved(const string& name) const;
-        string append_sequence_number(const string& name) const;
-
-        void remove_joint(unsigned int joint_id);
-
-        //void update_joint_coordinates();
         void render(RenderingOptions* rendering_options, bool glLoad = false);
-        void render_joints(RenderingOptions* rendering_options, bool glLoad = false) const;
-        void render_links(RenderingOptions* rendering_options, bool glLoad = false) const;
+        void renderJoints(RenderingOptions* rendering_options, bool glLoad = false) const;
+        void renderLinks(RenderingOptions* rendering_options, bool glLoad = false) const;
         void render_axis(RenderingOptions* rendering_options, bool glLoad = false) const;
 
-        string nextAutoPostureName() const;
-        Posture* getPostureByName(const string& name) const;
-        Posture* getPostureById(int id);
-        unsigned int postureCount() const;
-
-
     private:
-        //void update_joint_coordinates_(unsigned int joint_id, const DCoordinate3& parent_coordinates);
-        bool validate_joint_index_(int joint_id) const;
         void deleteJoint(unsigned int jointId);
         void prepareDeleteJoints(unsigned int jointId, vector<unsigned int>& result);
-        void handle_view_joint_CoordinatesChanged_(unsigned int jointId);
 
     public slots:
 
@@ -114,27 +96,20 @@ namespace cor3d
         void handleViewJointDeleted(const string&);
         void handleViewJointRenamed(const string&, const string&);
         void handleViewJointSelected(const string&);
-
-        void handle_view_joint_selectionChanged(int);
+        void handleViewJointSelected(int);
 
         void handleViewJointAbsoluteCoordinatesChanged(const string& name, const DCoordinate3& absoluteCoordinates);
+        void handleViewSelectedJointAbsoluteCoordinatesChanged(const DCoordinate3 absoluteCoordiantes);
         void handleViewJointRelativeCoordinatesChanged(const string& name, const DCoordinate3& relativeCoordinates);
         void handleViewJointScaleChanged(const string& name, const DCoordinate3& scale);
-
-        void handle_view_joint_rotation_axis_changed(const string&, const DCoordinate3& rotation_axis);
-        void handle_view_joint_rotation_constraint_changed(const string&, const DCoordinate3& rotation_constraint);
-
-        void handle_view_joint_parent_changed(int);
-        void handle_view_joint_type_changed(int);
-        void handle_view_joint_orientation_changed(const DCoordinate3&);
-        void handle_view_joint_axis_changed(const DCoordinate3&);
-        void handle_view_joint_configuration_changed(const DCoordinate3&);
-        void handle_view_joint_absolute_position_changed(const DCoordinate3&);
 
         void handleViewPostureAdded(const string&);
         void handleViewPostureDeleted(const string&);
         void handleViewPostureRenamed(const string&, const string&);
         void handleViewPostureSelected(const string&);
+
+        void handleViewPostureJointAbsoluteCoordinatesChanged(const DCoordinate3 absoluteCoordinates);
+        void handleViewPostureJointAbsoluteCoordinatesChanged(const string& jointName, const DCoordinate3 absoluteCoordinates);
 
         void handleViewSkeletonModelChanged(const string&);
         void handleViewSkeletonModelScaleChanged(const DCoordinate3&);
@@ -142,8 +117,6 @@ namespace cor3d
 
     signals:
         void modelSkeletonDataChanged(Skeleton* skeleton);
-
-        void model_joint_selectionChanged();
 
         void modelJointAdded(Skeleton* skeleton, Joint* joint, const string& parentName);
         void modelJointRenamed(const string& oldName, const string& newName);
@@ -155,73 +128,8 @@ namespace cor3d
         void modelPostureAdded(Skeleton* skeleton, Posture* posture);
         void modelPostureDeleted(Skeleton* skeleton, const string& postureName);
         void modelPostureRenamed(const string& oldPostureName, const string& newPostureName);
-        void modelPostureSelected(Skeleton* skeleton, Posture* posture);
+        void modelPostureSelected(Skeleton* skeleton, Posture* selectedPosture, Posture* previousPosture);
+        void modelPostureDataChanged(Posture* posture);
     };
-
-    inline string Skeleton::get_model_file() const
-    {
-        return _model_file;
-    }
-
-    inline DCoordinate3 Skeleton::get_model_offset() const
-    {
-        return _model_offset;
-    }
-
-    inline DCoordinate3 Skeleton::get_model_scale() const
-    {
-        return _model_scale;
-    }
-
-    inline unsigned int Skeleton::get_joint_count() const
-    {
-        return _joints.size();
-    }
-
-    inline int Skeleton::get_selectedJoint_id() const
-    {
-        return _selectedJoint;
-    }
-
-    inline void Skeleton::set_name(const string &name)
-    {
-        BaseEntity::set_name(name);
-        //emit model_joint_list_changed();
-    }
-
-    inline void Skeleton::set_model_offset(const DCoordinate3& model_offset)
-    {
-        _model_offset = model_offset;
-        emit modelSkeletonDataChanged(this);
-    }
-
-    inline void Skeleton::set_model_scale(const DCoordinate3& model_scale)
-    {
-        _model_scale = model_scale;
-        emit modelSkeletonDataChanged(this);
-    }
-
-
-//    inline void Skeleton::set_joint_length(int joint_id, double length)
-//    {
-//        _joints[joint_id].set_length(length);
-//    }
-
-    inline bool Skeleton::is_joint_selected() const
-    {
-        return _selectedJoint >= 0;
-    }
-
-    inline Posture* Skeleton::selectedPosture() const
-    {
-        if (_selectedPosture >=0 && _selectedPosture < _postures.size())
-        {
-            return _postures[_selectedPosture];
-        }
-
-        return 0;
-    }
-
-
 }
 

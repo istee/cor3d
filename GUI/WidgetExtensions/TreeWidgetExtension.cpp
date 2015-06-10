@@ -93,7 +93,7 @@ void TreeWidgetExtension::renameTreeWidgetItem(QTreeWidgetItem* item, const stri
 
 void TreeWidgetExtension::updateEditWidget(BaseEntity* baseEntity)
 {
-    QTreeWidgetItem* item = getTreeWidgetItemByData(baseEntity->get_name());
+    QTreeWidgetItem* item = getTreeWidgetItemByData(baseEntity->getName());
     BaseEntityListItem* itemWidget = (BaseEntityListItem*) this->itemWidget(item, 0);
     itemWidget->editWidget()->updateContent(baseEntity);
 }

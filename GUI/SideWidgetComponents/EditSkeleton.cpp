@@ -32,10 +32,10 @@ void EditSkeleton::update_content()
 void EditSkeleton::updateContent(BaseEntity* baseEntity)
 {
     Skeleton* skeleton = (Skeleton*) baseEntity;
-    _skeletonName = skeleton->get_name();
-    model_file->setValue(skeleton->get_model_file());
-    model_scale->setValue(skeleton->get_model_scale());
-    model_offset->setValue(skeleton->get_model_offset());
+    _skeletonName = skeleton->getName();
+    model_file->setValue(skeleton->getMeshFile());
+    model_scale->setValue(skeleton->getMeshScale());
+    model_offset->setValue(skeleton->getMeshOffset());
 }
 
 void EditSkeleton::handleSkeletonModelChanged(const string& file)

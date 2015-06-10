@@ -11,8 +11,8 @@ using namespace std;
 class RenderingOptions {
     bool _render;
     bool _render_model;
-    bool _render_joints;
-    bool _render_links;
+    bool _renderJoints;
+    bool _renderLinks;
 
     bool _render_axis;
 
@@ -23,8 +23,8 @@ class RenderingOptions {
 
     double model_opacity;
 
-    string _joint_model_file;
-    string _link_model_file;
+    string _joint_meshFile;
+    string _link_meshFile;
 
     TriangulatedMesh3   _joint_model;
     TriangulatedMesh3   _link_model;
@@ -44,12 +44,12 @@ public:
     {
         _render = true;
         _render_model = true;
-        _render_joints  = true;
-        _render_links = true;
+        _renderJoints  = true;
+        _renderLinks = true;
         _render_axis = true;
 
-        _joint_model_file = "Models/sphere.off";
-        _link_model_file = "Models/cone.off";
+        _joint_meshFile = "Models/sphere.off";
+        _link_meshFile = "Models/cone.off";
 
         _material_names.push_back(BaseEntity(0, "Brass"));
         _material_names.push_back(BaseEntity(1, "Gold"));
@@ -84,8 +84,8 @@ public:
         {
             is_initialized = true;
 
-            set_joint_model_file(_joint_model_file);
-            set_link_model_file(_link_model_file);
+            set_joint_meshFile(_joint_meshFile);
+            set_link_meshFile(_link_meshFile);
 
             if (_cone_model.LoadFromOFF("Models/cone.off"))
             {
@@ -104,14 +104,14 @@ public:
         return _render_model;
     }
 
-    bool get_render_joints() const
+    bool get_renderJoints() const
     {
-        return _render_joints;
+        return _renderJoints;
     }
 
-    bool get_render_links() const
+    bool get_renderLinks() const
     {
-        return _render_links;
+        return _renderLinks;
     }
 
     bool get_render_axis() const
@@ -134,14 +134,14 @@ public:
         return &_cone_model;
     }
 
-    const string& get_joint_model_file() const
+    const string& get_joint_meshFile() const
     {
-        return _joint_model_file;
+        return _joint_meshFile;
     }
 
-    const string& get_link_model_file() const
+    const string& get_link_meshFile() const
     {
-        return _link_model_file;
+        return _link_meshFile;
     }
 
     unsigned int get_model_material() const
@@ -184,40 +184,40 @@ public:
         _render_model = render_model;
     }
 
-    void set_render_joints(bool render_joints)
+    void set_renderJoints(bool renderJoints)
     {
-        _render_joints = render_joints;
+        _renderJoints = renderJoints;
     }
 
-    void set_render_links(bool render_links)
+    void set_renderLinks(bool renderLinks)
     {
-        _render_links = render_links;
+        _renderLinks = renderLinks;
     }
 
-    void set_joint_model_file(const string& joint_model_file)
+    void set_joint_meshFile(const string& joint_meshFile)
     {
-        if (_joint_model.LoadFromOFF(joint_model_file))
+        if (_joint_model.LoadFromOFF(joint_meshFile))
         {
             _joint_model.UpdateVertexBufferObjects();
-            _joint_model_file = joint_model_file;
+            _joint_meshFile = joint_meshFile;
         }
         else
         {
-            _joint_model.LoadFromOFF(_joint_model_file);
+            _joint_model.LoadFromOFF(_joint_meshFile);
             _joint_model.UpdateVertexBufferObjects();
         }
     }
 
-    void set_link_model_file(const string& link_model_file)
+    void set_link_meshFile(const string& link_meshFile)
     {
-        if (_link_model.LoadFromOFF(link_model_file))
+        if (_link_model.LoadFromOFF(link_meshFile))
         {
             _link_model.UpdateVertexBufferObjects();
-            _link_model_file = link_model_file;
+            _link_meshFile = link_meshFile;
         }
         else
         {
-            _link_model.LoadFromOFF(_link_model_file);
+            _link_model.LoadFromOFF(_link_meshFile);
             _link_model.UpdateVertexBufferObjects();
         }
     }

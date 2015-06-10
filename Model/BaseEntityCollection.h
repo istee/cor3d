@@ -12,6 +12,6 @@ protected:
 public:
 //    string next_entity_name()
 //    {
-//        return next_name<>("Skeleton ", base_entities);
+//        return nextName<>("Skeleton ", base_entities);
 //    }
 };
