@@ -53,10 +53,10 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="ManagePostures" name="managePostures" native="true"/>
+        <widget class="PostureSideWidget" name="managePostures" native="true"/>
        </item>
        <item>
-        <widget class="EditPosture" name="editPosture" native="true"/>
+        <widget class="PostureJointSideWidget" name="editPosture" native="true"/>
        </item>
       </layout>
      </widget>
@@ -66,15 +66,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ManagePostures</class>
+   <class>PostureSideWidget</class>
    <extends>QWidget</extends>
-   <header location="global">GUI/SideWidgetComponents/ManagePostures.h</header>
+   <header location="global">GUI/SideWidgets/PostureSideWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>EditPosture</class>
+   <class>PostureJointSideWidget</class>
    <extends>QWidget</extends>
-   <header>GUI/SideWidgetComponents/EditPosture.h</header>
+   <header>GUI/SideWidgets/PostureJointSideWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

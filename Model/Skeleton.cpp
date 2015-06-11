@@ -23,6 +23,11 @@ namespace cor3d {
         {
             lhs << **it;
         }
+        lhs << "skeleton_posture_count: " << rhs.getPostureCount() << endl;
+        for (vector<Posture*>::const_iterator it = rhs._postures.begin(); it != rhs._postures.end(); it++)
+        {
+            lhs << **it;
+        }
         return lhs;
     }
 
@@ -50,6 +55,13 @@ namespace cor3d {
             Joint* joint = new Joint(i, "", 0);
             lhs >> *joint;
             rhs._joints.push_back(joint);
+        }
+        lhs >> text >> number;
+        for (int i = 0; i < number; i++)
+        {
+            Posture* posture = new Posture(rhs._joints);
+            lhs >> *posture;
+            rhs._postures.push_back(posture);
         }
         return lhs;
     }
@@ -120,6 +132,7 @@ namespace cor3d {
         {
             Joint* joint = new Joint(_joints.size(), jointName, parent->getId(), parent->get_coordinates());
             joint->set_coordinate(parent->get_coordinates());
+            joint->set_scale(parent->get_scale());
             joint->set_axis(parent->get_axis());
             joint->set_orientation(parent->get_orientation());
             _joints.push_back(joint);

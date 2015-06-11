@@ -77,7 +77,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="SkeletonList" name="skeleton_list" native="true">
+        <widget class="SkeletonSideWidget" name="skeleton_list" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -87,7 +87,7 @@
         </widget>
        </item>
        <item>
-        <widget class="AddNewJoint" name="add_new_joint" native="true">
+        <widget class="JointSideWidget" name="add_new_joint" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -104,15 +104,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>SkeletonList</class>
+   <class>SkeletonSideWidget</class>
    <extends>QWidget</extends>
-   <header>GUI/SideWidgetComponents/SkeletonList.h</header>
+   <header>GUI/SideWidgets/SkeletonSideWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>AddNewJoint</class>
+   <class>JointSideWidget</class>
    <extends>QWidget</extends>
-   <header>GUI/SideWidgetComponents/AddNewJoint.h</header>
+   <header>GUI/SideWidgets/JointSideWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

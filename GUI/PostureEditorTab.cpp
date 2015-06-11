@@ -1,7 +1,7 @@
 #include "PostureEditorTab.h"
 
 #include "Cor3dApplication.h"
-#include "GUI/SideWidgetComponents/BaseSideWidget.h"
+#include "GUI/SideWidgets/BaseSideWidget.h"
 #include "GUI/WidgetExtensions/GroupBoxExtension.h"
 #include "GUI/PostureGLWidget.h"
 
@@ -33,7 +33,6 @@ void PostureEditorTab::handleModelSkeletonSelected(Skeleton* selectedSkeleton, S
     if (previousSkeleton)
     {
         disconnect(glwidget, SIGNAL(viewJointSelected(int)), previousSkeleton, SLOT(handleViewJointSelected(int)));
-        disconnect(glwidget, SIGNAL(view_joint_absolute_position_changed(DCoordinate3)), previousSkeleton, SLOT(handle_view_joint_fabrik_moved(DCoordinate3)));
 
         disconnect(managePostures, SIGNAL(viewPostureAdded(string)), previousSkeleton, SLOT(handleViewPostureAdded(string)));
         disconnect(managePostures, SIGNAL(viewPostureDeleted(string)), previousSkeleton, SLOT(handleViewPostureDeleted(string)));

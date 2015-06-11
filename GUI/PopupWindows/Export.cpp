@@ -23,7 +23,7 @@ Export::Export(QWidget *parent) : QWidget(parent)
     exportFile->setFilePath(QDir::currentPath().toStdString() + "/cor3d export " + QDateTime::currentDateTime().toString(QString::fromStdString("yyyy-MM-dd-hhmmss")).toStdString() + ".c3data");
 
     Cor3dApplication *cor3dApp = (Cor3dApplication*) qApp;
-    const vector<BaseEntity*> skeleton_list = cor3dApp->cor3d->getSkeletonList();
+    const vector<BaseEntity*> skeleton_list = cor3dApp->cor3d->getSkeletonSideWidget();
     model = new QStandardItemModel();
     model->setColumnCount(1);
     model->setHeaderData(0, Qt::Horizontal, "Select items to export:");
@@ -65,6 +65,8 @@ void Export::on_exportButton_clicked()
                 file << *skeleton << endl;
             }
         }
+
+        on_closeButton_clicked();
     }
     else
     {

@@ -16,6 +16,9 @@ namespace cor3d{
     enum PostureAlgorithmType { FABRIK, RIGID };
 
     class Posture: public QObject, public BaseEntity {
+        friend ostream& operator <<(ostream& lhs, const Posture& rhs);
+        friend istream& operator >>(istream& lhs, Posture& rhs);
+
         Q_OBJECT
 
         vector<DCoordinate3>    _jointAbsolutePostureCoordinates;
@@ -35,6 +38,7 @@ namespace cor3d{
         Joint* selectedJoint() const;
         void selectJoint(int jointId);
 
+        Posture(vector<Joint*>& joints);
         Posture(unsigned int id, string name, vector<Joint*>& joints);
         void constructChains(unsigned int selectedJoint);
         void clearChains();
@@ -58,7 +62,6 @@ namespace cor3d{
         Joint* getJointById(unsigned int) const;
 
     public slots:
-        void handle_view_joint_fabrik_moved(const DCoordinate3&);
         void handleViewChangesAccepted();
         void handleViewChangesCanceled();
         void handleViewPostureAlgorithmTypeSelected(const string& algorithmName);

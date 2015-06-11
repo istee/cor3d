@@ -2,6 +2,21 @@
 
 namespace cor3d
 {
+    Posture::Posture(vector<Joint*>& joints): QObject(), BaseEntity()
+    {
+        _isEdited = false;
+        _chainsNeedUpdate = false;
+        _postureAlgorithmType = RIGID;
+        _joints = joints;
+        _selectedJoint = -1;
+        for (vector<Joint*>::iterator it = _joints.begin(); it != _joints.end(); it++)
+        {
+            Joint* j = *it;
+            _jointAbsolutePostureCoordinates.push_back(j->get_coordinates());
+            _jointAbsoluteInitialPostureCoordinates.push_back(j->get_coordinates());
+        }
+    }
+
     Posture::Posture(unsigned int id, string name, vector<Joint*>& joints): QObject(), BaseEntity(id, name)
     {
         _isEdited = false;
@@ -15,6 +30,42 @@ namespace cor3d
             _jointAbsolutePostureCoordinates.push_back(j->get_coordinates());
             _jointAbsoluteInitialPostureCoordinates.push_back(j->get_coordinates());
         }
+    }
+
+    ostream& operator <<(ostream& lhs, const Posture& rhs)
+    {
+        lhs << "posture_name: " << rhs.getName() << endl;
+        lhs << "posture_id: " << rhs.getId() << endl;
+        lhs << "joint_count " << rhs._jointAbsolutePostureCoordinates.size() << endl;
+        for (unsigned int i = 0; i < rhs._jointAbsolutePostureCoordinates.size(); i++)
+        {
+            lhs << rhs._jointAbsoluteInitialPostureCoordinates[i] << " ";
+        }
+        lhs << endl;
+        return lhs;
+    }
+
+    istream& operator >>(istream& lhs, Posture& rhs)
+    {
+        string text;
+        char name[256];
+        int number;
+        DCoordinate3 coordinates;
+        lhs >> text;
+        lhs.getline(name, 256);
+        rhs.setName(name);
+        lhs >> text >> rhs._id;
+        lhs >> text >> number;
+        cout << "number " << number << endl;
+        rhs._jointAbsolutePostureCoordinates.clear();
+        rhs._jointAbsoluteInitialPostureCoordinates.clear();
+        for (unsigned int i = 0; i < number; i++)
+        {
+            lhs >> coordinates;
+            rhs._jointAbsoluteInitialPostureCoordinates.push_back(coordinates);
+            rhs._jointAbsolutePostureCoordinates.push_back(coordinates);
+        }
+        return lhs;
     }
 
     unsigned int Posture::getAlgorithmType() const
@@ -226,11 +277,6 @@ namespace cor3d
     void Posture::clearChains()
     {
         _chains.clear();
-    }
-
-    void Posture::handle_view_joint_fabrik_moved(const DCoordinate3& target)
-    {
-        //MoveSelected(target.x(), target.y(), target.z());
     }
 
     void Posture::renderPosture(RenderingOptions* renderingOptions, bool glLoad) const

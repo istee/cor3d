@@ -10,7 +10,7 @@
 #include "RenderingOptions.h"
 #include "GUI/PopupWindows/Export.h"
 #include "GUI/PopupWindows/Import.h"
-#include "GUI/SideWidgetComponents/RenderingOptionsWidget.h"
+#include "GUI/SideWidgets/RenderingOptionsWidget.h"
 #include "GUI/Toolbars/TransformationsToolbar.h"
 #include "GUI/Toolbars/FileToolbar.h"
 #include "IMainWindowTab.h"

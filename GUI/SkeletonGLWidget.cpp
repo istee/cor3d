@@ -27,7 +27,7 @@ void SkeletonGLWidget::specificPaintGL()
 
 void SkeletonGLWidget::specificDrawPickObjects()
 {
-    //_skeleton->renderJoints(cor3dApp->cor3d->getRenderingOptions(), true);
+    _skeleton->renderJoints(cor3dApp->cor3d->getRenderingOptions(), true);
     Joint* selectedJoint = _skeleton->getSelectedJoint();
     if (selectedJoint && selectedJoint->get_parent() >= 0)
     {

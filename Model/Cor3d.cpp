@@ -48,7 +48,7 @@ namespace cor3d {
         return 0;
     }
 
-    vector<BaseEntity*> Cor3d::getSkeletonList()
+    vector<BaseEntity*> Cor3d::getSkeletonSideWidget()
     {
         return getBaseEntities<Skeleton>(_skeletons);
     }

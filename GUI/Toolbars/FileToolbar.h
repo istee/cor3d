@@ -17,6 +17,10 @@ public:
 
 private:
     Ui::FileToolbar *ui;
+
+private slots:
+    void on_toolButtonImport_clicked();
+    void on_toolButtonExport_clicked();
 };
 
 #endif // FILETOOLBAR_H

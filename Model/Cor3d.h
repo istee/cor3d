@@ -21,7 +21,7 @@ namespace cor3d {
     public:
         Cor3d();
         string nextName() const;
-        vector<BaseEntity*> getSkeletonList();
+        vector<BaseEntity*> getSkeletonSideWidget();
         Skeleton* getSelectedSkeleton();
         Skeleton* getSkeletonById(unsigned int skeletonId);
         Skeleton* getSkeletonByName(const string& skeletonName);

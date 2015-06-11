@@ -18,7 +18,7 @@
     <number>2</number>
    </property>
    <item>
-    <widget class="QToolButton" name="toolButtonTransformations">
+    <widget class="ToolButtonExtension" name="toolButtonTransformations">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -31,21 +31,43 @@
        <height>30</height>
       </size>
      </property>
+     <property name="toolTip">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Transformations&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../Resources.qrc">
+       <normaloff>:/icons/Resources/eyeIcon.png</normaloff>:/icons/Resources/eyeIcon.png</iconset>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QToolButton" name="toolButtonTranslate">
+    <widget class="ToolButtonExtension" name="toolButtonTranslate">
      <property name="minimumSize">
       <size>
        <width>30</width>
        <height>30</height>
       </size>
      </property>
+     <property name="toolTip">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Translations&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../Resources.qrc">
+       <normaloff>:/icons/Resources/translateIcon.png</normaloff>:/icons/Resources/translateIcon.png</iconset>
      </property>
     </widget>
    </item>
@@ -108,15 +130,26 @@
     </widget>
    </item>
    <item>
-    <widget class="QToolButton" name="toolButtonRotate">
+    <widget class="ToolButtonExtension" name="toolButtonRotate">
      <property name="minimumSize">
       <size>
        <width>30</width>
        <height>30</height>
       </size>
      </property>
+     <property name="toolTip">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Rotation&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../Resources.qrc">
+       <normaloff>:/icons/Resources/iconRotate.png</normaloff>:/icons/Resources/iconRotate.png</iconset>
      </property>
     </widget>
    </item>
@@ -191,15 +224,26 @@
     </widget>
    </item>
    <item>
-    <widget class="QToolButton" name="toolButtonZoom">
+    <widget class="ToolButtonExtension" name="toolButtonZoom">
      <property name="minimumSize">
       <size>
        <width>30</width>
        <height>30</height>
       </size>
      </property>
+     <property name="toolTip">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zoom&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../Resources.qrc">
+       <normaloff>:/icons/Resources/zoomIcon.png</normaloff>:/icons/Resources/zoomIcon.png</iconset>
      </property>
      <property name="checkable">
       <bool>false</bool>
@@ -249,7 +293,14 @@
    <extends>QDoubleSpinBox</extends>
    <header location="global">GUI/WidgetExtensions/SpinboxExtension.h</header>
   </customwidget>
+  <customwidget>
+   <class>ToolButtonExtension</class>
+   <extends>QToolButton</extends>
+   <header location="global">GUI/WidgetExtensions/ToolButtonExtension.h</header>
+  </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../../Resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

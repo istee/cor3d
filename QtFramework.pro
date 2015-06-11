@@ -16,16 +16,14 @@ SOURCES += \
     Model/Cor3d.cpp \
     Model/Joint.cpp \
     GUI/BasicWidgets/DCoordinate3GroupBox.cpp \
-    GUI/SideWidgetComponents/SkeletonList.cpp \
-    GUI/SideWidgetComponents/EditSkeleton.cpp \
-    GUI/SideWidgetComponents/EditJoint.cpp \
-    GUI/SideWidgetComponents/AddNewSkeleton.cpp \
-    GUI/SideWidgetComponents/AddNewJoint.cpp \
+    GUI/SideWidgets/SkeletonSideWidget.cpp \
+    GUI/EditWidgets/SkeletonEditWidget.cpp \
+    GUI/SideWidgets/JointSideWidget.cpp \
     GUI/BasicWidgets/BaseEntityComboBox.cpp \
     GUI/SkeletonEditorTab.cpp \
     GUI/BasicWidgets/FileChooser.cpp \
     GUI/BasicWidgets/BaseEntityNameEdit.cpp \
-    GUI/SideWidgetComponents/RenderingOptionsWidget.cpp \
+    GUI/SideWidgets/RenderingOptionsWidget.cpp \
     Model/RenderingOptions.cpp \
     GUI/PostureEditorTab.cpp \
     GUI/SceneEditorTab.cpp \
@@ -37,13 +35,14 @@ SOURCES += \
     GUI/Toolbars/FileToolbar.cpp \
     GUI/BasicWidgets/BaseEntityListItem.cpp \
     GUI/WidgetExtensions/TreeWidgetExtension.cpp \
-    GUI/SideWidgetComponents/ManagePostures.cpp \
-    GUI/SideWidgetComponents/EditPosture.cpp \
+    GUI/SideWidgets/PostureSideWidget.cpp \
+    GUI/SideWidgets/PostureJointSideWidget.cpp \
     GUI/EditWidgets/BaseEditWidget.cpp \
     GUI/WidgetExtensions/ListWidgetExtension.cpp \
     Model/Posture.cpp \
-    GUI/EditWidgets/EditPostureJoint.cpp \
-    GUI/WidgetExtensions/GroupBoxExtension.cpp
+    GUI/EditWidgets/PostureEditWidget.cpp \
+    GUI/WidgetExtensions/GroupBoxExtension.cpp \
+    GUI/EditWidgets/JointEditWidget.cpp
 
 
 HEADERS += \
@@ -77,17 +76,15 @@ HEADERS += \
     GUI/RenderingOptions.h \
     GUI/BasicWidgets/DCoordinate3GroupBox.h \
     GUI/BasicWidgets/BaseEntityComboBox.h \
-    GUI/SideWidgetComponents/SkeletonList.h \
-    GUI/SideWidgetComponents/EditSkeleton.h \
-    GUI/SideWidgetComponents/EditJoint.h \
-    GUI/SideWidgetComponents/AddNewSkeleton.h \
-    GUI/SideWidgetComponents/AddNewJoint.h \
+    GUI/SideWidgets/SkeletonSideWidget.h \
+    GUI/EditWidgets/SkeletonEditWidget.h \
+    GUI/SideWidgets/JointSideWidget.h \
     GUI/IMainWindowTab.h \
     GUI/SkeletonEditorTab.h \
     GUI/BasicWidgets/FileChooser.h \
     GUI/BasicWidgets/BaseEntityNameEdit.h \
-    GUI/SideWidgetComponents/RenderingOptionsWidget.h \
-    GUI/SideWidgetComponents/BaseSideWidget.h \
+    GUI/SideWidgets/RenderingOptionsWidget.h \
+    GUI/SideWidgets/BaseSideWidget.h \
     Model/MaterialContainer.h \
     GUI/PostureEditorTab.h \
     GUI/SceneEditorTab.h \
@@ -101,27 +98,26 @@ HEADERS += \
     GUI/Toolbars/FileToolbar.h \
     GUI/BasicWidgets/BaseEntityListItem.h \
     GUI/WidgetExtensions/TreeWidgetExtension.h \
-    GUI/SideWidgetComponents/ManagePostures.h \
-    GUI/SideWidgetComponents/EditPosture.h \
+    GUI/SideWidgets/PostureSideWidget.h \
+    GUI/SideWidgets/PostureJointSideWidget.h \
     GUI/EditWidgets/BaseEditWidget.h \
     GUI/WidgetExtensions/ListWidgetExtension.h \
     GUI/WidgetExtensions/ToolButtonExtension.h \
-    GUI/EditWidgets/EditPostureJoint.h \
-    GUI/WidgetExtensions/GroupBoxExtension.h
+    GUI/EditWidgets/PostureEditWidget.h \
+    GUI/WidgetExtensions/GroupBoxExtension.h \
+    GUI/EditWidgets/JointEditWidget.h
 
 FORMS += \
     GUI/BasicWidgets/DCoordinate3GroupBox.ui \
     GUI/BasicWidgets/BaseEntityComboBox.ui \
-    GUI/SideWidgetComponents/SkeletonList.ui \
-    GUI/SideWidgetComponents/EditSkeleton.ui \
-    GUI/SideWidgetComponents/EditJoint.ui \
-    GUI/SideWidgetComponents/AddNewSkeleton.ui \
-    GUI/SideWidgetComponents/AddNewJoint.ui \
+    GUI/SideWidgets/SkeletonSideWidget.ui \
+    GUI/EditWidgets/SkeletonEditWidget.ui \
+    GUI/SideWidgets/JointSideWidget.ui \
     GUI/MainWindow.ui \
     GUI/SkeletonEditorTab.ui \
     GUI/BasicWidgets/BaseEntityNameEdit.ui \
     GUI/BasicWidgets/FileChooser.ui \
-    GUI/SideWidgetComponents/RenderingOptionsWidget.ui \
+    GUI/SideWidgets/RenderingOptionsWidget.ui \
     GUI/PostureEditorTab.ui \
     GUI/SceneEditorTab.ui \
     GUI/PopupWindows/Export.ui \
@@ -129,15 +125,15 @@ FORMS += \
     GUI/Toolbars/TransformationsToolbar.ui \
     GUI/Toolbars/FileToolbar.ui \
     GUI/BasicWidgets/BaseEntityListItem.ui \
-    GUI/SideWidgetComponents/ManagePostures.ui \
-    GUI/SideWidgetComponents/EditPosture.ui \
-    GUI/EditWidgets/EditPostureJoint.ui
+    GUI/SideWidgets/PostureSideWidget.ui \
+    GUI/SideWidgets/PostureJointSideWidget.ui \
+    GUI/EditWidgets/PostureEditWidget.ui \
+    GUI/EditWidgets/JointEditWidget.ui
 
 
 QT += opengl
 
-INCLUDEPATH += ./Dependencies/Include \
-    C:/boost_1_58_0/boost
+INCLUDEPATH += ./Dependencies/Include
 
 LIBS += ./Dependencies/LIB/GL/glew32.lib ./Dependencies/LIB/GL/glew32.dll
 

@@ -21,9 +21,18 @@ const DCoordinate3 DCoordinate3GroupBox::getValue() const
 void DCoordinate3GroupBox::setValue(const DCoordinate3& dcoordinate3)
 {
     blockSignals(true);
-    xDoubleSpinBox->setValue(dcoordinate3.x());
-    yDoubleSpinBox->setValue(dcoordinate3.y());
-    zDoubleSpinBox->setValue(dcoordinate3.z());
+    if (fabs(xDoubleSpinBox->value() - dcoordinate3.x()) > 0.0001)
+    {
+        xDoubleSpinBox->setValue(dcoordinate3.x());
+    }
+    if (fabs(yDoubleSpinBox->value() - dcoordinate3.y()) > 0.0001)
+    {
+        yDoubleSpinBox->setValue(dcoordinate3.y());
+    }
+    if (fabs(zDoubleSpinBox->value() - dcoordinate3.z()) > 0.0001)
+    {
+        zDoubleSpinBox->setValue(dcoordinate3.z());
+    }
     blockSignals(false);
 }
 

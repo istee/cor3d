@@ -45,6 +45,8 @@ void Import::on_importButton_clicked()
         {
             cor3dApp->cor3d->importSkeleton(file);
         }
+
+        on_closeButton_clicked();
     }
     else
     {

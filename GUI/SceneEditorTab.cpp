@@ -1,7 +1,7 @@
 #include "SceneEditorTab.h"
 
 #include "Cor3dApplication.h"
-#include "GUI/SideWidgetComponents/BaseSideWidget.h"
+#include "GUI/SideWidgets/BaseSideWidget.h"
 #include "GUI/WidgetExtensions/GroupBoxExtension.h"
 #include "GUI/SceneGLWidget.h"
 
