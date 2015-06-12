@@ -12,5 +12,6 @@
         <file>Resources/saveIcon.png</file>
         <file>Resources/translateIcon.png</file>
         <file>Resources/zoomIcon.png</file>
+        <file>Resources/mirrorIcon.png</file>
     </qresource>
 </RCC>

@@ -315,6 +315,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
     y_rot_mat = Rotation((double) _angle_y, rotation_axis.YNormal());
     z_rot_mat = Rotation((double) _angle_z, rotation_axis.ZNormal());
 
+
     if (is_drag)
     {
         double matModelView[16], matProjection[16];
@@ -341,6 +342,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
         Transformation TMV(matModelView);
         Transformation TIMV;
 
+        cout << TMV << endl;
 
 
         if (!TMV.GetInverse(TIMV))
@@ -363,6 +365,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 
         double mouseX = event->x();
         double mouseY = event->y();
+
 
         DCoordinate3 l1;
         DCoordinate3 l2;
@@ -389,7 +392,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
         glLoadIdentity();
         glMultMatrixd(matModelView);
 
-        double d = ((p0 - l1) * n) / ((l2 - l1) * n);
+        double d = ((p0 - l1).length()) / ((l2 - l1).length());
 
         //cout << "d: " << d << endl;
 
@@ -398,14 +401,13 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
         if (d >= 0.0 && d <= 1.0)
         {
             DCoordinate3 result = l1 + ((l2 - l1) * d);
-            DCoordinate3 rotated_result = TIMVT * result;
-            //                cout << "d: " << d << endl;
-            //                cout << "normal: " << n << endl;
-            //                cout << "p0: " << p0 << endl;
-            //                cout << "point: " << result << endl;
+            DCoordinate3 rotated_result = /*TIMVT **/ result;
+//                            cout << "d: " << d << endl;
+//                            cout << "normal: " << n << endl;
+//                            cout << "p0: " << p0 << endl;
+//                            cout << "point: " << result << endl;
 
             DCoordinate3 new_coord = dragCoordinate();
-            //DCoordinate3 *new_coord = _skeletons[0].GetSelectedPosition();
 
 
             //cout << "drag type " << _drag_type << endl;

@@ -550,6 +550,32 @@ namespace cor3d {
         emit modelJointDeleted(jointName);
     }
 
+    void Skeleton::mirrorJoint(Joint* mirroredJoint, Joint* mirrorParent, const DCoordinate3& mirrorRootCoordinates)
+    {
+        unsigned int childCount = mirroredJoint->get_children().size();
+        for (unsigned int i = 0; i < childCount; i++)
+        {
+            Joint* child = _joints[mirroredJoint->get_children()[i]];
+            string mirrorName = child->getName() + "_Mirror";
+            addJoint(mirrorParent->getName(), mirrorName);
+            Joint* mirror = getJointByName(mirrorName);
+            mirror->set_scale(child->get_scale());
+            DCoordinate3 coordiantes = DCoordinate3(mirrorRootCoordinates);
+            mirror->set_coordinate(coordiantes - child->get_coordinates());
+            emit modelJointDataChanged(mirror);
+            mirrorJoint(child, mirror, mirrorRootCoordinates);
+        }
+    }
+
+    void Skeleton::handleViewJointMirrored(const string& jointName)
+    {
+        Joint* joint = getJointByName(jointName);
+        if (joint)
+        {
+            mirrorJoint(joint, joint, joint->get_coordinates());
+        }
+    }
+
     void Skeleton::handleViewJointAbsoluteCoordinatesChanged(const string& name, const DCoordinate3& absoluteCoordinates)
     {
         Joint* joint = getJointByName(name);

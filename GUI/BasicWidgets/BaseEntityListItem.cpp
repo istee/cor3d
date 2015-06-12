@@ -1,5 +1,6 @@
 #include "BaseEntityListItem.h"
 #include "ui_BaseEntityListItem.h"
+#include "GUI/WidgetExtensions/ToolButtonExtension.h"
 
 #include <iostream>
 
@@ -8,13 +9,11 @@ using namespace std;
 BaseEntityListItem::BaseEntityListItem(const std::string& baseEntityNameLabelText, BaseEditWidget* editWidget, QWidget *parent) : QWidget(parent)
 {
     setupUi(this);
+    _baseEntityBaseEntityNameEdit = 0;
+    _mirrorToolButton = 0;
     baseEntityNameLabel->setText(QString::fromStdString(baseEntityNameLabelText));
-    baseEntityBaseEntityNameEdit->setVisible(false);
     _sizeHint = QSize(100, 40);
 
-    _isRenameVisible = true;
-    _isEditVisible = true;
-    _isDeleteVisible = true;
     _isRenameActive = false;
     _isEditActive = false;
     _editWidget = editWidget;
@@ -22,6 +21,54 @@ BaseEntityListItem::BaseEntityListItem(const std::string& baseEntityNameLabelTex
     {
         _editWidget->setVisible(false);
         verticalLayout->addWidget(editWidget);
+    }
+}
+
+void BaseEntityListItem::addRenameToolButton()
+{
+    ToolButtonExtension* renameToolButton = new ToolButtonExtension(this);
+    renameToolButton->setIcon(QIcon(":/icons/Resources/renameIcon.png"));
+    toolButtonLayout->addWidget(renameToolButton);
+    _baseEntityBaseEntityNameEdit = new QLineEdit(this);
+    _baseEntityBaseEntityNameEdit->setVisible(false);
+    horizontalLayout->insertWidget(1, _baseEntityBaseEntityNameEdit);
+    connect(renameToolButton, SIGNAL(clicked()), this, SLOT(handleRename()));
+    connect(_baseEntityBaseEntityNameEdit, SIGNAL(returnPressed()), this, SLOT(handleRename()));
+}
+
+void BaseEntityListItem::addEditToolButton()
+{
+    ToolButtonExtension* editToolButton = new ToolButtonExtension(this);
+    editToolButton->setIcon(QIcon(":/icons/Resources/editIcon.png"));
+    toolButtonLayout->addWidget(editToolButton);
+    connect(editToolButton, SIGNAL(clicked()), this, SLOT(handleEdit()));
+}
+
+void BaseEntityListItem::addDeleteToolButton()
+{
+    ToolButtonExtension* deleteToolButton = new ToolButtonExtension(this);
+    deleteToolButton->setIcon(QIcon(":/icons/Resources/deleteIcon.png"));
+    toolButtonLayout->addWidget(deleteToolButton);
+    connect(deleteToolButton, SIGNAL(clicked()), this, SLOT(handleDelete()));
+}
+
+void BaseEntityListItem::addMirrorToolButton()
+{
+    _mirrorToolButton = new ToolButtonExtension(this);
+    _mirrorToolButton->setAccessibleName(QString("mirrorToolButton"));
+    _mirrorToolButton->setIcon(QIcon(":/icons/Resources/mirrorIcon.png"));
+    toolButtonLayout->insertWidget(0, _mirrorToolButton);
+    connect(_mirrorToolButton, SIGNAL(clicked()), this, SLOT(handleMirror()));
+}
+
+void BaseEntityListItem::deleteMirrorToolButton()
+{
+    cout << "delete mirror " << endl;
+    if (_mirrorToolButton)
+    {
+        cout << "ifen belul " << endl;
+        delete _mirrorToolButton;
+        _mirrorToolButton = 0;
     }
 }
 
@@ -41,7 +88,7 @@ string BaseEntityListItem::getBaseEntityNameLabelText() const
 
 string BaseEntityListItem::getBaseEntityBaseEntityNameEditText() const
 {
-    return baseEntityBaseEntityNameEdit->text().toStdString();
+    return _baseEntityBaseEntityNameEdit->text().toStdString();
 }
 
 void BaseEntityListItem::showEditWidget(bool show)
@@ -65,24 +112,6 @@ bool BaseEntityListItem::isEditWidgetVisible()
 BaseEditWidget* BaseEntityListItem::editWidget()
 {
     return _editWidget;
-}
-
-void BaseEntityListItem::showRename(bool show)
-{
-    renameToolButton->setVisible(show);
-    _isRenameVisible = show;
-}
-
-void BaseEntityListItem::showEdit(bool show)
-{
-    editToolButton->setVisible(show);
-    _isEditVisible = show;
-}
-
-void BaseEntityListItem::showDelete(bool show)
-{
-    deleteToolButton->setVisible(show);
-    _isDeleteVisible = show;
 }
 
 QSize BaseEntityListItem::sizeHint() const
@@ -109,9 +138,9 @@ QSize BaseEntityListItem::minimumSizeHint() const
     }
 }
 
-void BaseEntityListItem::on_deleteToolButton_clicked()
+void BaseEntityListItem::handleEdit()
 {
-    emit viewListItemDeleted(baseEntityNameLabel->text().toStdString());
+    emit viewListItemEdited(baseEntityNameLabel->text().toStdString());
 }
 
 void BaseEntityListItem::handleRename()
@@ -121,45 +150,40 @@ void BaseEntityListItem::handleRename()
     if (_isRenameActive)
     {
         baseEntityNameLabel->setVisible(false);
-        baseEntityBaseEntityNameEdit->setText(baseEntityNameLabel->text());
-        baseEntityBaseEntityNameEdit->setVisible(true);
-        baseEntityBaseEntityNameEdit->setFocus();
+        _baseEntityBaseEntityNameEdit->setText(baseEntityNameLabel->text());
+        _baseEntityBaseEntityNameEdit->setVisible(true);
+        _baseEntityBaseEntityNameEdit->setFocus();
     }
     else
     {
-        baseEntityBaseEntityNameEdit->setVisible(false);
+        _baseEntityBaseEntityNameEdit->setVisible(false);
         baseEntityNameLabel->setVisible(true);
-        if (baseEntityNameLabel->text() != baseEntityBaseEntityNameEdit->text())
+        if (baseEntityNameLabel->text() != _baseEntityBaseEntityNameEdit->text())
         {
-            emit viewListItemRenamed(baseEntityNameLabel->text().toStdString(), baseEntityBaseEntityNameEdit->text().toStdString());
+            emit viewListItemRenamed(baseEntityNameLabel->text().toStdString(), _baseEntityBaseEntityNameEdit->text().toStdString());
         }
     }
+}
+
+void BaseEntityListItem::handleDelete()
+{
+    emit viewListItemDeleted(baseEntityNameLabel->text().toStdString());
+}
+
+void BaseEntityListItem::handleMirror()
+{
+    emit viewListItemMirrored(baseEntityNameLabel->text().toStdString());
 }
 
 void BaseEntityListItem::setVisible(bool visible)
 {
     QWidget::setVisible(visible);
-    renameToolButton->setVisible(visible && _isRenameVisible);
-    editToolButton->setVisible(visible && _isEditVisible);
-    deleteToolButton->setVisible(visible && _isDeleteVisible);
-    baseEntityBaseEntityNameEdit->setVisible(visible && _isRenameActive);
+    if (_baseEntityBaseEntityNameEdit)
+    {
+        _baseEntityBaseEntityNameEdit->setVisible(visible && _isRenameActive);
+    }
     if (_editWidget)
     {
         _editWidget->setVisible(visible && _isEditActive);
     }
-}
-
-void BaseEntityListItem::on_renameToolButton_clicked()
-{
-    handleRename();
-}
-
-void BaseEntityListItem::on_baseEntityBaseEntityNameEdit_returnPressed()
-{
-    handleRename();
-}
-
-void BaseEntityListItem::on_editToolButton_clicked()
-{
-    emit viewListItemEdited(baseEntityNameLabel->text().toStdString());
 }

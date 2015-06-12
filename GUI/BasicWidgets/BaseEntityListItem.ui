@@ -57,86 +57,16 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="baseEntityBaseEntityNameEdit"/>
-     </item>
-     <item>
-      <widget class="ToolButtonExtension" name="renameToolButton">
-       <property name="minimumSize">
-        <size>
-         <width>30</width>
-         <height>30</height>
-        </size>
+      <layout class="QHBoxLayout" name="toolButtonLayout">
+       <property name="spacing">
+        <number>0</number>
        </property>
-       <property name="toolTip">
-        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Rename&lt;/span&gt; item&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../../Resources.qrc">
-         <normaloff>:/icons/Resources/renameIcon.png</normaloff>:/icons/Resources/renameIcon.png</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="ToolButtonExtension" name="editToolButton">
-       <property name="minimumSize">
-        <size>
-         <width>30</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../../Resources.qrc">
-         <normaloff>:/icons/Resources/editIcon.png</normaloff>:/icons/Resources/editIcon.png</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="ToolButtonExtension" name="deleteToolButton">
-       <property name="minimumSize">
-        <size>
-         <width>30</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Delete&lt;/span&gt; this item&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../../Resources.qrc">
-         <normaloff>:/icons/Resources/deleteIcon.png</normaloff>:/icons/Resources/deleteIcon.png</iconset>
-       </property>
-      </widget>
+      </layout>
      </item>
     </layout>
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>ToolButtonExtension</class>
-   <extends>QToolButton</extends>
-   <header>GUI\WIdgetExtensions\ToolButtonExtension.h</header>
-  </customwidget>
- </customwidgets>
- <resources>
-  <include location="../../Resources.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

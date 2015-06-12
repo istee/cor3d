@@ -437,14 +437,16 @@ namespace cor3d
                     matrix[14] = start[2];
                     matrix[15] = 1.0;
 
+                    DCoordinate3 jointScale = getJointById((*it).getJointId(i))->get_scale();
+                    double scale = min(jointScale.x(), min(jointScale.y(), jointScale.z())) / 10.0;
+
                     glPushMatrix();
                         glMultMatrixf(matrix);
-                        glScalef(0.1, 0.1, length);
+                        glScalef(scale, scale, length);
                         link_model->Render();
                     glPopMatrix();
                 }
         }
-
     }
 
     Joint* Posture::getJointById(unsigned int index) const

@@ -89,6 +89,7 @@ namespace cor3d
     private:
         void deleteJoint(unsigned int jointId);
         void prepareDeleteJoints(unsigned int jointId, vector<unsigned int>& result);
+        void mirrorJoint(Joint* joint, Joint* mirrorParent, const DCoordinate3&);
 
     public slots:
 
@@ -97,6 +98,7 @@ namespace cor3d
         void handleViewJointRenamed(const string&, const string&);
         void handleViewJointSelected(const string&);
         void handleViewJointSelected(int);
+        void handleViewJointMirrored(const string&);
 
         void handleViewJointAbsoluteCoordinatesChanged(const string& name, const DCoordinate3& absoluteCoordinates);
         void handleViewSelectedJointAbsoluteCoordinatesChanged(const DCoordinate3 absoluteCoordiantes);
