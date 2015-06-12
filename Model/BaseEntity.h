@@ -54,6 +54,11 @@ namespace cor3d {
 
         template <class BaseEntitySubclass>
         friend bool isNameReserved(const string& name, const vector<BaseEntitySubclass*>& derived_entities);
+
+        virtual ~BaseEntity()
+        {
+
+        }
     };
 
     template <class BaseEntitySubclass>

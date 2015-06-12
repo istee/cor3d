@@ -22,6 +22,8 @@ JointSideWidget::JointSideWidget(QWidget *parent): BaseSideWidget(parent)
 
 void JointSideWidget::addJoint(Skeleton* skeleton, Joint* joint, const string& parentName)
 {
+    cout << "addJoint " << skeleton->getName() << " " << joint->getName() << endl;
+
     JointEditWidget* editJoint = new JointEditWidget(skeleton, joint, treeViewJoints);
     BaseEntityListItem* listItem = new BaseEntityListItem(joint->getName(), editJoint, treeViewJoints);
     listItem->addRenameToolButton();
@@ -84,6 +86,7 @@ void JointSideWidget::updateJointData(Joint* joint)
 
 void JointSideWidget::populateTreeViewJoints(Skeleton* skeleton, Joint* parent)
 {
+    cout << "populate trre " << endl;
     for (unsigned int i = 0; i < parent->get_children().size(); i++)
     {
         Joint* joint = skeleton->getJointById(parent->get_children()[i]);
@@ -98,6 +101,7 @@ void JointSideWidget::populateJoints(Skeleton* skeleton, Skeleton* previous)
 
     if (previous)
     {
+        cout << "treeview amit disconnectelunk " << previous->getName() << endl;
         disconnect(this, SIGNAL(viewJointAdded(string, string)), previous, SLOT(handleViewJointAdded(string,string)));
         disconnect(this, SIGNAL(viewJointSelected(string)), previous, SLOT(handleViewJointSelected(string)));
     }
@@ -117,6 +121,8 @@ void JointSideWidget::populateJoints(Skeleton* skeleton, Skeleton* previous)
 
         treeViewJoints->addTopLevelTreeWidgetItem(root->getName(), listItem);
 
+
+        cout << "skeleton aminek a jointjai " << skeleton->getName() << endl;
         populateTreeViewJoints(skeleton, root);
 
         addName->setValue(skeleton->nextAutoJointName());

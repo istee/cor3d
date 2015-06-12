@@ -14,17 +14,15 @@ namespace cor3d {
     class Cor3d: public QObject{
         Q_OBJECT
 
-        vector<Skeleton*>               _skeletons;
-        int                             _selectedSkeletonId;
+        BaseEntityCollection            _skeletons;
         RenderingOptions*               _renderingOptions;
         //BaseEntityCollection<Skeleton>  _baseEntitys;
 
     public:
         Cor3d();
         string nextName() const;
-        vector<BaseEntity*> getSkeletonSideWidget();
+        const vector<BaseEntity*> getSkeletonList();
         Skeleton* getSelectedSkeleton();
-        Skeleton* getSkeletonById(unsigned int skeletonId);
         Skeleton* getSkeletonByName(const string& skeletonName);
         void importSkeleton(ifstream& stream);
         RenderingOptions* getRenderingOptions() const;
