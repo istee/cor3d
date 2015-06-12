@@ -52,7 +52,7 @@ namespace cor3d{
 
     signals:
         void modelPostureIsEdited(Posture*, bool);
-        void modelPostureDataChanged(Posture*);
+        void modelPostureDataChanged(Posture*, const string& rootJointName);
 
     private:
         void fabrik(Chain& chain, DCoordinate3 target, double tolerance);

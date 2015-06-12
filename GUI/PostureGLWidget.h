@@ -9,6 +9,7 @@ protected:
     virtual void specificDrawPickObjects();
     virtual int specificPickCount();
     virtual void specificPick(unsigned int closestSelected);
+    virtual DCoordinate3 dragCoordinate();
 
 public:
     // special and default constructor

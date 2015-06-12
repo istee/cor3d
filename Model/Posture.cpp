@@ -97,6 +97,7 @@ namespace cor3d
 
     void Posture::MoveSelected(const DCoordinate3& target)
     {
+        cout << *this << endl;
         cout << "move " << _isEdited << endl;
         if (!_isEdited)
         {
@@ -108,6 +109,7 @@ namespace cor3d
 
         if (_chainsNeedUpdate)
         {
+            cout << "_chainsneedupdate " << endl;
             clearChains();
             constructChains(_selectedJoint);
         }
@@ -143,6 +145,8 @@ namespace cor3d
             }
 
             FinalizeMove();
+
+            emit modelPostureDataChanged(this, _joints[_chains[0].getJointId(0)]->getName());
         }
     }
 
@@ -473,7 +477,7 @@ namespace cor3d
         {
             _jointAbsoluteInitialPostureCoordinates[i] = _jointAbsolutePostureCoordinates[i];
         }
-        emit modelPostureDataChanged(this);
+        emit modelPostureDataChanged(this, _joints[0]->getName());
     }
 
     void Posture::handleViewChangesCanceled()
@@ -486,7 +490,7 @@ namespace cor3d
         {
             _jointAbsolutePostureCoordinates[i] = _jointAbsoluteInitialPostureCoordinates[i];
         }
-        emit modelPostureDataChanged(this);
+        emit modelPostureDataChanged(this, _joints[0]->getName());
     }
 
     void Posture::handleViewPostureAlgorithmTypeSelected(const string& algorithmName)

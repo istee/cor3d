@@ -11,12 +11,13 @@
 using namespace std;
 
 namespace cor3d {
-    class Cor3d: public QObject, public BaseEntityCollection {
+    class Cor3d: public QObject{
         Q_OBJECT
 
-        vector<Skeleton*>   _skeletons;
-        int                 _selectedSkeletonId;
-        RenderingOptions*   _renderingOptions;
+        vector<Skeleton*>               _skeletons;
+        int                             _selectedSkeletonId;
+        RenderingOptions*               _renderingOptions;
+        //BaseEntityCollection<Skeleton>  _baseEntitys;
 
     public:
         Cor3d();

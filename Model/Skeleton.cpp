@@ -632,6 +632,7 @@ namespace cor3d {
     void Skeleton::addPosture(const string& name)
     {
         Posture* posture = new Posture(_postures.size(), name, _joints);
+        posture->selectJoint(_selectedJoint);
         _postures.push_back(posture);
 
         emit modelPostureAdded(this, posture);

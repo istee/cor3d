@@ -12,6 +12,7 @@ protected:
     virtual int specificPickCount();
     virtual void specificPick(unsigned int closestSelected);
     virtual void drag(double x, double y, double z);
+    virtual DCoordinate3 dragCoordinate();
 
 public:
     // special and default constructor

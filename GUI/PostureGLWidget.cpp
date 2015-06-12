@@ -7,6 +7,11 @@ PostureGLWidget::PostureGLWidget(QWidget *parent, const QGLFormat &format): GLWi
 
 }
 
+DCoordinate3 PostureGLWidget::dragCoordinate()
+{
+    return _skeleton->getSelectedPosture()->getAbsolutePostureCoordinate(_skeleton->getSelectedPosture()->selectedJoint()->getId());
+}
+
 void PostureGLWidget::specificPaintGL()
 {
     if (_skeleton)

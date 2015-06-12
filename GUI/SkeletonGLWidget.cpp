@@ -9,6 +9,10 @@ SkeletonGLWidget::SkeletonGLWidget(QWidget *parent, const QGLFormat &format): GL
 
 }
 
+DCoordinate3 SkeletonGLWidget::dragCoordinate()
+{
+    return _skeleton->getSelectedJoint()->get_coordinates();
+}
 
 void SkeletonGLWidget::specificPaintGL()
 {

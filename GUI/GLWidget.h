@@ -73,6 +73,7 @@ protected:
     virtual void specificPaintGL() = 0;
     virtual void specificDrawPickObjects() = 0;
     virtual int specificPickCount() = 0;
+    virtual DCoordinate3 dragCoordinate() = 0;
     virtual void specificPick(unsigned int closestSelected) = 0;
 
     void render_move_arrows(RenderingOptions* rendering_options, const DCoordinate3 *position, int id = 0, bool glLoad = false);

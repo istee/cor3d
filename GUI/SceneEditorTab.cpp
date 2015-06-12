@@ -13,9 +13,9 @@ SceneEditorTab::SceneEditorTab(QWidget *parent): IMainWindowTab(parent)
     play_button->setIconSize(QSize(50, 50));
     horizontalSlider->setMaximum(0);
 
-    glwidget = new SceneGLWidget();
-    glwidget->updateGL();
-    glwidgetHolderLayout->layout()->addWidget(glwidget);
+    //glwidget = new SceneGLWidget();
+    //glwidget->updateGL();
+    //glwidgetHolderLayout->layout()->addWidget(glwidget);
 }
 
 void SceneEditorTab::initialize()

@@ -6,12 +6,11 @@
 
 using namespace std;
 
+template<class BaseEntitySubClass>
 class BaseEntityCollection {
 protected:
-    vector<BaseEntity*>     _data;
+    vector<BaseEntitySubClass*>     _data;
+    BaseEntitySubClass*             _selected;
 public:
-//    string next_entity_name()
-//    {
-//        return nextName<>("Skeleton ", base_entities);
-//    }
+    BaseEntityCollection();
 };

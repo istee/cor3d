@@ -42,7 +42,8 @@ SOURCES += \
     Model/Posture.cpp \
     GUI/EditWidgets/PostureEditWidget.cpp \
     GUI/WidgetExtensions/GroupBoxExtension.cpp \
-    GUI/EditWidgets/JointEditWidget.cpp
+    GUI/EditWidgets/JointEditWidget.cpp \
+    Model/BaseEntityCollection.cpp
 
 
 HEADERS += \

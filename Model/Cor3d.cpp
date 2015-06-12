@@ -5,6 +5,7 @@
 #include "Cor3d.h"
 #include "BaseEntity.h"
 #include "Skeleton.h"
+#include "BaseEntityCollection.h"
 
 namespace cor3d {
     Cor3d::Cor3d(): QObject()
@@ -13,6 +14,9 @@ namespace cor3d {
         _renderingOptions = new RenderingOptions();
 
         emit modelRenderingOptionsChanged(_renderingOptions);
+
+        //_baseEntitys = BaseEntityCollection<Skeleton>();
+        //BaseEntityCollection<Skeleton> b = BaseEntityCollection<Skeleton>();
     }
 
     string Cor3d::nextName() const

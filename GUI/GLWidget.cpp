@@ -358,7 +358,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
         //cout << "before normalizing: " << n << " , " << n.length() << endl;
         n.normalize();
 
-        DCoordinate3 p0 = _skeleton->getSelectedJoint()->get_coordinates();
+        DCoordinate3 p0 = dragCoordinate();
         //DCoordinate3 p0 = DCoordinate3(p0_const.x(), p0_const.y(), p0_const.z());
 
         double mouseX = event->x();
@@ -404,7 +404,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
             //                cout << "p0: " << p0 << endl;
             //                cout << "point: " << result << endl;
 
-            DCoordinate3 new_coord  = _skeleton->getSelectedJoint()->get_coordinates();
+            DCoordinate3 new_coord = dragCoordinate();
             //DCoordinate3 *new_coord = _skeletons[0].GetSelectedPosition();
 
 
