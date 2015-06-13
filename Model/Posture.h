@@ -8,6 +8,7 @@
 #include "Model/Chain.h"
 #include "Model/Joint.h"
 #include "GUI/RenderingOptions.h"
+#include "BaseEntityCollection.h"
 
 using namespace std;
 using namespace cagd;
@@ -24,11 +25,10 @@ namespace cor3d{
         vector<DCoordinate3>    _jointAbsolutePostureCoordinates;
         vector<DCoordinate3>    _jointAbsoluteInitialPostureCoordinates;
         vector<Chain>           _chains;
-        vector<Joint*>          _joints;
+        BaseEntityCollection&   _joints;
         PostureAlgorithmType    _postureAlgorithmType;
 
         bool                    _isEdited;
-        bool                    _chainsNeedUpdate;
         int                     _selectedJoint;
 
     public:
@@ -36,10 +36,9 @@ namespace cor3d{
         unsigned int getAlgorithmType() const;
         const DCoordinate3& getAbsolutePostureCoordinate(unsigned int jointId) const;
         Joint* selectedJoint() const;
-        void selectJoint(int jointId);
 
-        Posture(vector<Joint*>& joints);
-        Posture(unsigned int id, string name, vector<Joint*>& joints);
+        Posture(BaseEntityCollection& joints);
+        Posture(unsigned int id, string name, BaseEntityCollection& joints);
         void constructChains(unsigned int selectedJoint);
         void clearChains();
         void MoveSelected(const DCoordinate3& target);

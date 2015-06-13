@@ -6,6 +6,7 @@
 #include "Joint.h"
 #include "Posture.h"
 #include "Chain.h"
+#include "BaseEntityCollection.h"
 
 #include "../Core/DCoordinates3.h"
 #include "../Core/TriangulatedMeshes3.h"
@@ -31,9 +32,8 @@ namespace cor3d
         DCoordinate3            _meshOffset;
         DCoordinate3            _meshScale;
 
-        vector<Posture*>        _postures;
-        vector<Joint*>          _joints;
-        int                     _selectedJoint;
+        BaseEntityCollection    _postures;
+        BaseEntityCollection    _joints;
         int                     _selectedPosture;
 
 

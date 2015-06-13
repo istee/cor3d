@@ -38,7 +38,7 @@ namespace cor3d {
 
     Skeleton* Cor3d::getSkeletonByName(const string& skeletonName)
     {
-        return static_cast<Skeleton*>(_skeletons.getEntityByName(skeletonName));
+        return static_cast<Skeleton*>(_skeletons[skeletonName]);
     }
 
     const vector<BaseEntity*> Cor3d::getSkeletonList()

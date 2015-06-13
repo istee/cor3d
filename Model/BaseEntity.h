@@ -52,8 +52,8 @@ namespace cor3d {
             _id--;
         }
 
-        template <class BaseEntitySubclass>
-        friend bool isNameReserved(const string& name, const vector<BaseEntitySubclass*>& derived_entities);
+        //template <class BaseEntitySubclass>
+        //friend bool isNameReserved(const string& name, const vector<BaseEntitySubclass*>& derived_entities);
 
         virtual ~BaseEntity()
         {
@@ -61,6 +61,7 @@ namespace cor3d {
         }
     };
 
+    /*
     template <class BaseEntitySubclass>
     bool isNameReserved(const string& name, const vector<BaseEntitySubclass*>& derived_entities)
     {
@@ -119,4 +120,5 @@ namespace cor3d {
         }
         return base_entities;
     }
+    */
 }

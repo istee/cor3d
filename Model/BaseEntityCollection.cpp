@@ -6,6 +6,16 @@ namespace cor3d {
         _selected = 0;
     }
 
+    BaseEntityCollection::~BaseEntityCollection()
+    {
+        for (unsigned int i = 0; i < _data.size(); i++)
+        {
+            BaseEntity* entity = _data[i];
+            delete entity;
+        }
+        _data.erase(_data.begin(), _data.end());
+    }
+
     bool BaseEntityCollection::isNameReserved(const string& name) const
     {
         for (vector<BaseEntity*>::const_iterator it = _data.begin(); it != _data.end(); it++)
@@ -57,7 +67,7 @@ namespace cor3d {
     bool BaseEntityCollection::deleteEntity(const string& entityName, bool& selectionChanged)
     {
         selectionChanged = false;
-        BaseEntity* deleteEntity = getEntityByName(entityName);
+        BaseEntity* deleteEntity = (*this)[entityName];
         if (deleteEntity)
         {
 
@@ -95,7 +105,7 @@ namespace cor3d {
 
     bool BaseEntityCollection::selectEntity(const string& entityName)
     {
-        BaseEntity* newSelection = getEntityByName(entityName);
+        BaseEntity* newSelection = (*this)[entityName];
         if (newSelection)
         {
             if (!_selected)
@@ -118,7 +128,21 @@ namespace cor3d {
         return _selected;
     }
 
-    BaseEntity* BaseEntityCollection::getEntityByName(const string& entityName) const
+    const vector<BaseEntity*> BaseEntityCollection::getData() const
+    {
+        return _data;
+    }
+
+    BaseEntity* BaseEntityCollection::operator [](int entityId) const
+    {
+        if (entityId >= 0 && entityId < _data.size())
+        {
+            return _data[entityId];
+        }
+        return 0;
+    }
+
+    BaseEntity* BaseEntityCollection::operator [](const string& entityName) const
     {
         for (unsigned int i = 0; i < _data.size(); i++)
         {
@@ -128,19 +152,5 @@ namespace cor3d {
             }
         }
         return 0;
-    }
-
-    BaseEntity* BaseEntityCollection::getEntityById(int entityId) const
-    {
-        if (entityId >= 0 && entityId < _data.size())
-        {
-            return _data[entityId];
-        }
-        return 0;
-    }
-
-    const vector<BaseEntity*> BaseEntityCollection::getData() const
-    {
-        return _data;
     }
 }

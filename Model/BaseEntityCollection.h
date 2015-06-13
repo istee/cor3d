@@ -14,6 +14,7 @@ namespace cor3d {
         BaseEntity*             _selected;
     public:
         BaseEntityCollection(const string& entityPrefix);
+        ~BaseEntityCollection();
         string nextAutoName() const;
         bool isNameReserved(const string& name) const;
 
@@ -24,9 +25,9 @@ namespace cor3d {
         bool selectEntity(const string& entityName);
 
         BaseEntity* getSelectedEntity() const;
-        BaseEntity* getEntityByName(const string& entityName) const;
-        BaseEntity* getEntityById(int entityId) const;
         const vector<BaseEntity*> getData() const;
+        BaseEntity* operator [](int id) const;
+        BaseEntity* operator [](const string& name) const;
     private:
         string appendSequenceNumber(const string& name) const;
     };
