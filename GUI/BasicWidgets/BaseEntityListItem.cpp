@@ -4,6 +4,8 @@
 
 #include <iostream>
 
+#include <QMenu>
+
 using namespace std;
 
 BaseEntityListItem::BaseEntityListItem(const std::string& baseEntityNameLabelText, BaseEditWidget* editWidget, QWidget *parent) : QWidget(parent)
@@ -54,19 +56,26 @@ void BaseEntityListItem::addDeleteToolButton()
 
 void BaseEntityListItem::addMirrorToolButton()
 {
+    QMenu *menu = new QMenu();
+    QAction *testAction = new QAction("Mirror ", this);
+    QAction *testAction1 = new QAction("Keep original z coordinate ", this);
+    menu->addAction(testAction);
+    menu->addAction(testAction1);
+
     _mirrorToolButton = new ToolButtonExtension(this);
     _mirrorToolButton->setAccessibleName(QString("mirrorToolButton"));
     _mirrorToolButton->setIcon(QIcon(":/icons/Resources/mirrorIcon.png"));
+    _mirrorToolButton->setMenu(menu);
+    _mirrorToolButton->setPopupMode(QToolButton::InstantPopup);
     toolButtonLayout->insertWidget(0, _mirrorToolButton);
     connect(_mirrorToolButton, SIGNAL(clicked()), this, SLOT(handleMirror()));
+    connect(testAction, SIGNAL(triggered()), this, SLOT(handleMirror()));
 }
 
 void BaseEntityListItem::deleteMirrorToolButton()
 {
-    cout << "delete mirror " << endl;
     if (_mirrorToolButton)
     {
-        cout << "ifen belul " << endl;
         delete _mirrorToolButton;
         _mirrorToolButton = 0;
     }

@@ -58,7 +58,6 @@ namespace cor3d {
         if (!isNameReserved(entity->getName()))
         {
             _data.push_back(entity);
-            _selected = entity;
             return true;
         }
         return false;
@@ -82,7 +81,7 @@ namespace cor3d {
 
             for (vector<BaseEntity*>::iterator it = _data.begin() + deleteEntity->getId(); it != _data.end(); it++)
             {
-                (*it)->decrease_id();
+                (*it)->decreaseId();
             }
 
             if (!_selected)
@@ -110,16 +109,27 @@ namespace cor3d {
         {
             if (!_selected)
             {
+
                 _selected = newSelection;
                 return true;
             }
-
             if (_selected != newSelection)
             {
                 _selected = newSelection;
                 return true;
             }
         }
+        return false;
+    }
+
+    bool BaseEntityCollection::selectEntity(int entityId)
+    {
+        if (entityId >= 0 && entityId < _data.size())
+        {
+            _selected = _data[entityId];
+            return true;
+        }
+        _selected = 0;
         return false;
     }
 

@@ -8,7 +8,18 @@ BaseEntityNameEdit::BaseEntityNameEdit(QWidget *parent): QWidget(parent)
 {
     setupUi(this);
     lineEdit->installEventFilter(this);
- }
+}
+
+void BaseEntityNameEdit::setToolButtonToolTip(const string& toolTip)
+{
+    toolButton->setToolTip(QString::fromStdString(toolTip));
+}
+
+void BaseEntityNameEdit::setEnabled(bool enabled)
+{
+    toolButton->setEnabled(enabled);
+    lineEdit->setEnabled(enabled);
+}
 
  bool BaseEntityNameEdit::eventFilter(QObject *obj, QEvent *event)
  {

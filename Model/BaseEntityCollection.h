@@ -23,6 +23,7 @@ namespace cor3d {
         bool addEntity(BaseEntity* entity);
         bool deleteEntity(const string& entityName, bool& selectionChanged);
         bool selectEntity(const string& entityName);
+        bool selectEntity(int entityId);
 
         BaseEntity* getSelectedEntity() const;
         const vector<BaseEntity*> getData() const;

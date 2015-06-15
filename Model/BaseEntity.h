@@ -18,11 +18,7 @@ namespace cor3d {
         string          _name;
 
     public:
-        BaseEntity()
-        {
-            _id = -1;
-            _name = "";
-        }
+
 
         BaseEntity(unsigned int id, string name)
         {
@@ -47,7 +43,7 @@ namespace cor3d {
             _name = name;
         }
 
-        void decrease_id()
+        void decreaseId()
         {
             _id--;
         }
@@ -55,10 +51,7 @@ namespace cor3d {
         //template <class BaseEntitySubclass>
         //friend bool isNameReserved(const string& name, const vector<BaseEntitySubclass*>& derived_entities);
 
-        virtual ~BaseEntity()
-        {
-
-        }
+        virtual ~BaseEntity();
     };
 
     /*

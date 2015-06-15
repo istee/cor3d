@@ -30,13 +30,8 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
-      <widget class="SceneEditorTab" name="scene_editor">
-       <attribute name="title">
-        <string>Scene Editor</string>
-       </attribute>
-      </widget>
       <widget class="PostureEditorTab" name="posture_editor">
        <attribute name="title">
         <string>Pose Editor</string>
@@ -77,14 +72,16 @@
      <enum>Qt::DefaultContextMenu</enum>
     </property>
     <property name="title">
-     <string>Window</string>
+     <string>Tools</string>
     </property>
     <addaction name="actionTransformations"/>
+    <addaction name="actionFile"/>
    </widget>
    <widget class="QMenu" name="menu_Tools">
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="actionAbout"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
     <property name="title">
@@ -173,6 +170,22 @@
     <string>Transformations</string>
    </property>
   </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionFile">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>File</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -185,12 +198,6 @@
    <class>PostureEditorTab</class>
    <extends>QWidget</extends>
    <header>GUI/PostureEditorTab.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>SceneEditorTab</class>
-   <extends>QWidget</extends>
-   <header>GUI/SceneEditorTab.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

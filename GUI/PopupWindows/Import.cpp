@@ -20,7 +20,7 @@ Import::Import(QWidget *parent) : QWidget(parent)
     importFile->setFilter("*.c3data");
     importFile->setCaption("Import file");
     importFile->setAcceptMode(QFileDialog::AcceptOpen);
-    importFile->setFilePath("");
+    importFile->setFilePath("/SaveFiles");
 
     model = new QStandardItemModel();
 
@@ -41,6 +41,10 @@ void Import::on_importButton_clicked()
         string text;
         unsigned int skeletonCount;
         file >> text >> skeletonCount;
+        for (int i = 0; i < skeletonCount; i++)
+        {
+            file >> text;
+        }
         for (unsigned int i = 0; i < skeletonCount; i++)
         {
             cor3dApp->cor3d->importSkeleton(file);
@@ -55,9 +59,37 @@ void Import::on_importButton_clicked()
     }
 }
 
+void Import::addItemToModel(QStandardItem *item)
+{
+    model->appendRow(item);
+    buttonSelectAll->setEnabled(true);
+    buttonClearAll->setEnabled(true);
+    importButton->setEnabled(true);
+}
+
+
 void Import::on_importFile_changed(string filename)
 {
     importFile->setFilePath(filename);
+    ifstream file;
+    file.open(importFile->getValue().data(), ios::out);
+    if (file.is_open())
+    {
+        string text;
+        file >> text;
+        unsigned int skeletonCount;
+        file >> skeletonCount;
+        for (int i = 0; i < skeletonCount; i++)
+        {
+            file >> text;
+            QStandardItem *item = new QStandardItem(QString::fromStdString(text));
+            item->setCheckable(true);
+            item->setCheckState(Qt::Checked);
+            addItemToModel(item);
+        }
+        treeView->setModel(model);
+    }
+    file.close();
 }
 
 void Import::on_closeButton_clicked()

@@ -31,13 +31,13 @@ void SkeletonGLWidget::specificPaintGL()
 
 void SkeletonGLWidget::specificDrawPickObjects()
 {
-    _skeleton->renderJoints(cor3dApp->cor3d->getRenderingOptions(), true);
+    _skeleton->renderJoints(_renderingOptions, true);
     Joint* selectedJoint = _skeleton->getSelectedJoint();
     if (selectedJoint && selectedJoint->get_parent() >= 0)
     {
         DCoordinate3 selected_position = _skeleton->getSelectedJoint()->get_coordinates();
 
-        render_move_arrows(cor3dApp->cor3d->getRenderingOptions(), &selected_position, _skeleton->getJointCount(), true);
+        render_move_arrows(_renderingOptions, &selected_position, _skeleton->getJointCount(), true);
     }
 }
 

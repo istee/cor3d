@@ -19,6 +19,8 @@ public:
     string getValue() const;
     void setValue(const string& value);
     void setLabel(const string& label_string);
+    void setEnabled(bool enabled);
+    void setToolButtonToolTip(const string& toolTip);
 
 signals:
     void nameChanged(const string& name);

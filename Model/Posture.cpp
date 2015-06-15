@@ -2,23 +2,10 @@
 
 namespace cor3d
 {
-    Posture::Posture(BaseEntityCollection& joints): QObject(), BaseEntity(), _joints(joints)
-    {
-        _isEdited = false;
-        _postureAlgorithmType = RIGID;
-        _selectedJoint = -1;
-        for (unsigned int i = 0; i < joints.entityCount(); i++)
-        {
-            Joint* joint = static_cast<Joint*>(_joints[i]);
-            _jointAbsolutePostureCoordinates.push_back(joint->get_coordinates());
-            _jointAbsoluteInitialPostureCoordinates.push_back(joint->get_coordinates());
-        }
-    }
-
     Posture::Posture(unsigned int id, string name, BaseEntityCollection& joints): QObject(), BaseEntity(id, name), _joints(joints)
     {
         _isEdited = false;
-        _postureAlgorithmType = RIGID;
+        _postureAlgorithmType = FABRIK;
         _selectedJoint = -1;
         for (unsigned int i = 0; i < joints.entityCount(); i++)
         {
@@ -30,7 +17,7 @@ namespace cor3d
 
     ostream& operator <<(ostream& lhs, const Posture& rhs)
     {
-        lhs << "posture_name: " << rhs.getName() << endl;
+        lhs << "posture_name:" << endl << rhs.getName() << endl;
         lhs << "posture_id: " << rhs.getId() << endl;
         lhs << "joint_count " << rhs._jointAbsolutePostureCoordinates.size() << endl;
         for (unsigned int i = 0; i < rhs._jointAbsolutePostureCoordinates.size(); i++)
@@ -48,6 +35,7 @@ namespace cor3d
         int number;
         DCoordinate3 coordinates;
         lhs >> text;
+        lhs.getline(name, 256);
         lhs.getline(name, 256);
         rhs.setName(name);
         lhs >> text >> rhs._id;
@@ -89,25 +77,23 @@ namespace cor3d
     {
         if (_joints.getSelectedEntity())
         {
-            cout << *this << endl;
-            cout << "move " << _isEdited << endl;
-            if (!_isEdited)
-            {
-                _isEdited = true;
-                cout << "before chains " << _selectedJoint << endl;
-                emit modelPostureIsEdited(this, _isEdited);
-                constructChains(_selectedJoint);
-            }
 
-            if (_selectedJoint != _joints.getSelectedEntity()->getId())
+            if (_selectedJoint != _joints.getSelectedEntity()->getId() || _isEdited)
             {
                 _selectedJoint = _joints.getSelectedEntity()->getId();
-                cout << "_chainsneedupdate " << endl;
                 clearChains();
                 constructChains(_selectedJoint);
             }
 
-            cout << "after chains " << endl;
+            if (!_isEdited)
+            {
+                _isEdited = true;
+                emit modelPostureIsEdited(this, _isEdited);
+                //constructChains(_selectedJoint);
+            }
+
+
+
             if (_chains.size() > 0)
             {
                 DCoordinate3 selectedCoordinates = DCoordinate3(_chains[0].get_joint_coordinates(_chains[0].get_chain_size() - 1));
@@ -286,11 +272,11 @@ namespace cor3d
 
     void Posture::renderPostureJoints(RenderingOptions* renderingOptions, bool glLoad) const
     {
-        const TriangulatedMesh3* joint_model = renderingOptions->get_joint_model();
+        const TriangulatedMesh3* joint_model = renderingOptions->getJointMesh();
 
-        if (renderingOptions->get_renderJoints() && joint_model)
+        if (renderingOptions->isRenderJoints() && joint_model)
         {
-            renderingOptions->get_material(renderingOptions->get_joint_material())->Apply();
+            renderingOptions->getMaterial(renderingOptions->getJointMaterial())->Apply();
 
             for(unsigned int i = 0; i < _jointAbsolutePostureCoordinates.size(); i++)
             {
@@ -312,11 +298,11 @@ namespace cor3d
 
     void Posture::renderPostureLinks(RenderingOptions* renderingOptions, bool glLoad) const
     {
-        const TriangulatedMesh3* link_model = renderingOptions->get_link_model();
+        const TriangulatedMesh3* link_model = renderingOptions->getLinkMesh();
 
-        if (renderingOptions->get_renderLinks() && link_model && _joints.entityCount() > 1)
+        if (renderingOptions->isRenderLinks() && link_model && _joints.entityCount() > 1)
         {
-            renderingOptions->get_material(renderingOptions->get_link_material())->Apply();
+            renderingOptions->getMaterial(renderingOptions->getLinkMaterial())->Apply();
 
             for(unsigned int i = 1; i < _jointAbsoluteInitialPostureCoordinates.size(); i++)
             {
@@ -380,7 +366,7 @@ namespace cor3d
 
     void Posture::render_chains(RenderingOptions* rendering_options, bool glLoad) const
     {
-        const TriangulatedMesh3* link_model = rendering_options->get_link_model();
+        const TriangulatedMesh3* link_model = rendering_options->getLinkMesh();
         MatFBRuby.Apply();
         for(vector<Chain>::const_iterator it = _chains.begin(); it != _chains.end(); it++)
         {

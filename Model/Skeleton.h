@@ -34,11 +34,8 @@ namespace cor3d
 
         BaseEntityCollection    _postures;
         BaseEntityCollection    _joints;
-        int                     _selectedPosture;
-
 
     public:
-        Skeleton();
         Skeleton(unsigned int id, const string& name);
 
 

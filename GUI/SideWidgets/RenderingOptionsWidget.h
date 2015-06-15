@@ -12,24 +12,22 @@ using namespace std;
 class RenderingOptionsWidget: public QFrame, public Ui::RenderingOptionsWidget
 {
     Q_OBJECT
-    Cor3dApplication *cor3dApp;
+    RenderingOptions*           _renderingOptions;
+    int                         _skeletonMaterialBackup;
+    int                         _jointMaterialBackup;
+    int                         _jointSelectedMaterialBackup;
+    int                         _linkMaterial;
 public:
     // special and default constructor
-    RenderingOptionsWidget(QWidget *parent = 0);
-    void update_content();
-
-signals:
-
-    void view_skeleton_render_toggled(bool on);
-    void view_skeleton_material_changed(int material_id);
-    void view_joint_render_toggled(bool on);
-    void view_joint_meshFileChanged(const string& file);
-    void view_joint_material_changed(int material_id);
-    void view_selectedJoint_material_changed(int material_id);
-    void view_link_render_toggled(bool on);
-    void view_link_meshFileChanged(const string& file);
-    void view_link_material_changed(int material_id);
+    RenderingOptionsWidget(RenderingOptions*, QWidget *parent = 0);
 
 private slots:
-    void on_pushButton_3_clicked();
+    void on_cancelPushButton_clicked();
+    void on_savePushButton_clicked();
+    void on_defaultPushButton_clicked();
+
+    void skeletonMaterialSelectionChanged(int);
+    void jointMaterialSelectionChanged(int);
+    void jointSelectedMaterialSelectionChanged(int);
+    void linkMaterialSelectionChanged(int);
 };

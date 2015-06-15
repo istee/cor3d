@@ -10,7 +10,7 @@ namespace cor3d {
 
     ostream& operator <<(ostream& lhs, const Joint& rhs)
     {
-        lhs << "joint_name: " << rhs.getName() << endl;
+        lhs << "joint_name:" << endl << rhs.getName() << endl;
         lhs << "joint_id: " << rhs.getId() << endl;
         lhs << "joint_parent: " << rhs.get_parent() << endl;
         lhs << "joint_type: " << rhs.get_type() << endl;
@@ -32,6 +32,7 @@ namespace cor3d {
         char name[256];
         int number, child;
         lhs >> text;
+        lhs.getline(name, 256);
         lhs.getline(name, 256);
         rhs.setName(name);
         lhs >> text >> rhs._id;

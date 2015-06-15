@@ -37,7 +37,6 @@ namespace cor3d{
         const DCoordinate3& getAbsolutePostureCoordinate(unsigned int jointId) const;
         Joint* selectedJoint() const;
 
-        Posture(BaseEntityCollection& joints);
         Posture(unsigned int id, string name, BaseEntityCollection& joints);
         void constructChains(unsigned int selectedJoint);
         void clearChains();

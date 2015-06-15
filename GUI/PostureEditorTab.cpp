@@ -92,14 +92,14 @@ void PostureEditorTab::handleModelPostureSelected(Skeleton* selectedSkeleton, Po
     }
     else
     {
-        connect(selectedPosture, SIGNAL(modelPostureDataChanged(Posture*)), this, SLOT(handleModelPostureDataChanged(Posture*)));
+        connect(selectedPosture, SIGNAL(modelPostureDataChanged(Posture*, string)), this, SLOT(handleModelPostureDataChanged(Posture*, string)));
     }
     managePostures->selectPosture(selectedSkeleton, selectedPosture);
     editPosture->populatePostureJoints(selectedSkeleton, selectedPosture);
     updateGLWidget();
 }
 
-void PostureEditorTab::handleModelPostureDataChanged(Posture* posture)
+void PostureEditorTab::handleModelPostureDataChanged(Posture* posture, const string& rootJoint)
 {
     updateGLWidget();
 }

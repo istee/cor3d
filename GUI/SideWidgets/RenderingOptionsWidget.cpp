@@ -8,65 +8,82 @@ unsigned int int_to_unsigned(int integer)
     return (unsigned int) integer;
 }
 
-RenderingOptionsWidget::RenderingOptionsWidget(QWidget *parent): QFrame(parent)
+RenderingOptionsWidget::RenderingOptionsWidget(RenderingOptions* renderingOptions, QWidget *parent): QFrame(parent)
 {
     setupUi(this);
 
+    _renderingOptions = renderingOptions;
 
-    cor3dApp = (Cor3dApplication*) qApp;
+    skeletonMaterial->setLabel("Skeleton color");
+    jointMeshFile->setLabel("Joint model");
+    jointMeshFile->setCaption("Open OFF model file");
+    jointMeshFile->setLabel("OFF Files (*.off)");
+    jointMaterial->setLabel("Joint color");
+    jointSelectedMaterial->setLabel("Joint selected color");
+    linkMeshFile->setLabel("Link model");
+    linkMeshFile->setCaption("Open OFF model file");
+    linkMeshFile->setFilter("OFF Files (*.off)");
+    linkMaterial->setLabel("Link color");
+    renderJoints->hide();
+    renderLink->hide();
 
-    skeleton_color->setLabel("Skeleton color");
-    joint_meshFile->setLabel("Joint model");
-    joint_meshFile->setCaption("Open OFF model file");
-    joint_meshFile->setLabel("OFF Files (*.off)");
-    joint_color->setLabel("Joint color");
-    joint_selected_color->setLabel("Joint selected color");
-    link_meshFile->setLabel("Link model");
-    link_meshFile->setCaption("Open OFF model file");
-    link_meshFile->setFilter("OFF Files (*.off)");
-    link_color->setLabel("Link color");
-    joint_render->hide();
-    link_render->hide();
+    skeletonMaterial->populate(renderingOptions->getMaterials());
+    skeletonMaterial->setIndex(renderingOptions->getSkeletonMaterial());
+    jointMaterial->populate(renderingOptions->getMaterials());
+    jointMaterial->setIndex(renderingOptions->getJointMaterial());
+    jointSelectedMaterial->populate(renderingOptions->getMaterials());
+    jointSelectedMaterial->setIndex(renderingOptions->getSelectedJointMaterial());
+    linkMaterial->populate(renderingOptions->getMaterials());
+    linkMaterial->setIndex(renderingOptions->getLinkMaterial());
 
-    connect(skeleton_render, SIGNAL(toggled(bool)), this, SIGNAL(view_skeleton_render_toggled(bool)));
-    connect(skeleton_color, SIGNAL(selectionChanged(int)), this, SIGNAL(view_skeleton_material_changed(int)));
-    connect(joint_render, SIGNAL(toggled(bool)), this, SIGNAL(view_joint_render_toggled(bool)));
-    connect(joint_meshFile, SIGNAL(fileChanged(string)), this, SIGNAL(view_joint_meshFileChanged(string)));
-    connect(joint_color, SIGNAL(selectionChanged(int)), this, SIGNAL(view_joint_material_changed(int)));
-    connect(joint_selected_color, SIGNAL(selectionChanged(int)), this, SIGNAL(view_selectedJoint_material_changed(int)));
-    connect(link_render, SIGNAL(toggled(bool)), this, SIGNAL(view_link_render_toggled(bool)));
-    connect(link_meshFile, SIGNAL(fileChanged(string)), this, SIGNAL(view_link_meshFileChanged(string)));
-    connect(link_color, SIGNAL(selectionChanged(int)), this, SIGNAL(view_link_material_changed(int)));
+    _skeletonMaterialBackup = renderingOptions->getSkeletonMaterial();
+    _jointMaterialBackup = renderingOptions->getJointMaterial();
+    _jointSelectedMaterialBackup = renderingOptions->getSelectedJointMaterial();
+    _linkMaterial = renderingOptions->getLinkMaterial();
 
+    connect(skeletonMaterial, SIGNAL(selectionChanged(int)), this, SLOT(skeletonMaterialSelectionChanged(int)));
+    connect(jointMaterial, SIGNAL(selectionChanged(int)), this, SLOT(jointMaterialSelectionChanged(int)));
+    connect(jointSelectedMaterial, SIGNAL(selectionChanged(int)), this, SLOT(jointSelectedMaterialSelectionChanged(int)));
+    connect(linkMaterial, SIGNAL(selectionChanged(int)), this, SLOT(linkMaterialSelectionChanged(int)));
 }
 
-void RenderingOptionsWidget::update_content()
+void RenderingOptionsWidget::on_defaultPushButton_clicked()
 {
-    /*
-    RenderingOptions *rendering_options = cor3dApp->cor3d->get_rendering_options();
-    if (rendering_options)
-    {
-        blockSignals(true);
-        skeleton_render->setChecked(rendering_options->get_render_model());
-        skeleton_color->populate(rendering_options->get_materials());
-        skeleton_color->setIndex(rendering_options->get_model_material());
-        joint_render->setChecked(rendering_options->get_renderJoints());
-        joint_color->populate(rendering_options->get_materials());
-        joint_color->setIndex(rendering_options->get_joint_material());
-        joint_selected_color->populate(rendering_options->get_materials());
-        joint_selected_color->setIndex(rendering_options->get_selectedJoint_material());
-        link_render->setChecked(rendering_options->get_renderLinks());
-        link_color->populate(rendering_options->get_materials());
-        link_color->setIndex(rendering_options->get_link_material());
-        joint_meshFile->setValue(rendering_options->get_joint_meshFile());
-        link_meshFile->setValue(rendering_options->get_link_meshFile());
-        blockSignals(false);
-    }
-    */
+    _renderingOptions->restoreDefaultValues();
+    this->close();
 }
 
-
-void RenderingOptionsWidget::on_pushButton_3_clicked()
+void RenderingOptionsWidget::on_savePushButton_clicked()
 {
     this->close();
+}
+
+void RenderingOptionsWidget::on_cancelPushButton_clicked()
+{
+    _renderingOptions->setSkeletonMaterial(_skeletonMaterialBackup);
+    _renderingOptions->setJointMaterial(_jointMaterialBackup);
+    _renderingOptions->setSelectedJointMaterial(_jointSelectedMaterialBackup);
+    _renderingOptions->setLinkMaterial(_linkMaterial);
+    this->close();
+}
+
+void RenderingOptionsWidget::skeletonMaterialSelectionChanged(int material)
+{
+    _renderingOptions->setSkeletonMaterial(material);
+}
+
+void RenderingOptionsWidget::jointMaterialSelectionChanged(int material)
+{
+    cout << "material " << material << endl;
+    _renderingOptions->setJointMaterial(material);
+}
+
+void RenderingOptionsWidget::jointSelectedMaterialSelectionChanged(int material)
+{
+    _renderingOptions->setSelectedJointMaterial(material);
+}
+
+void RenderingOptionsWidget::linkMaterialSelectionChanged(int material)
+{
+    _renderingOptions->setLinkMaterial(material);
 }

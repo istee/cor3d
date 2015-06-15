@@ -9,7 +9,7 @@ namespace cor3d {
 
     std::ostream& operator <<(std::ostream& lhs, const Skeleton& rhs)
     {
-        lhs << "skeleton_name: " << rhs.getName() << endl;
+        lhs << "skeleton_name:" << endl << rhs.getName() << endl;
         bool hasModelFile = "" != rhs.getMeshFile();
         lhs << "skeleton_has_meshFile: " << hasModelFile << endl;
         if (hasModelFile)
@@ -40,7 +40,9 @@ namespace cor3d {
 
         lhs >> text;
         lhs.getline(name, 256);
+        lhs.getline(name, 256);
         rhs.setName(string(name));
+        cout << "rhs name " << rhs.getName() << endl;
         lhs >> text >> boolean;
         if (boolean)
         {
@@ -52,14 +54,14 @@ namespace cor3d {
         lhs >> text >> number;
         for (int i = 0; i < number; i++)
         {
-            Joint* joint = new Joint(i, "", 0);
+            Joint* joint = new Joint(i, "joint" + i, 0);
             lhs >> *joint;
             rhs._joints.addEntity(joint);
         }
         lhs >> text >> number;
         for (int i = 0; i < number; i++)
         {
-            Posture* posture = new Posture(rhs._joints);
+            Posture* posture = new Posture(i, "posture" + i, rhs._joints);
             lhs >> *posture;
             rhs._postures.addEntity(posture);
         }
@@ -97,18 +99,10 @@ namespace cor3d {
         return static_cast<Posture*>(_postures.getSelectedEntity());
     }
 
-    Skeleton::Skeleton(): QObject(), BaseEntity(), _joints("Joint"), _postures("Posture")
-    {
-        _meshScale = DCoordinate3(1.0, 1.0, 1.0);
-        _meshOffset = DCoordinate3(0, 0, 0);
-        _selectedPosture = -1;
-    }
-
     Skeleton::Skeleton(unsigned int id, const string& name): QObject(), BaseEntity(id, name), _joints("Joint"), _postures("Posture")
     {
         _meshScale = DCoordinate3(1.0, 1.0, 1.0);
         _meshOffset = DCoordinate3(0, 0, 0);
-        _selectedPosture = -1;
     }
 
     void Skeleton::addRoot()
@@ -262,14 +256,12 @@ namespace cor3d {
 
         renderLinks(rendering_options);
 
-        render_axis(rendering_options);
-
-        if (rendering_options->get_render_model() && !_meshFile.empty())
+        if (rendering_options->isRenderSkeletonMesh() && !_meshFile.empty())
         {
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE);
             glDepthMask(GL_FALSE);
-            rendering_options->get_material(rendering_options->get_model_material())->Apply();
+            rendering_options->getMaterial(rendering_options->getSkeletonMaterial())->Apply();
             glPushMatrix();
             glTranslated(_meshOffset.x(), _meshOffset.y(), _meshOffset.z());
             glScaled(_meshScale.x(), _meshScale.y(), _meshScale.z());
@@ -282,12 +274,11 @@ namespace cor3d {
 
     void Skeleton::renderJoints(RenderingOptions* rendering_options, bool glLoad) const
     {
-        const TriangulatedMesh3* joint_model = rendering_options->get_joint_model();
+        const TriangulatedMesh3* joint_model = rendering_options->getJointMesh();
 
-        if (rendering_options->get_renderJoints() && joint_model)
+        if (rendering_options->isRenderJoints() && joint_model)
         {
-            rendering_options->get_material(rendering_options->get_joint_material())->Apply();
-
+            rendering_options->getMaterial(rendering_options->getJointMaterial())->Apply();
             for(unsigned int i = 0; i < _joints.entityCount(); i++)
             {
                 Joint* joint = static_cast<Joint*>(_joints[i]);
@@ -307,62 +298,18 @@ namespace cor3d {
         }
     }
 
-
-
     void Skeleton::render_axis(RenderingOptions* rendering_options, bool glLoad) const
     {
-        if (getSelectedJoint())
-        {
-            int joint_id = getSelectedJoint()->getId();
-            if (rendering_options->get_render_axis())
-            {
-                DCoordinate3 axis = getJointById(joint_id)->get_axis();
-                if (axis.length() > 0)
-                {
-                    DCoordinate3 parent_position = getJointById(getJointById(joint_id)->get_parent())->get_coordinates();
-                    DCoordinate3 p1 = parent_position + 1000 * axis;
-                    DCoordinate3 p2 = parent_position - 1000 * axis;
 
-                    glDisable(GL_LIGHTING);
-                    glLineWidth(2.5);
-                    glColor3f(1.0, 0.0, 0.0);
-                    glBegin(GL_LINES);
-                        glVertex3f(p1.x(), p1.y(), p1.z());
-                        glVertex3f(p2.x(), p2.y(), p2.z());
-                    glEnd();
-                    glEnable(GL_LIGHTING);
-                }
-            }
-        }
-
-//        glPushMatrix();
-//        glColor3f(1.0, 1.0, 0.0);
-//        glDisable(GL_LIGHTING);
-
-//        glBegin(GL_TRIANGLE_FAN);
-//        glVertex3f(0.0, 0.0, 0.0);
-//        float radius = 2;
-
-//        for (float angle=1.0f;angle<361.0f;angle+=0.2)
-//        {
-//            float x2 = sin(angle)*radius;
-//            float y2 = cos(angle)*radius;
-//            glVertex3f(x2, y2, 0.0);
-//        }
-
-//        glEnd();
-
-//        glEnable(GL_LIGHTING);
-//        glPopMatrix();
     }
 
     void Skeleton::renderLinks(RenderingOptions* rendering_options, bool glLoad) const
     {
-        const TriangulatedMesh3* link_model = rendering_options->get_link_model();
+        const TriangulatedMesh3* link_model = rendering_options->getLinkMesh();
 
-        if (rendering_options->get_renderLinks() && link_model &&_joints.entityCount() > 1)
+        if (rendering_options->isRenderLinks() && link_model &&_joints.entityCount() > 1)
         {
-            rendering_options->get_material(rendering_options->get_link_material())->Apply();
+            rendering_options->getMaterial(rendering_options->getLinkMaterial())->Apply();
 
             for(unsigned int i = 1; i < _joints.entityCount(); i++)
             {
@@ -436,22 +383,23 @@ namespace cor3d {
             _joints.addEntity(joint);
             parentJoint->add_child(joint->getId());
             emit modelJointAdded(this, joint, parentName);
-
-            emit modelJointSelected(name);
+/*
+            cout << "select elott" << endl;
+            handleViewJointSelected(name);
+            //emit modelJointSelected(name);
+            */
         }
     }
 
-    void Skeleton::handleViewJointSelected(int joint_id)
+    void Skeleton::handleViewJointSelected(int jointId)
     {
-        BaseEntity* joint = _joints[joint_id];
-        if (_joints.selectEntity(joint->getName()))
+        if (_joints.selectEntity(jointId))
         {
-            emit modelJointSelected(joint->getName());
+            emit modelJointSelected(_joints.getSelectedEntity()->getName());
         }
         else
         {
             emit modelJointSelected("");
-
         }
     }
 
@@ -582,13 +530,16 @@ namespace cor3d {
 
     void Skeleton::handleViewPostureAdded(const string& name)
     {
-        addPosture(name);
-        Posture* previous = getSelectedPosture();
-        Posture* posture = getPostureByName(name);
-        if (posture)
+        Posture* posture = new Posture(_postures.entityCount(), name, _joints);
+        if (_postures.addEntity(posture))
         {
-            _selectedPosture = posture->getId();
-            emit modelPostureSelected(this, posture, previous);
+            emit modelPostureAdded(this, posture);
+
+            //emit modelSkeletonSelected(skeleton, selected);
+        }
+        else
+        {
+            delete posture;
         }
     }
 
@@ -635,7 +586,7 @@ namespace cor3d {
             _postures.erase(_postures.begin() + postureId);
             for (vector<Posture*>::iterator it = _postures.begin() + postureId; it != _postures.end(); it++)
             {
-                ((BaseEntity*) *it)->decrease_id();
+                ((BaseEntity*) *it)->decreaseId();
             }
 
             emit modelPostureDeleted(this, name);
@@ -659,16 +610,10 @@ namespace cor3d {
 
     void Skeleton::handleViewPostureSelected(const string& name)
     {
-        Posture* previous = getSelectedPosture();
-        Posture* posture = getPostureByName(name);
-        if (posture)
+        Posture* oldSelection = (Posture*) _postures.getSelectedEntity();
+        if (_postures.selectEntity(name))
         {
-            _selectedPosture = posture->getId();
-            emit modelPostureSelected(this, posture, previous);
-        }
-        else
-        {
-            emit modelPostureSelected(this, 0, previous);
+            emit modelPostureSelected(this, (Posture*) _postures.getSelectedEntity(), oldSelection);
         }
     }
 

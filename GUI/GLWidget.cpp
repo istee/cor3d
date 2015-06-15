@@ -86,6 +86,9 @@ void GLWidget::initializeGL()
 
     cor3dApp = (Cor3dApplication*) qApp;
     cor3dApp->cor3d->getRenderingOptions()->initialize();
+    _renderingOptions = cor3dApp->cor3d->getRenderingOptions();
+
+    connect(cor3dApp->cor3d->getRenderingOptions(), SIGNAL(renderingOptionsChanged()), this, SLOT(renderingOptionsChanged()));
 }
 
 //-----------------------
@@ -273,9 +276,7 @@ void GLWidget::pick(double x, double y)
                         closest_depth    = pick_buffer[offset + 1];
                     }
                 }
-
                 specificPick(closest_selected);
-
             }
             else
             {
@@ -342,8 +343,6 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
         Transformation TMV(matModelView);
         Transformation TIMV;
 
-        cout << TMV << endl;
-
 
         if (!TMV.GetInverse(TIMV))
         {
@@ -355,13 +354,10 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
         TIMVT(0,3) = 0;
         TIMVT(1,3) = 0;
         TIMVT(2,3) = 0;
-        //cout << TIMVT;
         DCoordinate3 n = TIMVT * _initial_normal;
-        //cout << "before normalizing: " << n << " , " << n.length() << endl;
         n.normalize();
 
         DCoordinate3 p0 = dragCoordinate();
-        //DCoordinate3 p0 = DCoordinate3(p0_const.x(), p0_const.y(), p0_const.z());
 
         double mouseX = event->x();
         double mouseY = event->y();
@@ -386,48 +382,38 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
         gluUnProject(winX, winY, 1.0, matModelView, matProjection, viewport, &x, &y, &z);
         l2 = DCoordinate3(x, y, z);
 
-        //cout << l1 << endl << l2 << endl;
-
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
         glMultMatrixd(matModelView);
 
         double d = ((p0 - l1).length()) / ((l2 - l1).length());
 
-        //cout << "d: " << d << endl;
-
         glPopMatrix();
 
         if (d >= 0.0 && d <= 1.0)
         {
             DCoordinate3 result = l1 + ((l2 - l1) * d);
-            DCoordinate3 rotated_result = /*TIMVT **/ result;
-//                            cout << "d: " << d << endl;
-//                            cout << "normal: " << n << endl;
-//                            cout << "p0: " << p0 << endl;
-//                            cout << "point: " << result << endl;
+            DCoordinate3 rotated_result = result;
 
             DCoordinate3 new_coord = dragCoordinate();
 
-
-            //cout << "drag type " << _drag_type << endl;
             switch(_drag_type)
             {
             case 0:
                 {
-                    drag(rotated_result[0] - 1, new_coord[1], new_coord[2]);
+                    drag(rotated_result[0] - 1 / _zoom, new_coord[1], new_coord[2]);
                     break;
                 }
 
             case 1:
                 {
-                    drag(new_coord[0], rotated_result[1] - 1, new_coord[2]);
+                    drag(new_coord[0], rotated_result[1] - 1 / _zoom, new_coord[2]);
                     break;
                 }
 
             case 2:
                 {
-                    drag(new_coord[0], new_coord[1], rotated_result[2] - 1);
+                    drag(new_coord[0], new_coord[1], rotated_result[2] - 1 / _zoom);
                     break;
                 }
 
@@ -502,6 +488,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 
             //DCoordinate3 transform = z_rot_mat * y_rot_mat * x_rot_mat * translation * mouse;
 
+
             emit glwidgetTranslationChanged(DCoordinate3(_trans_x, _trans_y, _trans_z));
         }
     }
@@ -522,7 +509,7 @@ void GLWidget::wheelEvent(QWheelEvent *event)
 {
     event->accept();
     {
-        _zoom += event->delta() / 1020.0;
+        _zoom += event->delta() / 1200.0;
         if (_zoom < 0.1)
         {
             _zoom = 0.1;
@@ -549,7 +536,7 @@ void GLWidget::set_render_mesh(int skeleton_id, bool value)
     //    updateGL();
 }
 
-void GLWidget::set_renderLinks(int skeleton_id, bool value)
+void GLWidget::setRenderLinks(int skeleton_id, bool value)
 {
     //    if (skeleton_id == -1)
     //    {
@@ -560,7 +547,7 @@ void GLWidget::set_renderLinks(int skeleton_id, bool value)
     //    updateGL();
 }
 
-void GLWidget::set_renderJoints(int skeleton_id, bool value)
+void GLWidget::enableRenderJoints(int skeleton_id, bool value)
 {
     //    if (skeleton_id == -1)
     //    {
@@ -575,7 +562,7 @@ void GLWidget::render_move_arrows(RenderingOptions* rendering_options, const DCo
 {
     glDisable(GL_LIGHTING);
 
-    double line_offset = 1;
+    double line_offset = 1/ _zoom;
     glBegin(GL_LINES);
     glColor3f(0.7, 0.1, 0.1);
     glVertex3f(position->x(), position->y(), position->z());
@@ -614,9 +601,9 @@ void GLWidget::render_move_arrows(RenderingOptions* rendering_options, const DCo
     matrix[14] = position->z();
     matrix[15] = 1.0;
 
-    const TriangulatedMesh3* cone = rendering_options->get_cone_model();
+    const TriangulatedMesh3* cone = rendering_options->getConeMesh();
     glPushMatrix();
-    MatFBRuby.Apply();
+    MatPlasticRed.Apply();
     glMultMatrixf(matrix);
     glScalef(0.01 / _zoom, 0.5 / _zoom, 0.5 / _zoom);
     if (glLoad)
@@ -627,7 +614,7 @@ void GLWidget::render_move_arrows(RenderingOptions* rendering_options, const DCo
     glPopMatrix();
 
     glPushMatrix();
-    MatFBTurquoise.Apply();
+    MatPlasticCyan.Apply();
     glMultMatrixf(matrix);
     glScalef(0.5 / _zoom, 0.01 / _zoom, 0.5 / _zoom);
     if (glLoad)
@@ -638,7 +625,7 @@ void GLWidget::render_move_arrows(RenderingOptions* rendering_options, const DCo
     glPopMatrix();
 
     glPushMatrix();
-    MatFBEmerald.Apply();
+    MatPlasticRed.Apply();
     glMultMatrixf(matrix);
     glScalef(0.5 / _zoom, 0.5 / _zoom, 0.01 / _zoom);
     if (glLoad)
@@ -691,4 +678,10 @@ void GLWidget::render_move_arrows(RenderingOptions* rendering_options, const DCo
     }
     cone->Render();
     glPopMatrix();
+}
+
+void GLWidget::renderingOptionsChanged()
+{
+    cout << "render change" << endl;
+    updateGL();
 }

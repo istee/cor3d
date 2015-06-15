@@ -43,7 +43,8 @@ SOURCES += \
     GUI/EditWidgets/PostureEditWidget.cpp \
     GUI/WidgetExtensions/GroupBoxExtension.cpp \
     GUI/EditWidgets/JointEditWidget.cpp \
-    Model/BaseEntityCollection.cpp
+    Model/BaseEntityCollection.cpp \
+    Model/Algorithm.cpp
 
 
 HEADERS += \
@@ -106,7 +107,9 @@ HEADERS += \
     GUI/WidgetExtensions/ToolButtonExtension.h \
     GUI/EditWidgets/PostureEditWidget.h \
     GUI/WidgetExtensions/GroupBoxExtension.h \
-    GUI/EditWidgets/JointEditWidget.h
+    GUI/EditWidgets/JointEditWidget.h \
+    GUI/PopupWindows/AboutWindow.h \
+    Model/Algorithm.h
 
 FORMS += \
     GUI/BasicWidgets/DCoordinate3GroupBox.ui \
@@ -129,7 +132,8 @@ FORMS += \
     GUI/SideWidgets/PostureSideWidget.ui \
     GUI/SideWidgets/PostureJointSideWidget.ui \
     GUI/EditWidgets/PostureEditWidget.ui \
-    GUI/EditWidgets/JointEditWidget.ui
+    GUI/EditWidgets/JointEditWidget.ui \
+    GUI/PopupWindows/AboutWindow.ui
 
 
 QT += opengl

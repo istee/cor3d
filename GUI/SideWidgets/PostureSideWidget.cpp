@@ -9,24 +9,35 @@
 PostureSideWidget::PostureSideWidget(QWidget *parent) : BaseSideWidget(parent)
 {
     setupUi(this);
-    addName->setLabel("Name");
-
+    addName->setLabel("New posture name: ");
+    addName->setToolTip("Add new posture with the specified name");
+    addName->setEnabled(false);
     connect(addName, SIGNAL(baseEntityAdded(string)), this, SLOT(handleViewPostureAdded(string)));
 }
 
 void PostureSideWidget::populatePostureList(Skeleton* skeleton)
 {
     postureList->clear();
-    for (unsigned int i = 0; i < skeleton->getPostureCount(); i++)
+    if (skeleton)
     {
-        Posture* posture = skeleton->getPostureById(i);
-        addPosture(skeleton, posture);
+        addName->setEnabled(true);
+
+
+        for (unsigned int i = 0; i < skeleton->getPostureCount(); i++)
+        {
+            Posture* posture = skeleton->getPostureById(i);
+            addPosture(skeleton, posture);
+        }
+        if (skeleton->getSelectedPosture())
+        {
+            selectPosture(skeleton, skeleton->getSelectedPosture());
+        }
+        addName->setValue(skeleton->nextAutoPostureName());
     }
-    if (skeleton->getSelectedPosture())
+    else
     {
-        selectPosture(skeleton, skeleton->getSelectedPosture());
+        addName->setEnabled(false);
     }
-    addName->setValue(skeleton->nextAutoPostureName());
 }
 
 void PostureSideWidget::handleViewPostureAdded(const string& name)

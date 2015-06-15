@@ -22,9 +22,8 @@ using namespace cor3d;
 SkeletonSideWidget::SkeletonSideWidget(QWidget *parent): BaseSideWidget(parent)
 {
     setupUi(this);
-    addName->setLabel("Name");
-    //skeleton_listview->setSelectionBehavior(QAbstractItemView::SelectItems);
-
+    addName->setLabel("New skeleton name: ");
+    addName->setToolTip("Add new Skeleton with the specified name");
     connect(groupBox, SIGNAL(groupboxToggled(bool)), this, SLOT(handle_groupboxToggled(bool)));
     connect(addName, SIGNAL(baseEntityAdded(string)), this, SLOT(handleViewSkeletonAdded(string)));
 

@@ -69,6 +69,7 @@ protected:
 
 
     Skeleton*               _skeleton;
+    RenderingOptions*       _renderingOptions;
 
     virtual void specificPaintGL() = 0;
     virtual void specificDrawPickObjects() = 0;
@@ -125,11 +126,12 @@ signals:
 
 public slots:
     // public event handling methods/slots
+    void renderingOptionsChanged();
     void set_translation(const DCoordinate3& translation);
     void set_rotation(const DCoordinate3& angles);
     void set_zoom_factor(double value);
 
     void set_render_mesh(int skeleton_id, bool value);
-    void set_renderLinks(int skeleton_id, bool value);
-    void set_renderJoints(int skeleton_id, bool value);
+    void setRenderLinks(int skeleton_id, bool value);
+    void enableRenderJoints(int skeleton_id, bool value);
 };

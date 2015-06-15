@@ -4,60 +4,82 @@
 #include "Model/BaseEntity.h"
 #include "Core/Materials.h"
 
+#include <QObject>
+
 using namespace cagd;
 using namespace cor3d;
 using namespace std;
 
-class RenderingOptions {
-    bool _render;
-    bool _render_model;
-    bool _renderJoints;
-    bool _renderLinks;
+class RenderingOptions: public QObject {
+    Q_OBJECT
 
-    bool _render_axis;
+    bool                _renderSkeletonMesh;
+    bool                _renderJoints;
+    bool                _renderLinks;
 
-    unsigned int _model_material;
-    unsigned int _joint_material;
-    unsigned int _selectedJoint_material;
-    unsigned int _link_material;
+    unsigned int        _skeletonMaterial;
+    unsigned int        _linkMaterial;
+    unsigned int        _jointMaterial;
+    unsigned int        _selectedJointMaterial;
 
-    double model_opacity;
 
-    string _joint_meshFile;
-    string _link_meshFile;
+    double              _skeletonMeshOpacity;
 
-    TriangulatedMesh3   _joint_model;
-    TriangulatedMesh3   _link_model;
-    TriangulatedMesh3   _cone_model;
+    string              _jointMeshFile;
+    string              _linkMeshFile;
 
-    vector<BaseEntity>  _material_names;
+    TriangulatedMesh3   _jointMesh;
+    TriangulatedMesh3   _linkMesh;
+    TriangulatedMesh3   _coneMesh;
+
+    vector<BaseEntity>  _materialNames;
     vector<Material*>   _materials;
 
-    bool               is_initialized;
+    bool                _isInitialized;
 
     DCoordinate3        _translation;
     DCoordinate3        _rotation;
     double              _zoom;
 
+signals:
+    void renderingOptionsChanged();
+
 public:
-    RenderingOptions()
+    RenderingOptions(): QObject()
     {
-        _render = true;
-        _render_model = true;
+        blockSignals(true);
+
+        _renderSkeletonMesh = true;
         _renderJoints  = true;
         _renderLinks = true;
-        _render_axis = true;
 
-        _joint_meshFile = "Models/sphere.off";
-        _link_meshFile = "Models/cone.off";
+        _jointMeshFile = "Models/sphere.off";
+        _linkMeshFile = "Models/cone.off";
 
-        _material_names.push_back(BaseEntity(0, "Brass"));
-        _material_names.push_back(BaseEntity(1, "Gold"));
-        _material_names.push_back(BaseEntity(2, "Silver"));
-        _material_names.push_back(BaseEntity(3, "Emerald"));
-        _material_names.push_back(BaseEntity(4, "Pearl"));
-        _material_names.push_back(BaseEntity(5, "Ruby"));
-        _material_names.push_back(BaseEntity(6, "Turquoise"));
+        _materialNames.push_back(BaseEntity(0, "Brass"));
+        _materialNames.push_back(BaseEntity(1, "Gold"));
+        _materialNames.push_back(BaseEntity(2, "Silver"));
+        _materialNames.push_back(BaseEntity(3, "Emerald"));
+        _materialNames.push_back(BaseEntity(4, "Pearl"));
+        _materialNames.push_back(BaseEntity(5, "Ruby"));
+        _materialNames.push_back(BaseEntity(6, "Turquoise"));
+        _materialNames.push_back(BaseEntity(7, "Jade"));
+        _materialNames.push_back(BaseEntity(8, "Obsidian"));
+        _materialNames.push_back(BaseEntity(9, "Bronze"));
+        _materialNames.push_back(BaseEntity(10, "Chrome"));
+        _materialNames.push_back(BaseEntity(11, "Copper"));
+        _materialNames.push_back(BaseEntity(12, "Plastic Black"));
+        _materialNames.push_back(BaseEntity(13, "Plastic Cyan"));
+        _materialNames.push_back(BaseEntity(14, "Plastic Green"));
+        _materialNames.push_back(BaseEntity(15, "Plastic Red"));
+        _materialNames.push_back(BaseEntity(16, "Plastic White"));
+        _materialNames.push_back(BaseEntity(17, "Plastic Yellow"));
+        _materialNames.push_back(BaseEntity(18, "Rubber Black"));
+        _materialNames.push_back(BaseEntity(19, "Rubber Cyan"));
+        _materialNames.push_back(BaseEntity(20, "Rubber Green"));
+        _materialNames.push_back(BaseEntity(21, "Rubber Red"));
+        _materialNames.push_back(BaseEntity(22, "Rubber White"));
+        _materialNames.push_back(BaseEntity(23, "Rubber Yellow"));
         _materials.push_back(&MatFBBrass);
         _materials.push_back(&MatFBGold);
         _materials.push_back(&MatFBSilver);
@@ -65,103 +87,122 @@ public:
         _materials.push_back(&MatFBPearl);
         _materials.push_back(&MatFBRuby);
         _materials.push_back(&MatFBTurquoise);
+        _materials.push_back(&MatFBJade);
+        _materials.push_back(&MatFBObsidian);
+        _materials.push_back(&MatFBBronze);
+        _materials.push_back(&MatFBChrome);
+        _materials.push_back(&MatFBCopper);
+        _materials.push_back(&MatPlasticBlack);
+        _materials.push_back(&MatPlasticCyan);
+        _materials.push_back(&MatPlasticGreen);
+        _materials.push_back(&MatPlasticRed);
+        _materials.push_back(&MatPlasticWhite);
+        _materials.push_back(&MatPlasticYellow);
+        _materials.push_back(&MatRubberBlack);
+        _materials.push_back(&MatRubberCyan);
+        _materials.push_back(&MatRubberGreen);
+        _materials.push_back(&MatRubberRed);
+        _materials.push_back(&MatRubberWhite);
+        _materials.push_back(&MatRubberYellow);
 
-        _model_material = 4;
-        _joint_material = 2;
-        _selectedJoint_material = 0;
-        _link_material = 1;
-
-        is_initialized = false;
+        _isInitialized = false;
 
         _translation = DCoordinate3(0.0, 0.0, 0.0);
         _rotation = DCoordinate3(0.0, 0.0, 0.0);
         _zoom = 1.0;
+
+        restoreDefaultValues();
+
+        blockSignals(false);
     }
 
     void initialize()
     {
         if (true)
         {
-            is_initialized = true;
+            blockSignals(true);
 
-            set_joint_meshFile(_joint_meshFile);
-            set_link_meshFile(_link_meshFile);
+            _isInitialized = true;
 
-            if (_cone_model.LoadFromOFF("Models/cone.off"))
+            setJointMeshFile(_jointMeshFile);
+            setLinkMeshFile(_linkMeshFile);
+
+            if (_coneMesh.LoadFromOFF("Models/cone.off"))
             {
-                _cone_model.UpdateVertexBufferObjects();
+                _coneMesh.UpdateVertexBufferObjects();
             }
+
+            blockSignals(false);
         }
     }
 
-    bool get_render() const
+    bool restoreDefaultValues()
     {
-        return _render;
+        _skeletonMaterial = 7;
+        _jointMaterial = 2;
+        _selectedJointMaterial = 0;
+        _linkMaterial = 1;
+        emit renderingOptionsChanged();
     }
 
-    bool get_render_model() const
+    bool isRenderSkeletonMesh() const
     {
-        return _render_model;
+        return _renderSkeletonMesh;
     }
 
-    bool get_renderJoints() const
+    bool isRenderJoints() const
     {
         return _renderJoints;
     }
 
-    bool get_renderLinks() const
+    bool isRenderLinks() const
     {
         return _renderLinks;
     }
 
-    bool get_render_axis() const
+    const TriangulatedMesh3* getLinkMesh() const
     {
-        return _render_axis;
+        return &_linkMesh;
     }
 
-    const TriangulatedMesh3* get_joint_model() const
+    const TriangulatedMesh3* getJointMesh() const
     {
-        return &_joint_model;
+        return &_jointMesh;
     }
 
-    const TriangulatedMesh3* get_link_model() const
+    const TriangulatedMesh3* getConeMesh() const
     {
-        return &_link_model;
+        return &_coneMesh;
     }
 
-    const TriangulatedMesh3* get_cone_model() const
+    const string& getJointMeshFile() const
     {
-        return &_cone_model;
+        return _jointMeshFile;
     }
 
-    const string& get_joint_meshFile() const
+    const string& getLinkMeshFile() const
     {
-        return _joint_meshFile;
+        return _linkMeshFile;
     }
 
-    const string& get_link_meshFile() const
+    unsigned int getSkeletonMaterial() const
     {
-        return _link_meshFile;
+        return _skeletonMaterial;
     }
 
-    unsigned int get_model_material() const
+    unsigned int getJointMaterial() const
     {
-        return _model_material;
+        return _jointMaterial;
     }
 
-    unsigned int get_joint_material() const
+    unsigned int getSelectedJointMaterial() const
     {
-        return _joint_material;
+        return _selectedJointMaterial;
     }
 
-    unsigned int get_selectedJoint_material() const
+    unsigned int getLinkMaterial() const
     {
-        return _selectedJoint_material;
-    }
-
-    unsigned int get_link_material() const
-    {
-        return _link_material;
+        return _linkMaterial;
     }
 
     DCoordinate3 getTranslation() const
@@ -179,75 +220,84 @@ public:
         return _zoom;
     }
 
-    void set_render_model(bool render_model)
+    void enableRenderSkeletonMesh(bool renderMesh)
     {
-        _render_model = render_model;
+        _renderSkeletonMesh = renderMesh;
+        emit renderingOptionsChanged();
     }
 
-    void set_renderJoints(bool renderJoints)
+    void enableRenderJoints(bool renderJoints)
     {
         _renderJoints = renderJoints;
+        emit renderingOptionsChanged();
     }
 
-    void set_renderLinks(bool renderLinks)
+    void setRenderLinks(bool renderLinks)
     {
         _renderLinks = renderLinks;
+        emit renderingOptionsChanged();
     }
 
-    void set_joint_meshFile(const string& joint_meshFile)
+    void setJointMeshFile(const string& joint_meshFile)
     {
-        if (_joint_model.LoadFromOFF(joint_meshFile))
+        if (_jointMesh.LoadFromOFF(joint_meshFile))
         {
-            _joint_model.UpdateVertexBufferObjects();
-            _joint_meshFile = joint_meshFile;
+            _jointMesh.UpdateVertexBufferObjects();
+            _jointMeshFile = joint_meshFile;
+            emit renderingOptionsChanged();
         }
         else
         {
-            _joint_model.LoadFromOFF(_joint_meshFile);
-            _joint_model.UpdateVertexBufferObjects();
+            _jointMesh.LoadFromOFF(_jointMeshFile);
+            _jointMesh.UpdateVertexBufferObjects();
         }
     }
 
-    void set_link_meshFile(const string& link_meshFile)
+    void setLinkMeshFile(const string& link_meshFile)
     {
-        if (_link_model.LoadFromOFF(link_meshFile))
+        if (_linkMesh.LoadFromOFF(link_meshFile))
         {
-            _link_model.UpdateVertexBufferObjects();
-            _link_meshFile = link_meshFile;
+            _linkMesh.UpdateVertexBufferObjects();
+            _linkMeshFile = link_meshFile;
+            emit renderingOptionsChanged();
         }
         else
         {
-            _link_model.LoadFromOFF(_link_meshFile);
-            _link_model.UpdateVertexBufferObjects();
+            _linkMesh.LoadFromOFF(_linkMeshFile);
+            _linkMesh.UpdateVertexBufferObjects();
         }
     }
 
-    void set_model_material(unsigned int model_material)
+    void setSkeletonMaterial(unsigned int model_material)
     {
-        _model_material = model_material;
+        _skeletonMaterial = model_material;
+        emit renderingOptionsChanged();
     }
 
-    void set_joint_material(unsigned int joint_material)
+    void setJointMaterial(unsigned int joint_material)
     {
-        _joint_material = joint_material;
+        _jointMaterial = joint_material;
+        emit renderingOptionsChanged();
     }
 
-    void set_selectedJoint_material(unsigned int selected_joint_material)
+    void setSelectedJointMaterial(unsigned int selected_jointMaterial)
     {
-        _selectedJoint_material = selected_joint_material;
+        _selectedJointMaterial = selected_jointMaterial;
+        emit renderingOptionsChanged();
     }
 
-    void set_link_material(unsigned int link_material)
+    void setLinkMaterial(unsigned int link_material)
     {
-        _link_material = link_material;
+        _linkMaterial = link_material;
+        emit renderingOptionsChanged();
     }
 
-    const vector<BaseEntity>& get_materials() const
+    const vector<BaseEntity>& getMaterials() const
     {
-        return _material_names;
+        return _materialNames;
     }
 
-    Material* get_material(unsigned int id)
+    Material* getMaterial(unsigned int id) const
     {
         return _materials[id];
     }

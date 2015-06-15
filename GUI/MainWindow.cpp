@@ -14,6 +14,7 @@
 #include "GUI/Toolbars/TransformationsToolbar.h"
 #include "GUI/Toolbars/FileToolbar.h"
 #include "IMainWindowTab.h"
+#include "GUI/PopupWindows/AboutWindow.h"
 
 using namespace std;
 using namespace cor3d;
@@ -35,15 +36,13 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     connect(_cor3d, SIGNAL(modelRotationChanged(DCoordinate3)), this, SLOT(handle_modelRotationChanged(DCoordinate3)));
     connect(_cor3d, SIGNAL(modelZoomChanged(double)), this, SLOT(handle_modelZoomChanged(double)));
 
-    IMainWindowTab* skeletonEditorTab = (IMainWindowTab*) tabWidget->widget(2);
+    IMainWindowTab* skeletonEditorTab = (IMainWindowTab*) tabWidget->widget(1);
     skeletonEditorTab->setSelected(true);
 }
 
 void MainWindow::initialize()
 {
-    //skeleton_editor->initialize();
-    //posture_editor->initialize();
-    scene_editor->initialize();
+
 }
 
 //--------------------------------
@@ -57,7 +56,7 @@ void MainWindow::on_action_Quit_triggered()
 
 void MainWindow::on_actionRendering_options_activated()
 {
-    RenderingOptionsWidget *roWidget = new RenderingOptionsWidget(this);
+    RenderingOptionsWidget *roWidget = new RenderingOptionsWidget(((Cor3dApplication*) qApp)->cor3d->getRenderingOptions(), this);
     roWidget->setWindowTitle("Rendering Options");
     roWidget->setWindowModality(Qt::ApplicationModal);
     roWidget->setWindowFlags(Qt::Window);
@@ -133,4 +132,17 @@ void MainWindow::on_tabWidget_currentChanged(QWidget* tab)
 
     mainWindowTab->setSelected(true);
     mainWindowTab->updateGLWidget();
+}
+
+void MainWindow::on_actionAbout_triggered()
+{
+    AboutWindow* aboutWindow = new AboutWindow(this);
+    aboutWindow->setWindowTitle("About");
+    aboutWindow->setWindowFlags(Qt::Window);
+    aboutWindow->show();
+}
+
+void MainWindow::on_actionFile_triggered(bool checked)
+{
+    fileToolbarUi->setVisible(checked);
 }

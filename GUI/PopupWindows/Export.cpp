@@ -15,6 +15,7 @@
 Export::Export(QWidget *parent) : QWidget(parent)
 {
     setupUi(this);
+    exportButton->setEnabled(false);
     exportFile->setLabel("Export file:");
     exportFile->setButtonText("Browse");
     exportFile->setFilter("*.c3data");
@@ -26,7 +27,7 @@ Export::Export(QWidget *parent) : QWidget(parent)
     const vector<BaseEntity*> skeleton_list = cor3dApp->cor3d->getSkeletonList();
     model = new QStandardItemModel();
     model->setColumnCount(1);
-    model->setHeaderData(0, Qt::Horizontal, "Select items to export:");
+    model->setHeaderData(0, Qt::Horizontal, "Select skeletons to export:");
 
     for (vector<BaseEntity*>::const_iterator it = skeleton_list.begin(); it != skeleton_list.end(); it++)
     {
@@ -45,6 +46,7 @@ void Export::AddItemToModel(QStandardItem *item)
     model->appendRow(item);
     buttonSelectAll->setEnabled(true);
     buttonClearAll->setEnabled(true);
+    exportButton->setEnabled(true);
 }
 
 void Export::on_exportButton_clicked()
@@ -56,6 +58,12 @@ void Export::on_exportButton_clicked()
     {
         int skeletonCount = treeView->model()->rowCount();
         file << "skeleton_count: " << skeletonCount << endl;
+        for (int i = 0; i < skeletonCount; i++)
+        {
+            string skeletonName = treeView->model()->index(i,0).data().toString().toStdString();
+            Skeleton *skeleton = cor3dApp->cor3d->getSkeletonByName(skeletonName);
+            file << skeleton->getName() << endl;
+        }
         for (int i = 0; i < skeletonCount; i++)
         {
             string skeletonName = treeView->model()->index(i,0).data().toString().toStdString();

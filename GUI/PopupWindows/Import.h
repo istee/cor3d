@@ -19,5 +19,6 @@ private slots:
     void on_closeButton_clicked();
     void on_importButton_clicked();
     void on_importFile_changed(string filename);
+    void addItemToModel(QStandardItem *item);
 };
 

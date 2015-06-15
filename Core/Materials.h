@@ -61,5 +61,22 @@ namespace cagd
                 MatFBEmerald,
                 MatFBPearl,
                 MatFBRuby,
-                MatFBTurquoise;
+                MatFBTurquoise,
+                MatFBJade,
+                MatFBObsidian,
+                MatFBBronze,
+                MatFBChrome,
+                MatFBCopper,
+                MatPlasticBlack,
+                MatPlasticCyan,
+                MatPlasticGreen,
+                MatPlasticRed,
+                MatPlasticWhite,
+                MatPlasticYellow,
+                MatRubberBlack,
+                MatRubberCyan,
+                MatRubberGreen,
+                MatRubberRed,
+                MatRubberWhite,
+                MatRubberYellow;
 }

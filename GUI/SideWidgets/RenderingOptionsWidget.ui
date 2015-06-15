@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>240</width>
+    <width>257</width>
     <height>428</height>
    </rect>
   </property>
@@ -23,7 +23,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QGroupBox" name="skeleton_rendering_options">
+    <widget class="QGroupBox" name="skeletonRenderingOptions">
      <property name="font">
       <font>
        <pointsize>10</pointsize>
@@ -37,14 +37,14 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QCheckBox" name="skeleton_render">
+       <widget class="QCheckBox" name="renderSkeleton">
         <property name="text">
          <string>Render skeleton</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="BaseEntityComboBox" name="skeleton_color" native="true"/>
+       <widget class="BaseEntityComboBox" name="skeletonMaterial" native="true"/>
       </item>
       <item>
        <widget class="QWidget" name="widget" native="true">
@@ -57,7 +57,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QSlider" name="opacity_horizontalSlider">
+          <widget class="QSlider" name="opacityHorizontalSlider">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -70,48 +70,48 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="joint_rendering_options">
+    <widget class="QGroupBox" name="jointRenderingOptions">
      <property name="title">
       <string>Joints</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <widget class="QCheckBox" name="joint_render">
+       <widget class="QCheckBox" name="renderJoints">
         <property name="text">
          <string>Render joints</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="FileChooser" name="joint_meshFile" native="true"/>
+       <widget class="FileChooser" name="jointMeshFile" native="true"/>
       </item>
       <item>
-       <widget class="BaseEntityComboBox" name="joint_color" native="true"/>
+       <widget class="BaseEntityComboBox" name="jointMaterial" native="true"/>
       </item>
       <item>
-       <widget class="BaseEntityComboBox" name="joint_selected_color" native="true"/>
+       <widget class="BaseEntityComboBox" name="jointSelectedMaterial" native="true"/>
       </item>
      </layout>
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="link_rendering_options">
+    <widget class="QGroupBox" name="linkRenderingOptions">
      <property name="title">
       <string>Links</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
-       <widget class="QCheckBox" name="link_render">
+       <widget class="QCheckBox" name="renderLink">
         <property name="text">
          <string>Render links</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="FileChooser" name="link_meshFile" native="true"/>
+       <widget class="FileChooser" name="linkMeshFile" native="true"/>
       </item>
       <item>
-       <widget class="BaseEntityComboBox" name="link_color" native="true"/>
+       <widget class="BaseEntityComboBox" name="linkMaterial" native="true"/>
       </item>
      </layout>
     </widget>
@@ -119,21 +119,21 @@
    <item>
     <layout class="QHBoxLayout" name="buttons">
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="defaultPushButton">
        <property name="text">
         <string>Default</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_2">
+      <widget class="QPushButton" name="savePushButton">
        <property name="text">
         <string>Save</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_3">
+      <widget class="QPushButton" name="cancelPushButton">
        <property name="text">
         <string>Cancel</string>
        </property>

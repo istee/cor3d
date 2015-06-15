@@ -56,9 +56,8 @@ namespace cor3d {
         Skeleton* skeleton = new Skeleton(_skeletons.entityCount(), "");
         stream >> *skeleton;
         _skeletons.addEntity(skeleton);
+        cout << *skeleton << endl;
         emit modelSkeletonAdded(skeleton);
-
-        emit handleViewSkeletonSelected(skeleton->getName());
     }
 
     // implementation of public slots
@@ -91,7 +90,7 @@ namespace cor3d {
         {
             emit modelSkeletonAdded(skeleton);
 
-            emit modelSkeletonSelected(skeleton, selected);
+            //emit modelSkeletonSelected(skeleton, selected);
         }
         else
         {
