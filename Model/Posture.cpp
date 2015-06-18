@@ -13,6 +13,8 @@ namespace cor3d
             _jointAbsolutePostureCoordinates.push_back(joint->get_coordinates());
             _jointAbsoluteInitialPostureCoordinates.push_back(joint->get_coordinates());
         }
+
+        _algorithm = new Fabrik(_joints, _jointAbsoluteInitialPostureCoordinates, _jointAbsolutePostureCoordinates);
     }
 
     ostream& operator <<(ostream& lhs, const Posture& rhs)
@@ -38,6 +40,7 @@ namespace cor3d
         lhs.getline(name, 256);
         lhs.getline(name, 256);
         rhs.setName(name);
+        cout << "t: " << text << " " << name << endl;
         lhs >> text >> rhs._id;
         lhs >> text >> number;
         cout << "number " << number << endl;
@@ -49,6 +52,7 @@ namespace cor3d
             rhs._jointAbsoluteInitialPostureCoordinates.push_back(coordinates);
             rhs._jointAbsolutePostureCoordinates.push_back(coordinates);
         }
+        cout << rhs << endl;
         return lhs;
     }
 
@@ -78,6 +82,9 @@ namespace cor3d
         if (_joints.getSelectedEntity())
         {
 
+            _algorithm->moveToTarget(target);
+
+            /*
             if (_selectedJoint != _joints.getSelectedEntity()->getId() || _isEdited)
             {
                 _selectedJoint = _joints.getSelectedEntity()->getId();
@@ -98,7 +105,7 @@ namespace cor3d
             {
                 DCoordinate3 selectedCoordinates = DCoordinate3(_chains[0].get_joint_coordinates(_chains[0].get_chain_size() - 1));
 
-                fabrik(_chains[0], target, 1e-10);
+                //fabrik(_chains[0], target, 1e-10);
 
                 selectedCoordinates -= DCoordinate3(_chains[0].get_joint_coordinates(_chains[0].get_chain_size() - 1));
 
@@ -121,12 +128,12 @@ namespace cor3d
                             _chains[i].set_joint_coordinates(_chains[i].get_joint_coordinates(j) - selectedCoordinates, j);
                         }
                     }
-                }
+                }*/
 
-                FinalizeMove();
+                //FinalizeMove();
 
-                emit modelPostureDataChanged(this, _joints[_chains[0].getJointId(0)]->getName());
-            }
+                emit modelPostureDataChanged(this, "root");
+            //}
         }
     }
 
@@ -204,7 +211,7 @@ namespace cor3d
 
     int Posture::construct_chains_(int joint_id, int chain_index, int parent_chain_index)
     {
-        Chain chain = Chain(chain_index, parent_chain_index, false);
+        Chain chain = Chain(chain_index, parent_chain_index, _chains[parent_chain_index].getChainHierarchyLevel(), false);
         chain.add_joint_to_front(_jointAbsolutePostureCoordinates[getJointById(joint_id)->get_parent()], getJointById(getJointById(joint_id)->get_parent())->getId());
         while(getJointById(joint_id)->get_children().size() == 1)
         {
@@ -227,7 +234,7 @@ namespace cor3d
         //update_joint_coordinates();
         if (selectedJoint > 0)
         {
-            Chain chain = Chain(0, -1, true);
+            Chain chain = Chain(0, -1, 0, true);
             forward_chain(chain, selectedJoint);
             _chains.push_back(chain);
             vector<unsigned int> children = getJointById(selectedJoint)->get_children();
@@ -267,7 +274,7 @@ namespace cor3d
     {
         renderPostureJoints(renderingOptions, glLoad);
         renderPostureLinks(renderingOptions, true);
-        render_chains(renderingOptions, glLoad);
+        _algorithm->renderChains(renderingOptions, glLoad);
     }
 
     void Posture::renderPostureJoints(RenderingOptions* renderingOptions, bool glLoad) const

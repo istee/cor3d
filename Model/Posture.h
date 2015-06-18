@@ -3,12 +3,15 @@
 #include <string>
 #include <vector>
 
+#include "Algorithm.h"
 #include "BaseEntity.h"
 #include "Core/DCoordinates3.h"
 #include "Model/Chain.h"
 #include "Model/Joint.h"
 #include "GUI/RenderingOptions.h"
 #include "BaseEntityCollection.h"
+#include "Fabrik.h"
+#include "Ccd.h"
 
 using namespace std;
 using namespace cagd;
@@ -30,6 +33,8 @@ namespace cor3d{
 
         bool                    _isEdited;
         int                     _selectedJoint;
+
+        Algorithm*              _algorithm;
 
     public:
         //getter functions

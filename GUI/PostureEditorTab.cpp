@@ -88,7 +88,7 @@ void PostureEditorTab::handleModelPostureSelected(Skeleton* selectedSkeleton, Po
 {
     if (previousPosture)
     {
-        disconnect(previousPosture, SIGNAL(modelPostureDataChanged(Posture*)), this, SLOT(handleModelPostureDataChanged(Posture*)));
+        disconnect(previousPosture, SIGNAL(modelPostureDataChanged(Posture*, string)), this, SLOT(handleModelPostureDataChanged(Posture*, string)));
     }
     else
     {

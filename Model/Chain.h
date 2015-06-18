@@ -13,14 +13,16 @@ namespace cor3d {
         int _id;
         int _parent_id;
         bool _forward;
+        unsigned int         _chainHierarchyLevel;
         vector<DCoordinate3> _joints_coordinates;
         vector<unsigned int> _jointIds;
     public:
         vector<int>  ids;
-        Chain(int id, int parent_id, bool forward)
+        Chain(int id, int parent_id, unsigned int chainHierarchyLevel, bool forward)
         {
             _id = id;
             _parent_id = parent_id;
+            _chainHierarchyLevel = chainHierarchyLevel;
             _forward = forward;
         }
         DCoordinate3 get_chain_start()
@@ -74,13 +76,19 @@ namespace cor3d {
             return _parent_id;
         }
 
+        unsigned int getChainHierarchyLevel()
+        {
+            return _chainHierarchyLevel;
+        }
+
         friend std::ostream& operator <<(std::ostream& lhs, const Chain& rhs)
         {
             lhs << "Chain " << rhs._id << std::endl;
             lhs << "Parent chain " << rhs._parent_id << std::endl;
+            lhs << "Chain size " << rhs.get_chain_size() << endl;
             for (int i = 0; i < rhs.get_chain_size(); i++)
             {
-                lhs << rhs.get_joint_coordinates(i) << endl;
+                lhs << rhs.getJointId(i) << " " << rhs.get_joint_coordinates(i) << endl;
             }
             return lhs;
         }

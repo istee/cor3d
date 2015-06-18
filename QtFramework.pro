@@ -44,7 +44,9 @@ SOURCES += \
     GUI/WidgetExtensions/GroupBoxExtension.cpp \
     GUI/EditWidgets/JointEditWidget.cpp \
     Model/BaseEntityCollection.cpp \
-    Model/Algorithm.cpp
+    Model/Algorithm.cpp \
+    Model/Fabrik.cpp \
+    Model/Ccd.cpp
 
 
 HEADERS += \
@@ -109,7 +111,9 @@ HEADERS += \
     GUI/WidgetExtensions/GroupBoxExtension.h \
     GUI/EditWidgets/JointEditWidget.h \
     GUI/PopupWindows/AboutWindow.h \
-    Model/Algorithm.h
+    Model/Algorithm.h \
+    Model/Fabrik.h \
+    Model/Ccd.h
 
 FORMS += \
     GUI/BasicWidgets/DCoordinate3GroupBox.ui \

@@ -42,7 +42,6 @@ namespace cor3d {
         lhs.getline(name, 256);
         lhs.getline(name, 256);
         rhs.setName(string(name));
-        cout << "rhs name " << rhs.getName() << endl;
         lhs >> text >> boolean;
         if (boolean)
         {
@@ -52,6 +51,7 @@ namespace cor3d {
             lhs >> text >> rhs._meshScale;
         }
         lhs >> text >> number;
+        cout << "joint number " << number << endl;
         for (int i = 0; i < number; i++)
         {
             Joint* joint = new Joint(i, "joint" + i, 0);
