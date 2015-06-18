@@ -244,6 +244,41 @@ namespace cagd
         }
     };
 
+    //-------------------------
+    // template class ArbitraryAxisRotationMatrix
+    //-------------------------
+    class ArbitraryAxisRotationMatrix: public Matrix<double>
+    {
+    public:
+        ArbitraryAxisRotationMatrix(double u, double v, double w, double angleSine, double angleCosine): Matrix<double>(4, 4)
+        {
+            float L = (u*u + v * v + w * w);
+            float u2 = u * u;
+            float v2 = v * v;
+            float w2 = w * w;
+
+            _data[0][0] = (u2 + (v2 + w2) * angleCosine) / L;
+            _data[0][1] = (u * v * (1 - angleCosine) - w * sqrt(L) * angleSine) / L;
+            _data[0][2] = (u * w * (1 - angleCosine) + v * sqrt(L) * angleSine) / L;
+            _data[0][3] = 0.0;
+
+            _data[1][0] = (u * v * (1 - angleCosine) + w * sqrt(L) * angleSine) / L;
+            _data[1][1] = (v2 + (u2 + w2) * angleCosine) / L;
+            _data[1][2] = (v * w * (1 - angleCosine) - u * sqrt(L) * angleSine) / L;
+            _data[1][3] = 0.0;
+
+            _data[2][0] = (u * w * (1 - angleCosine) - v * sqrt(L) * angleSine) / L;
+            _data[2][1] = (v * w * (1 - angleCosine) + u * sqrt(L) * angleSine) / L;
+            _data[2][2] = (w2 + (u2 + v2) * angleCosine) / L;
+            _data[2][3] = 0.0;
+
+            _data[3][0] = 0.0;
+            _data[3][1] = 0.0;
+            _data[3][2] = 0.0;
+            _data[3][3] = 1.0;
+        }
+    };
+
     //--------------------------------------------------
     // implementation of template class Matrix
     //--------------------------------------------------

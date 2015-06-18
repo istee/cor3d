@@ -32,16 +32,17 @@ namespace cor3d{
         PostureAlgorithmType    _postureAlgorithmType;
 
         bool                    _isEdited;
-        int                     _selectedJoint;
 
         Algorithm*              _algorithm;
+
+        DCoordinate3            _target;
+        int                     _lastSelectedJoint;
 
     public:
         //getter functions
         unsigned int getAlgorithmType() const;
         const DCoordinate3& getAbsolutePostureCoordinate(unsigned int jointId) const;
-        Joint* selectedJoint() const;
-
+        DCoordinate3& getTargetCoordinate();
         Posture(unsigned int id, string name, BaseEntityCollection& joints);
         void constructChains(unsigned int selectedJoint);
         void clearChains();

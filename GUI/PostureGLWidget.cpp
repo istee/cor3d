@@ -9,7 +9,7 @@ PostureGLWidget::PostureGLWidget(QWidget *parent, const QGLFormat &format): GLWi
 
 DCoordinate3 PostureGLWidget::dragCoordinate()
 {
-    return _skeleton->getSelectedPosture()->getAbsolutePostureCoordinate(_skeleton->getSelectedPosture()->selectedJoint()->getId());
+    return _skeleton->getSelectedPosture()->getTargetCoordinate();
 }
 
 void PostureGLWidget::specificPaintGL()
@@ -23,7 +23,7 @@ void PostureGLWidget::specificPaintGL()
             if (_skeleton->getSelectedJoint() && _skeleton->getSelectedJoint()->getId() > 0)
             {
                 DCoordinate3 position = _skeleton->getSelectedPosture()->getAbsolutePostureCoordinate(_skeleton->getSelectedJoint()->getId());
-                render_move_arrows(rendering_options, &position);
+                render_move_arrows(rendering_options, &_skeleton->getSelectedPosture()->getTargetCoordinate());
             }
         }
     }
@@ -39,7 +39,7 @@ void PostureGLWidget::specificDrawPickObjects()
         {
             DCoordinate3 selected_position = _skeleton->getSelectedPosture()->getAbsolutePostureCoordinate(_skeleton->getSelectedJoint()->getId());
 
-            render_move_arrows(cor3dApp->cor3d->getRenderingOptions(), &selected_position, _skeleton->getJointCount(), true);
+            render_move_arrows(cor3dApp->cor3d->getRenderingOptions(), &_skeleton->getSelectedPosture()->getTargetCoordinate(), _skeleton->getJointCount(), true);
         }
     }
 }

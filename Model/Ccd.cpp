@@ -35,81 +35,19 @@ namespace cor3d {
 
             DCoordinate3 rotateAround = currentToNextVector ^ currentToTargetVector;
 
-            /*
-            double d = sqrt(rotateAround.x() * rotateAround.x() + rotateAround.y() * rotateAround.y() + rotateAround.z() * rotateAround.z());
 
-            Matrix<double> identity = Matrix<double>(3, 3);
-            identity(0, 0) = 1;
-            identity(1, 1) = 1;
-            identity(2, 2) = 1;
+            Matrix<double> inputMat = Matrix<double>(4, 1);
+            inputMat(0, 0) = currentToNextVector.x();
+            inputMat(1, 0) = currentToNextVector.y();
+            inputMat(2, 0) = currentToNextVector.z();
+            inputMat(3, 0) = 1.0;
 
-            Matrix<double> L = Matrix<double>(3, 3);
-            L(0, 1) = rotateAround.z();
-            L(0, 2) = -rotateAround.y();
-            L(1, 0) = -rotateAround.z();
-            L(1, 2) = rotateAround.x();
-            L(2, 0) = rotateAround.y();
-            L(2, 1) = -rotateAround.x();
-            */
-
-            //DCoordinate3 result = currentToNextVector ^ (identity + angleSin / d * L + ((1 - angleCos) / (d * d) * (L ^ L)));
+            ArbitraryAxisRotationMatrix rotationMat = ArbitraryAxisRotationMatrix(rotateAround.x(), rotateAround.y(), rotateAround.z(), angleSin, angleCos);
 
 
-
-            float rotationMatrix[4][4];
-            float inputMatrix[4][1] = {0.0, 0.0, 0.0, 0.0};
-            float outputMatrix[4][1] = {0.0, 0.0, 0.0, 0.0};
-
-            inputMatrix[0][0] = currentToNextVector.x();
-                inputMatrix[1][0] = currentToNextVector.y();
-                inputMatrix[2][0] = currentToNextVector.z();
-                inputMatrix[3][0] = 1.0;
-
-                double u = rotateAround.x();
-                double v = rotateAround.y();
-                double w = rotateAround.z();
-
-
-            float L = (u*u + v * v + w * w);
-                //angle = angle * M_PI / 180.0; //converting to radian value
-                float u2 = u * u;
-                float v2 = v * v;
-                float w2 = w * w;
-
-                rotationMatrix[0][0] = (u2 + (v2 + w2) * angleCos) / L;
-                rotationMatrix[0][1] = (u * v * (1 - angleCos) - w * sqrt(L) * angleSin) / L;
-                rotationMatrix[0][2] = (u * w * (1 - angleCos) + v * sqrt(L) * angleSin) / L;
-                rotationMatrix[0][3] = 0.0;
-
-                rotationMatrix[1][0] = (u * v * (1 - angleCos) + w * sqrt(L) * angleSin) / L;
-                rotationMatrix[1][1] = (v2 + (u2 + w2) * angleCos) / L;
-                rotationMatrix[1][2] = (v * w * (1 - angleCos) - u * sqrt(L) * angleSin) / L;
-                rotationMatrix[1][3] = 0.0;
-
-                rotationMatrix[2][0] = (u * w * (1 - angleCos) - v * sqrt(L) * angleSin) / L;
-                rotationMatrix[2][1] = (v * w * (1 - angleCos) + u * sqrt(L) * angleSin) / L;
-                rotationMatrix[2][2] = (w2 + (u2 + v2) * angleCos) / L;
-                rotationMatrix[2][3] = 0.0;
-
-                rotationMatrix[3][0] = 0.0;
-                rotationMatrix[3][1] = 0.0;
-                rotationMatrix[3][2] = 0.0;
-                rotationMatrix[3][3] = 1.0;
-
-                for(int i = 0; i < 4; i++ ){
-                        for(int j = 0; j < 1; j++){
-                            outputMatrix[i][j] = 0;
-                            for(int k = 0; k < 4; k++){
-                                outputMatrix[i][j] += rotationMatrix[i][k] * inputMatrix[k][j];
-                            }
-                        }
-                    }
-            chain.set_joint_coordinates(chain.get_joint_coordinates(i) + DCoordinate3(outputMatrix[0][0], outputMatrix[1][0],outputMatrix[2][0]),i + 1);
-
-
-
-
-
+            Matrix<double> result = rotationMat * inputMat;
+            cout << result << endl << endl;
+            chain.set_joint_coordinates(chain.get_joint_coordinates(i) + DCoordinate3(result(0, 0), result(1, 0), result(2, 0)),i + 1);
 
 
 
@@ -117,7 +55,6 @@ namespace cor3d {
             cout << currentToTargetVector << endl;
             cout << currentToNextVector << endl;
             cout << (currentToNextVector ^ currentToTargetVector) << endl;
-            //cout << result << endl;
 
             break;
         }

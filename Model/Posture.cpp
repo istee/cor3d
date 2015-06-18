@@ -6,7 +6,7 @@ namespace cor3d
     {
         _isEdited = false;
         _postureAlgorithmType = FABRIK;
-        _selectedJoint = -1;
+        _lastSelectedJoint = -1;
         for (unsigned int i = 0; i < joints.entityCount(); i++)
         {
             Joint* joint = static_cast<Joint*>(_joints[i]);
@@ -14,7 +14,7 @@ namespace cor3d
             _jointAbsoluteInitialPostureCoordinates.push_back(joint->get_coordinates());
         }
 
-        _algorithm = new Fabrik(_joints, _jointAbsoluteInitialPostureCoordinates, _jointAbsolutePostureCoordinates);
+        _algorithm = new Ccd(_joints, _jointAbsoluteInitialPostureCoordinates, _jointAbsolutePostureCoordinates);
     }
 
     ostream& operator <<(ostream& lhs, const Posture& rhs)
@@ -67,9 +67,14 @@ namespace cor3d
         return _isEdited;
     }
 
-    Joint* Posture::selectedJoint() const
+    DCoordinate3& Posture::getTargetCoordinate()
     {
-        return static_cast<Joint*>(_joints.getSelectedEntity());
+        if (_joints.getSelectedEntity() && _joints.getSelectedEntity()->getId() != _lastSelectedJoint)
+        {
+            _lastSelectedJoint = _joints.getSelectedEntity()->getId();
+            _target = static_cast<Joint*>(_joints.getSelectedEntity())->get_coordinates();
+        }
+        return _target;
     }
 
     const DCoordinate3& Posture::getAbsolutePostureCoordinate(unsigned int jointId) const
@@ -82,6 +87,7 @@ namespace cor3d
         if (_joints.getSelectedEntity())
         {
 
+            _target = target;
             _algorithm->moveToTarget(target);
 
             /*
